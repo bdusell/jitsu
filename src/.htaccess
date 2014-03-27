@@ -3,7 +3,7 @@
 RewriteEngine On
 DirectorySlash Off
 
-# Reqrite rule base
+# Rewrite rule base
 RewriteBase /
 
 # Default page

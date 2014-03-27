@@ -1,0 +1,6 @@
+#!/bin/bash
+
+. include
+
+mysql-root "$ACCESS_LOG_DB_NAME" < sql/access_logs.mysql
+

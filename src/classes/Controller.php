@@ -2,7 +2,7 @@
 
 class Controller {
 
-	/* Controller stuff goes here */
+	/* Controller stuff goes here. */
 
 }
 

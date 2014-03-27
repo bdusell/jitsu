@@ -1,16 +1,16 @@
 <?php
 
-/* Set to false on the live site. */
-$DEBUG = true;
+/* Load essential settings. */
+include 'config.php';
 
-$BASE = '';
+$BASE_DIR = trim($BASE_DIR, '/');
 
-/* Set the include path. */
+/* Update the include path to include classes and view classes. */
 set_include_path(
-	get_include_path() . PATH_SEPARATOR .
-	$_SERVER['DOCUMENT_ROOT'] . "$BASE/classes" . PATH_SEPARATOR .
-	$_SERVER['DOCUMENT_ROOT'] . "$BASE/views" . PATH_SEPARATOR .
-	$_SERVER['DOCUMENT_ROOT'] . $BASE
+	$_SERVER['DOCUMENT_ROOT'] . "/$BASE_DIR/classes" . PATH_SEPARATOR .
+	$_SERVER['DOCUMENT_ROOT'] . "/$BASE_DIR/views" . PATH_SEPARATOR .
+	$_SERVER['DOCUMENT_ROOT'] . "/$BASE_DIR" . PATH_SEPARATOR
+	get_include_path()
 );
 
 /* Set up class autoloading. */
@@ -18,15 +18,13 @@ function __autoload($name) {
 	include "$name.php";
 }
 
-Config::set_base($BASE);
-
-/* Activate error reporting. */
+/* Apply error reporting settings. */
 ini_set('display_errors', $DEBUG ? 1 : 0);
 ini_set('display_startup_errors', $DEBUG ? 1 : 0);
 ini_set('html_errors', 0);
 error_reporting($DEBUG ? E_ALL : 0);
 
-/* Register a custom error handler which throws an exception. */
+/* Override the default error handler. */
 function my_error_handler($errno, $errstr, $errfile, $errline /*, $errcontext*/) {
 	global $DEBUG;
 	if($DEBUG) {
@@ -38,7 +36,7 @@ function my_error_handler($errno, $errstr, $errfile, $errline /*, $errcontext*/)
 }
 set_error_handler('my_error_handler');
 
-/* Register a custom exception handling routine. */
+/* Override the default exception handler. */
 function my_exception_handler($e) {
 	global $DEBUG;
 	if($DEBUG) {
@@ -55,6 +53,6 @@ Stack trace:
 set_exception_handler('my_exception_handler');
 
 /* Log this request. */
-AccessLog::log();
+if($ACCESS_LOGGING) AccessLog::log();
 
 ?>

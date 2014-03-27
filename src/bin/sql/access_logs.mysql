@@ -1,0 +1,15 @@
+# Create the access log tables.
+
+# Don't drop the table if it already exists.
+
+create table if not exists access_logs (
+	http_user_agent varchar(256),
+	http_referer varchar(256),
+	remote_addr varchar(20),
+	request_uri varchar(512),
+	request_time int,
+	request_time_float float,
+	remote_host varchar(32),
+	remote_user varchar(32)
+);
+

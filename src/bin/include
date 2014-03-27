@@ -1,0 +1,11 @@
+if [ -z "$INCLUDE_INCLUDED" ]; then
+INCLUDE_INCLUDED=1
+
+. config
+
+function mysql-root {
+	mysql "-u$MYSQL_ROOT_USER" "-p$MYSQL_ROOT_PASSWORD" $@
+}
+
+fi
+

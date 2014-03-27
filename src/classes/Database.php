@@ -1,5 +1,6 @@
 <?php
 
+/* Object-oriented interface to your application's main database. */
 class Database extends DatabaseSingleton {
 
 	public function __construct() {

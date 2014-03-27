@@ -6,16 +6,25 @@ class AccessLog extends DatabaseSingleton {
 		parent::__construct();
 	}
 
-	protected function database() { return 'access_log_database'; }
-	protected function user()     { return 'access_log_user'; }
-	protected function password() { return 'access_log_password'; }
+	protected function database() {
+		global $ACCESS_LOG_DATABASE;
+		return $ACCESS_LOG_DATABASE;
+	}
 
-	private static $table = 'access_log_table';
+	protected function user() {
+		global $ACCESS_LOG_USER;
+		return $ACCESS_LOG_USER;
+	}
+
+	protected function password() {
+		global $ACCESS_LOG_PASSWORD;
+		return $ACCESS_LOG_PASSWORD;
+	}
 
 	public static function log() {
-		$table = self::$table;
+		global $ACCESS_LOG_TABLE;
 		self::execute(<<<SQL
-insert into $table (
+insert into $ACCESS_LOG_TABLE (
 	http_user_agent, http_referer, remote_addr, request_uri, request_time,
 	request_time_float, remote_host, remote_user
 ) values (

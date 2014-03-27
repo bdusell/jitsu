@@ -3,13 +3,12 @@
 /* Load essential settings. */
 include 'config.php';
 
-$BASE_DIR = trim($BASE_DIR, '/');
+$BASE_DIR = '/' . trim($BASE_DIR, '/');
 
 /* Update the include path to include classes and view classes. */
 set_include_path(
-	$_SERVER['DOCUMENT_ROOT'] . "/$BASE_DIR/classes" . PATH_SEPARATOR .
-	$_SERVER['DOCUMENT_ROOT'] . "/$BASE_DIR/views" . PATH_SEPARATOR .
-	$_SERVER['DOCUMENT_ROOT'] . "/$BASE_DIR" . PATH_SEPARATOR
+	$_SERVER['DOCUMENT_ROOT'] . "$BASE_DIR/classes" . PATH_SEPARATOR .
+	$_SERVER['DOCUMENT_ROOT'] . "$BASE_DIR/views" . PATH_SEPARATOR .
 	get_include_path()
 );
 

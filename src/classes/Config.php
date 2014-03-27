@@ -46,7 +46,7 @@ class Config {
 	}
 
 	private static function _base_url($server_name) {
-		return self::protocol() . '://' . rtrim(rtrim($server_name, '/') . '/' . self::base(), '/') . '/';
+		return self::protocol() . '://' . rtrim(rtrim($server_name, '/') . '/' . self::base_directory(), '/') . '/';
 	}
 
 	public static function expected_base_url() {

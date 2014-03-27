@@ -10,7 +10,7 @@ $BASE_DIR = '';
 
 /* Access logging switch. If true, all HTTP requests to PHP scripts including
 'init.php' will be logged. */
-$ACCESS_LOGGING = true;
+$ACCESS_LOGGING = false;
 $ACCESS_LOG_DATABASE = 'access_logs';
 $ACCESS_LOG_USER     = 'access_log_user';
 $ACCESS_LOG_PASSWORD = 'access_log_password';

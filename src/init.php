@@ -4,12 +4,12 @@
 include 'config.php';
 
 /* Normalize the base directory. */
-$BASE_DIR = '/' . trim($BASE_DIR, '/');
+$BASE_DIR = trim($BASE_DIR, '/');
 
 /* Update the include path. */
 $PATH[] = '../src/lib';
-$PATH[] = '../src/views';
-$PATH[] = '../src/app';
+$PATH[] = '../src/app/views';
+$PATH[] = '../src/app/lib';
 foreach($PLUGINS as $p) $PATH[] = "../src/plugins/$p";
 $PATH[] = get_include_path();
 set_include_path(join(PATH_SEPARATOR, $PATH));

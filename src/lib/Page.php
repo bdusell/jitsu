@@ -14,7 +14,7 @@ abstract class Page {
 	}
 
 	public function base() {
-		return Config::base_url();
+		return null;
 	}
 
 	public function favicon() {
@@ -26,7 +26,7 @@ abstract class Page {
 	}
 
 	public function scripts() {
-		return array('js/jquery.min.js');
+		return array('js/main.js');
 	}
 
 	public function template() {

@@ -10,7 +10,7 @@ RewriteBase /
 RewriteRule ^/?$ index
 
 # Other rewrite rules
-RewriteRule ^index$ index.php?page=index
+RewriteRule ^(index)$ index.php?page=$1
 
 # Deny access to anything we don't like
 RewriteRule !^/?(index\.php|(ajax|assets|css|js)(/|$)) - [F,L]

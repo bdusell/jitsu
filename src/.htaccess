@@ -13,5 +13,5 @@ RewriteRule ^/?$ index
 RewriteRule ^index$ index.php?page=index
 
 # Deny access to anything we don't like
-RewriteRule !^/?(index.php|(ajax|assets|css|js)(/|$)) - [F,L]
+RewriteRule !^/?(index\.php|(ajax|assets|css|js)(/|$)) - [F,L]
 

@@ -1,7 +1,7 @@
 <?php
 
 /* A set of convenient wrappers around the PDO MySQL library. */
-abstract class DatabaseSingleton {
+abstract class SQLDatabase {
 
 	/* Maps class names to singleton instances. */
 	private static $instances = array();
@@ -34,7 +34,7 @@ abstract class DatabaseSingleton {
 	/* Querying. */
 
 	/* Execute a one-shot SQL query and return the resulting rows in an
-	iterable SqlStatement object. The remaining parameters may be used to
+	iterable SQLStatement object. The remaining parameters may be used to
 	pass arguments to the query. If there is only a single array passed as
 	an additional argument, its contents are used as the parameters.
 
@@ -72,7 +72,7 @@ abstract class DatabaseSingleton {
 
 	/* Execute a SQL statement. If there are no arguments after the SQL
 	statement, return the number of affected rows. Otherwise, return
-	a SqlStatement. */
+	a SQLStatement. */
 	public static function execute(/* $statement, [ $arg_array | $arg1, $arg2, ... ] */) {
 		$args = func_get_args();
 		$statement = array_shift($args);
@@ -216,7 +216,7 @@ abstract class DatabaseSingleton {
 
 	// Raise an error.
 	private static function raise_error($msg, $errstr, $code = null, $state = null, $sql = null) {
-		throw new DatabaseError($msg, $errstr, $code, $state, $sql);
+		throw new SQLError($msg, $errstr, $code, $state, $sql);
 	}
 
 	// Convert an attribute name to its integer constant.
@@ -226,7 +226,7 @@ abstract class DatabaseSingleton {
 
 	// Wrap a statement
 	private static function wrap_statement($stmt) {
-		return new SqlStatement($stmt);
+		return new SQLStatement($stmt);
 	}
 
 	// Upon instantiation of this singleton class, connect to the database.

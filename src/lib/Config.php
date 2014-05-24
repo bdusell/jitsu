@@ -1,13 +1,14 @@
 <?php
 
+/* API to phrame configuration. */
 class Config {
 
-	public static function debug_mode_on() {
+	public static function debug() {
 		global $DEBUG;
 		return $DEBUG;
 	}
 
-	public static function base_directory() {
+	public static function base_dir() {
 		global $BASE_DIR;
 		return $BASE_DIR;
 	}
@@ -32,12 +33,12 @@ class Config {
 		return $DOMAIN;
 	}
 
-	public static function contact_email() {
+	public static function email() {
 		global $EMAIL;
 		return $EMAIL;
 	}
 
-	public static function expected_server_name() {
+	public static function artificial_server_name() {
 		return ltrim(self::subdomain() . '.' . self::domain(), '.');
 	}
 
@@ -46,26 +47,16 @@ class Config {
 	}
 
 	private static function _base_url($server_name) {
-		return self::protocol() . '://' . rtrim(rtrim($server_name, '/') . '/' . self::base_directory(), '/') . '/';
+		return self::protocol() . '://' . rtrim(rtrim($server_name, '/') . '/' . self::base_dir(), '/') . '/';
 	}
 
-	public static function expected_base_url() {
+	public static function artificial_base_url() {
 		return self::_base_url(self::expected_server_name());
 	}
 
 	public static function base_url() {
 		return self::_base_url(self::server_name());
 	}
-
-	public static function site_name() {
-		global $SITE_NAME;
-		return $SITE_NAME;
-	}
-
-	public static function site_title() {
-		return self::site_name();
-	}
-
 }
 
 ?>

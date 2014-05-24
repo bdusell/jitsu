@@ -1,7 +1,7 @@
 <?php
 
 /* An exception extension for database-related errors. */
-class DatabaseError extends Exception {
+class SQLError extends Exception {
 
 	private $errstr;
 	private $state;

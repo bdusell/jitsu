@@ -1,3 +1,0 @@
-MYSQL_ROOT_USER=root
-MYSQL_ROOT_PASSWORD=password
-ACCESS_LOG_DB_NAME=access_logs

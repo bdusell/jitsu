@@ -28,24 +28,8 @@ class Util {
 		return (bool) $value;
 	}
 
-	public static function html($text) {
-		return htmlspecialchars($text);
-	}
-
-	public static function is_empty_string($str) {
+	public static function is_empty_value($str) {
 		return is_null($str) || $str === '';
-	}
-
-	public static function html_attr($text) {
-		return htmlspecialchars($text, ENT_QUOTES);
-	}
-
-	public static function xml($text) {
-		return htmlspecialchars($text, ENT_NOQUOTES);
-	}
-
-	public static function sql_like($text) {
-		return str_replace(array('%', '_'), array('%%', '_'), $text);
 	}
 
 	public static function repr($var) {
@@ -56,18 +40,18 @@ class Util {
 		return print_r($var, true);
 	}
 
-	public static function html_print($s) {
+	public static function print_html($s) {
 ?>
-<pre><?= self::html($s) ?></pre>
+<pre><?= Escape::html($s) ?></pre>
 <?php
 	}
 
 	public static function print_repr($var) {
-		self::html_print(self::repr($var));
+		self::print_html(self::repr($var));
 	}
 
 	public static function print_str($var) {
-		self::html_print(self::str($var));
+		self::print_html(self::str($var));
 	}
 
 	public static function hilight($text, $substr, $tag) {
@@ -85,7 +69,7 @@ class Util {
 	}
 
 	public static function underscores($s) {
-		return strtolower(join('_', preg_split('/(?<=.)(?=[A-Z])/', $s)));
+		return strtolower(join('_', preg_split('/(?<=[^A-Z])(?=[A-Z])/', $s)));
 	}
 
 	public static function format_stack_trace($trace) {

@@ -8,14 +8,6 @@ $DEBUG = true;
 <server-address>/dev1/index.php. */
 $BASE_DIR = '';
 
-/* Access logging switch. If true, all HTTP requests to PHP scripts including
-'init.php' will be logged. */
-$ACCESS_LOGGING = false;
-$ACCESS_LOG_DATABASE = 'access_logs';
-$ACCESS_LOG_USER     = 'access_log_user';
-$ACCESS_LOG_PASSWORD = 'access_log_password';
-$ACCESS_LOG_TABLE    = 'access_logs';
-
 /* The name of your website, used in page titles by default. */
 $SITE_NAME = 'Example Website Name';
 
@@ -30,5 +22,8 @@ $DOMAIN = 'example.com';
 
 /* Your site's contact e-mail. */
 $EMAIL = "admin@$DOMAIN";
+
+/* Names of active plugins (see plugins/ directory) */
+$PLUGINS = array('sql', 'logs');
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 /* Object-oriented interface to your application's main database. */
-class Database extends DatabaseSingleton {
+class Database extends SQLDatabase {
 
 	public function __construct() {
 		/* XXX Won't work if this contructor isn't defined. */

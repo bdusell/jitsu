@@ -1,6 +1,6 @@
 <?php
 
-class AccessLog extends DatabaseSingleton {
+class AccessLog extends SQLDatabase {
 
 	public function __construct() {
 		parent::__construct();

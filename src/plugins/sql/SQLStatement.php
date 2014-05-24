@@ -2,7 +2,7 @@
 
 /* A convenient wrapper around the PDO statement class, including an iterator
 interface. */
-class SqlStatement implements Iterator {
+class SQLStatement implements Iterator {
 
 	private $stmt;
 	private $current;
@@ -147,7 +147,7 @@ class SqlStatement implements Iterator {
 
 	private function raise_error($msg) {
 		list($state, $code, $errstr) = $this->stmt->errorInfo();
-		throw new DatabaseError($msg, $errstr, $code, $state);
+		throw new SQLError($msg, $errstr, $code, $state);
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-class Index extends View {
+class Index extends Page {
 
 	/* Variables to store parameters. */
 

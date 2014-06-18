@@ -2,6 +2,7 @@
 
 RewriteEngine On
 DirectorySlash Off
+Options -Indexes
 
 # Rewrite rule base
 RewriteBase /
@@ -9,9 +10,12 @@ RewriteBase /
 # Default page
 RewriteRule ^/?$ index
 
-# Other rewrite rules
+# Specify pages here
 RewriteRule ^(index)$ index.php?page=$1
 
+# Specify ajax scripts here
+RewriteRule ^ajax/()$ ajax/$1.php
+
 # Deny access to anything we don't like
-RewriteRule !^/?(index\.php|(ajax|assets|css|js)(/|$)) - [F,L]
+RewriteRule !^/?(index\.php|ajax/.*\.php|assets/.*\.(png|jpg|gif|svg|woff|ttf|eot)|css/.*\.css|js/.*\.js)$ - [R=404,L]
 

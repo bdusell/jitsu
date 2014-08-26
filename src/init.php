@@ -10,6 +10,7 @@ $BASE_DIR = trim($BASE_DIR, '/');
 $PATH[] = '../src/lib';
 $PATH[] = '../src/app/views';
 $PATH[] = '../src/app/lib';
+$PATH[] = '../src/app/plugins';
 foreach($PLUGINS as $p) $PATH[] = "../src/plugins/$p";
 $PATH[] = get_include_path();
 set_include_path(join(PATH_SEPARATOR, $PATH));

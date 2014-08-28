@@ -52,4 +52,12 @@ Stack trace:
 }
 set_exception_handler('phrame_exception_handler');
 
+/* Initialize plugins. */
+foreach($PLUGINS as $p) {
+	$name = "../src/plugins/$p/init.php";
+	if(is_file($name)) {
+		include $name;
+	}
+}
+
 ?>

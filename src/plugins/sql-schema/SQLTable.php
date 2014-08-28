@@ -6,12 +6,13 @@ class SQLTable {
 
 	private $driver;
 	private $name;
-	private $pluralized_name;
 	private $fields;
+	private $constraints;
 
-	public function __construct($driver, $name, $plural = null) {
+	public function __construct($driver, $name) {
 		$this->driver = $driver;
-		$this->pluralized_name = is_null($plural) ? Util::pluralize($name) : $plural;
+		$this->name = $name;
+		$this->plural_name = is_null($plural) ? Util::pluralize($name) : $plural;
 		$this->fields = array();
 	}
 
@@ -22,8 +23,12 @@ class SQLTable {
 		return $this;
 	}
 
+	public function constraint($constraint) {
+
+	}
+
 	public function create_statement() {
-		return 'CREATE TABLE ' . $this->escape($this->name);
+		return 'CREATE TABLE ' . $driver->escape($this->plural_name) . 
 	}
 }
 

@@ -246,7 +246,7 @@ abstract class SQLDatabase {
 				}
 				$str = $driver . ':' . join(';', $settings);
 			}
-			elseif($driver == 'sqlite') {
+			elseif($driver == 'sqlite' || $driver == 'sqlite2') {
 				$str = $driver . ':' . $this->database();
 			}
 			$this->conn = new PDO($str, $this->user(), $this->password());

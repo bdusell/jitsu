@@ -10,6 +10,7 @@ $BASE_DIR = trim($BASE_DIR, '/');
 $PATH[] = '../src/lib';
 $PATH[] = '../src/app/views';
 $PATH[] = '../src/app/lib';
+$PATH[] = '../src/app/plugins';
 foreach($PLUGINS as $p) $PATH[] = "../src/plugins/$p";
 $PATH[] = get_include_path();
 set_include_path(join(PATH_SEPARATOR, $PATH));
@@ -50,5 +51,13 @@ Stack trace:
 	}
 }
 set_exception_handler('phrame_exception_handler');
+
+/* Initialize plugins. */
+foreach($PLUGINS as $p) {
+	$name = "../src/plugins/$p/init.php";
+	if(is_file($name)) {
+		include $name;
+	}
+}
 
 ?>

@@ -72,6 +72,30 @@ class Util {
 		return strtolower(join('_', preg_split('/(?<=[^A-Z])(?=[A-Z])/', $s)));
 	}
 
+	public static function begins_with($s, $prefix) {
+		return substr($s, 0, strlen($prefix)) === $prefix;
+	}
+
+	public static function ends_with($s, $suffix) {
+		return substr($s, -strlen($suffix)) === $suffix;
+	}
+
+	public static function pluralize($s) {
+		// Irregular vowel y
+		// -y => -ies
+		$result = preg_replace('/([^aeiou])y$/', '$1ies', $s, 1, $count);
+		if($count) return $result;
+
+		// Sibilants
+		// -s, -z, -x, -j, -sh, -tch, -zh => -ses, -zes, etc.
+		$result = preg_replace('/(tch|sh|zh|[szxj])$/', '$1es', $s, 1, $count);
+		if($count) return $result;
+
+		// Simple addition of s
+		// - => -s
+		return $s . 's';
+	}
+
 	public static function format_stack_trace($trace) {
 		$levels = array();
 		foreach($trace as $level) {

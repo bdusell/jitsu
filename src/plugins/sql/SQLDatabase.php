@@ -7,11 +7,11 @@ abstract class SQLDatabase {
 	private static $instances = array();
 
 	/* Overridable methods for configuration. */
-	protected function driver()  { return 'mysql'; }
-	protected function host()    { return 'localhost'; }
+	protected abstract function driver();
+	protected function host() { return 'localhost'; }
 	protected abstract function database();
-	protected abstract function user();
-	protected abstract function password();
+	protected function user() { return null; }
+	protected function password() { return null; }
 	protected function charset() { return null; }
 
 	private static $attrs = array(
@@ -232,19 +232,26 @@ abstract class SQLDatabase {
 	// Upon instantiation of this singleton class, connect to the database.
 	protected function __construct() {
 		try {
-			$settings = array(
-				'host=' . $this->host(),
-				'dbname=' . $this->database()
-			);
-			if(!is_null($charset = $this->charset())) {
-				$settings[] = "charset=$charset";
+			$driver = $this->driver();
+			$str = null;
+			$user = null;
+			$password = null;
+			if($driver == 'mysql') {
+				$settings = array(
+					'host=' . $this->host(),
+					'dbname=' . $this->database()
+				);
+				if(!is_null($charset = $this->charset())) {
+					$settings[] = "charset=$charset";
+				}
+				$str = $driver . ':' . join(';', $settings);
 			}
-			$this->conn = new PDO(
-				$this->driver() . ':' . join(';', $settings),
-				$this->user(),
-				$this->password());
+			elseif($driver == 'sqlite' || $driver == 'sqlite2') {
+				$str = $driver . ':' . $this->database();
+			}
+			$this->conn = new PDO($str, $this->user(), $this->password());
 			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			if(!is_null($charset)) {
+			if($driver == 'mysql' && !is_null($charset)) {
 				$this->conn->exec('set names ' . $this->charset());
 			}
 		}

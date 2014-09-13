@@ -18,7 +18,7 @@ class SQLStatement implements Iterator {
 	referenced by name. */
 	public function bind_output($col, &$var, $type = null) {
 		if(is_null($type)) $result = $this->stmt->bindColumn($col, $var);
-		else $result = $this->stmt->bindColumn($col, $var, self::type_value($column));
+		else $result = $this->stmt->bindColumn($col, $var, self::type_value($type));
 		if(!$result) $this->raise_error("unable to bind variable to column '$col'");
 	}
 
@@ -27,7 +27,7 @@ class SQLStatement implements Iterator {
 	*/
 	public function bind_input($param, &$var, $type = null) {
 		if(is_null($type)) $result = $this->stmt->bindParam($param, $var);
-		else $result = $this->stmt->bindParam($param, $var, self::type_value($column));
+		else $result = $this->stmt->bindParam($param, $var, self::type_value($type));
 		if(!$result) $this->raise_error("unable to bind variable to prepared statement parameter '$param'");
 	}
 
@@ -67,6 +67,16 @@ class SQLStatement implements Iterator {
 	make it executable again. */
 	public function finish() {
 		if(!$this->stmt->closeCursor()) $this->raise_error('unable to close cursor');
+	}
+
+	/* Return the first row and ignore the rest. If there are no records
+	returned, return null. */
+	public function first() {
+		foreach($this as $row) {
+			$this->finish();
+			return $row;
+		}
+		return null;
 	}
 
 	/* Return the first cell of the first row and ignore anything else. If
@@ -117,14 +127,15 @@ class SQLStatement implements Iterator {
 		return null;
 	}
 
-	public function next() {
-		/* TODO wrap in Struct object so invalid keys raise errors */
-		$this->current = $this->stmt->fetch(PDO::FETCH_LAZY);
+	public function next($mode = PDO::FETCH_OBJ) {
+		$this->current = $this->stmt->fetch($mode);
 	}
 
-	public function rewind() {
-		if(is_null($this->current)) $this->next();
-		else $this->current = $this->stmt->fetch(PDO::FETCH_LAZY, PDO::FETCH_ORI_ABS, 0);
+	public function rewind($mode = PDO::FETCH_OBJ) {
+		// Called before the first iteration
+		// Pre-load the first row
+		if(is_null($this->current)) $this->next($mode);
+		else $this->current = $this->stmt->fetch($mode, PDO::FETCH_ORI_ABS, 0);
 	}
 
 	public function valid() {

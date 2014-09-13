@@ -13,6 +13,11 @@ class Config {
 		return $BASE_DIR;
 	}
 
+	public static function document_root() {
+		global $DOCUMENT_ROOT;
+		return $DOCUMENT_ROOT;
+	}
+
 	public static function site_name() {
 		global $SITE_NAME;
 		return $SITE_NAME;

@@ -15,6 +15,9 @@ class Struct {
 		return $this->attrs[$name];
 	}
 
+	public function __set($name, $value) {
+		$this->attrs[$name] = $value;
+	}
 }
 
 ?>

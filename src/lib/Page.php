@@ -30,7 +30,7 @@ abstract class Page {
 	}
 
 	public function template() {
-		return Util::underscores(get_class($this));
+		return Util::underscores(preg_replace('/View$/', '', get_class($this)));
 	}
 
 	public function set_param($name, $value) {

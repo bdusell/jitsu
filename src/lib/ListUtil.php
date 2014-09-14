@@ -239,6 +239,69 @@ class ListUtil {
 	public static function contains($list, $value) {
 		return in_array($value, $list, true);
 	}
+
+	/* Sort a list of strings into a human-friendly order, where numbers
+	 * are sorted by value and not lexicographically. Note that the
+	 * list afterwards is NOT normalized, although it can still be
+	 * traversed in order. Return a copy of the sorted list. */
+	public static function human_sort(&$list) {
+		natsort($list);
+		return $list;
+	}
+
+	/* Sort a list of strings into human-friendly order (case-
+	 * insensitive). Note that the list afterwards is NOT normalized,
+	 * although it can still be traversed in order. Return a copy of the
+	 * sorted list. */
+	public static function human_isort(&$list) {
+		natcasesort($list);
+		return $list;
+	}
+
+	/* Re-index the keys of an array so that it becomes a valid list. */
+	public static function normalize(&$array) {
+		$array = array_values($array);
+	}
+
+	/* Generate a list consisting of a range of numbers, with an optional
+	 * step size which defaults to integer 1. If the step size is an
+	 * integer, then the range is non-inclusive (stops 1 before `$j`).
+	 * If the step size is a real value, then the range is inclusive. */
+	public static function range($i, $j, $step) {
+		return range($i, is_int($step) ? $j - 1 : $j, $step);
+	}
+
+	/* Sort an array in reverse order. Returns a copy of the sorted
+	 * list. */
+	public static function reverse_sort(&$list) {
+		rsort($list);
+		return $list;
+	}
+
+	/* Randomize the ordering of elements in a list Returns a copy of the
+	 * shuffled list. */
+	public static function shuffle(&$list) {
+		shuffle($list);
+		return $list;
+	}
+
+	/* Sort an array. Returns a copy of the sorted list. Accepts an
+	 * optional comparison function (in the style of `strcmp`). */
+	public static function sort(&$list, $callback = null) {
+		if($callback === null) {
+			sort($list);
+		} else {
+			usort($list, $callback);
+		}
+		return $list;
+	}
+
+	/* Sort an array according to the rules defined by the current
+	 * locale. Returns the sorted list. */
+	public static function locale_sort(&$list) {
+		sort($list, SORT_LOCALE_STRING);
+		return $list;
+	}
 }
 
 ?>

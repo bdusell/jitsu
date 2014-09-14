@@ -227,6 +227,18 @@ class ListUtil {
 	public static function length($list) {
 		return count($list);
 	}
+
+	/* Return whether a list contains a certain value. Comparison is non-
+	 * strict. */
+	public static function loose_contains($list, $value) {
+		return in_array($value, $list);
+	}
+
+	/* Return whether a list contains a certain value. Comparison is
+	 * strict. */
+	public static function contains($list, $value) {
+		return in_array($value, $list, true);
+	}
 }
 
 ?>

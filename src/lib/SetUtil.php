@@ -24,7 +24,9 @@ class SetUtil {
 		return $set1 + $set2;
 	}
 
-	/* Return whether two sets have the same contents. */
+	/* Return whether two sets have the same contents. Note that there is
+	 * no distinction between comparing unordered sets loosely and
+	 * strictly due to the normalization of array keys in PHP. */
 	public static function equal($set1, $set2) {
 		return $set1 == $set2;
 	}

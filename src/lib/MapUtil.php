@@ -232,6 +232,27 @@ class MapUtil {
 	public static function size($map) {
 		return count($map);
 	}
+
+	/* Return whether a value exists in a map. Comparison is non-strict. */
+	public static function loose_contains_value($map, $value) {
+		return in_array($value, $map);
+	}
+
+	/* Return whether a value exists in a map. Comparison is strict. */
+	public static function contains_value($map, $value) {
+		return in_array($value, $map, true);
+	}
+
+	/* Maps which contain the same key-value pairs will compare strictly
+	 * inequal (!==) if the pairs were defined in a different order. Use
+	 * this function to normalize unordered maps so that they compare
+	 * strictly equal if and only if they contain the same key-value pairs,
+	 * where comparison of values is strict. Modifies the map in place and
+	 * returns a copy of the normalized map. */
+	public static function normalize(&$map) {
+		ksort($map);
+		return $map;
+	}
 }
 
 ?>

@@ -203,6 +203,18 @@ class MapUtil {
 	public static function key_of($map, $value) {
 		return array_search($map, $value, true);
 	}
+
+	/* Return a copy of a map with no duplicate values, where the key
+	 * selected for each value is determined by sort order. Comparison is
+	 * strict. */
+	public static function with_unique_values($map) {
+		return array_unique($map, SORT_REGULAR);
+	}
+
+	/* Get a list of the values in a map. */
+	public static function values($map) {
+		return array_values($map);
+	}
 }
 
 ?>

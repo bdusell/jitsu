@@ -179,6 +179,49 @@ class ListUtil {
 	public static function shift(&$list) {
 		return array_shift($list);
 	}
+
+	private static function _slice_j($i, $j) {
+		if($j === null) {
+			return null;
+		} else {
+			if($j < 0) {
+				return $j;
+			} else {
+				if($j > $i) {
+					return $j - $i;
+				} else {
+					return 0;
+				}
+			}
+		}
+	}
+
+	/* Return a slice of a list, where `$i` is the starting index and `$j`
+	 * is one past the last index, or null if all the rest of the list
+	 * should be used. If `$j` is negative, this denotes the number of
+	 * elements from the end of the array where the slice stops. */
+	public static function slice($list, $i, $j = null) {
+		return array_slice($list, $i, self::_slice_j($i, $j));
+	}
+
+	/* Replace a slice of a list with the contents of another list. Use
+	 * `null` for `$j` to assign until the end of the list. Returns the
+	 * replaced slice. */
+	public static function assign_slice(&$list, $i, $j, $sub) {
+		return array_splice($list, $i,
+			$j === null ? count($list) : self::_slice_j($i, $j),
+			$sub);
+	}
+
+	/* Sum all of the elements in a list together. */
+	public static function sum($list) {
+		return array_sum($list);
+	}
+
+	/* Unshift an element onto the beginning of a list. */
+	public static function unshift(&$list, $value) {
+		array_unshift($list, $value);
+	}
 }
 
 ?>

@@ -43,31 +43,29 @@ class ListUtil {
 	}
 
 	/* Split an array into sub-arrays of size `$n`, where the last chunk
-	 * may contain fewer than `$n` elements.
-	 * PHP 4.2.0+ */
+	 * may contain fewer than `$n` elements. */
 	public static function chunks($array, $n) {
 		return array_chunk($array, $n);
 	}
 
-	/* Get the `$j`th column of a 2-dimensional array as its own array.
-	 * PHP 5.5.0+ */
+	/* Get the `$j`th column of a 2-dimensional array as its own array. */
 	public static function column($array, $j) {
 		return array_column($array, $j);
 	}
 
 	/* Get an associative array mapping the values of the given array to
-	 * the number of times they occur.
-	 * PHP 4+ */
+	 * the number of times they occur. */
 	public static function histogram($array) {
 		return array_count_values($array);
 	}
 
-	/* Return all of the elements which are in the given array but not in
-	 * any of the following arrays. Note that indices are not readjusted.
-	 * PHP 4.0.4+ */
-	public static function difference(/* $array, $a1, ... */) {
-		$args = func_get_args();
-		call_user_func_array('array_diff', $args);
+
+
+
+	/* Return a list of all values which are in `$list1` but not in
+	 * `$list2`, `$list3`, etc. */
+	public static function difference(/* $list1, $list2, ... */) {
+		return call_user_func_array('array_diff', func_get_args());
 	}
 
 	/* Return an array filled with `$n` elements of the given value.

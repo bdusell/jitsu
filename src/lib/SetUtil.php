@@ -16,6 +16,13 @@ class SetUtil {
 		return true;
 	}
 
+	/* Convert a list of values to a set of values. */
+	public static function from_list($list) {
+		$result = array();
+		foreach($list as $v) $result[$v] = true;
+		return $result;
+	}
+
 	/* Return the union of two sets. */
 	public static function union($set1, $set2) {
 		return $set1 + $set2;
@@ -50,6 +57,20 @@ class SetUtil {
 	 * case. */
 	public static function to_lower($set) {
 		return array_change_key_case($map);
+	}
+
+	/* Return a set of all elements in `$set1` which are not in `$set2`,
+	 * `$set3`, etc. Comparison is non-strict (==). */
+	public static function loose_difference(/* $set1, $set2, ... */) {
+		return call_user_func_array('array_diff_key', func_get_args());
+	}
+
+	/* Return a set of all elements in `$set1` which are not in `$set2`,
+	 * etc. Comparison is strict (===). */
+	public static function difference(/* $set1, $set2, ... */) {
+		$args = func_get_args();
+		$args[] = array('FuncUtil', 'key_cmp');
+		return call_user_func_array('array_diff_ukey', $args);
 	}
 }
 

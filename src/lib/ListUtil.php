@@ -59,60 +59,125 @@ class ListUtil {
 		return array_count_values($array);
 	}
 
-
-
-
 	/* Return a list of all values which are in `$list1` but not in
-	 * `$list2`, `$list3`, etc. */
-	public static function difference(/* $list1, $list2, ... */) {
+	 * `$list2`, `$list3`, etc. Comparison is non-strict. */
+	public static function loose_difference(/* $list1, $list2, ... */) {
 		return call_user_func_array('array_diff', func_get_args());
 	}
 
-	/* Return an array filled with `$n` elements of the given value.
-	 * PHP 4.2.0+ */
-	public static function fill($n, $value) {
+	/* Return a list consisting of `$n` copies of `$value`. */
+	public static function repeat($value, $n) {
 		return array_fill(0, $n, $value);
 	}
 
-	/* Return an array filtered by the given predicate.
-	 * PHP 4.0.6+ */
+	/* Return an array filtered by the given predicate. */
 	public static function filter($array, $callback) {
 		return array_filter($array, $callback);
 	}
 
-	/* Exchange the values of an array with their indices.
-	 * PHP 4+ */
-	public static function invert($array) {
-		return array_flip($array);
+	/* Given a list of integers and strings, return a map mapping the
+	 * values of `$list` to their indices, where later entries take
+	 * precedence if there are duplicates. */
+	public static function invert($list) {
+		return array_flip($list);
 	}
 
-	/* Return all of the elements which are in all of the given arrays.
-	 * Note that indices are not readjusted.
-	 * PHP 4.0.4+ */
-	public static function intersection($array) {
-		$args = func_get_args();
-		return call_user_func_array('array_intersect', $args);
+	/* Return all of the elements which are in all of the given lists.
+	 * Note that indices are not readjusted. */
+	public static function loose_intersection($lists) {
+		return call_user_func_array('array_intersect', $lists);
 	}
 
-	/* Apply a callback to all of the elements in an array and return
-	 * the results in an array.
-	 * PHP 4.0.6+ */
-	public static function map($array, $callback) {
-		return array_map($callback, $array);
+	/* Return a list of all indices in the given list which contain a
+	 * certain value. Comparison is non-strict. */
+	public static function loose_indices_of($list, $value) {
+		return array_keys($list, $value);
 	}
 
-	/* Apply a callback which accepts `n` arguments to `n` arrays. Return
-	 * the results in an array.
-	 * PHP 4.0.6+ */
-	public static function map_n($arrays, $callback) {
-		array_unshift($arrays, $callback);
-		return call_user_func('array_map', $arrays);
+	/* Return a list of all indices in the given list which contain
+	 * a certain value. Comparison is strict. */
+	public static function indices_of($list, $value) {
+		return array_keys($list, $value, true);
 	}
 
-	/* Concatenate multiple arrays into one. */
-	public static function concatenate(/* $array1, ... */) {
-		$args = func_get_args();
-		return call_user_func('array_merge', $args);
+	/* Apply a callback to all of the elements in a list and return
+	 * the results in a list. */
+	public static function map($list, $callback) {
+		return array_map($callback, $list);
+	}
+
+	/* Concatenate two lists. */
+	public static function concatenate($list1, $list2) {
+		return array_merge($list1, $list2);
+	}
+
+	/* Pad a list to size `$n` with copies of `$value`. */
+	public static function pad($list, $n, $value) {
+		return array_pad($list, $n, $value);
+	}
+
+	/* Pop the last element from a list. Return the popped element or null
+	 * if the list was empty. */
+	public static function pop(&$list) {
+		return array_pop($list);
+	}
+
+	/* Multiply all of the values in a list together. */
+	public static function product($list) {
+		return array_product($list);
+	}
+
+	/* Push an element onto the end of a list. Equivalent to
+	 * `$list[] = $value`, which should be preferred instead. */
+	public static function push(&$list, $value) {
+		return array_push($list, $value);
+	}
+
+	/* Return a random element from a list. */
+	public static function random($list) {
+		return array_rand($list);
+	}
+
+	/* Return a list of `$n` random elements from a list. */
+	public static function random_n($list, $n) {
+		$result = array_rand($list, $n);
+		if($n == 1) $result = array($result);
+		return $result;
+	}
+
+	/* Reduce a list of a values to a single one using a binary
+	 * callback. Optionally pass a non-null third argument as an initial
+	 * value. If the initial value is omitted, null will be returned for
+	 * an empty list, and for a list of length 1 the element inside it. */
+	public static function reduce($list, $callback, $initial = null) {
+		return array_reduce($list, $callback, $initial);
+	}
+
+	/* Return a the given list, reversed. */
+	public static function reversed($list) {
+		return array_reverse($list);
+	}
+
+	/* Search a list for a value and return the index where it was found,
+	 * or else -1. Comparison is non-strict. */
+	public static function loose_index_of($list, $value) {
+		$result = array_search($list, $value);
+		if($result === false) return -1;
+		return $result;
+	}
+
+	/* Search a list for a value and return the index where it was found,
+	 * or else -1. Comparison is strict. */
+	public static function index_of($list, $value) {
+		$result = array_search($list, $value, true);
+		if($result === false) return -1;
+		return $result;
+	}
+
+	/* Shift an element off the beginning of a list. Return the shifted
+	 * element or null if the list was empty. */
+	public static function shift(&$list) {
+		return array_shift($list);
 	}
 }
 

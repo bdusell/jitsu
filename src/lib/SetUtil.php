@@ -70,6 +70,11 @@ class SetUtil {
 	public static function to_list($set) {
 		return array_keys($set);
 	}
+
+	/* Return the number of elements in a set. */
+	public static function size($set) {
+		return count($set);
+	}
 }
 
 ?>

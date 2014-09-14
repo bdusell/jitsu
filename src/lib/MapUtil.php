@@ -146,9 +146,16 @@ class MapUtil {
 		return array_keys($map, $value, true);
 	}
 
+	/* Merge a series of maps. This is the same as extending them, except
+	 * that integer keys are re-indexed so that they never overwrite each
+	 * other but count up non-decreasingly. */
+	public static function merge(/* $map1, ... */) {
+		return call_user_func('array_merge', func_get_args());
+	}
+
 	/* Merge a series of maps recursively. Merging means that for
 	 * maps with conflicting keys, the contents under these keys are
-	 * merged using the procedure described shortly. Recursively means
+	 * merged using the logic tabulated below. Recursively means
 	 * that when any merged contents are also maps, the same merging
 	 * procedure is applied on them recursively.
 	 * 
@@ -178,16 +185,12 @@ class MapUtil {
 		return call_user_func('array_merge_recursive', func_get_args());
 	}
 
-	/* Merge a series of maps. This is the same as extending them, except
-	 * that integer keys are re-indexed so that they never overwrite each
-	 * other but count up non-decreasingly. */
-	public static function merge(/* $map1, ... */) {
-		return call_user_func('array_merge', func_get_args());
-	}
-
 	/* Recursively extend a series of maps in order. That is, return
 	 * the same result as `extended`, except that for conflicting keys
-	 * which both have arrays, the arrays are extended recursively. */
+	 * which both have arrays, the arrays are extended recursively. Note
+	 * that this means that when two lists are in conflict, the first list
+	 * is not overwritten, only overlaid, which may not be exactly what you
+	 * want. */
 	public static function recursively_extended(/* $map1, ... */) {
 		return call_user_func('array_replace_recursive', func_get_args());
 	}
@@ -214,6 +217,20 @@ class MapUtil {
 	/* Get a list of the values in a map. */
 	public static function values($map) {
 		return array_values($map);
+	}
+
+	/* Apply a callback to every element in a list. Optionally provide
+	 * user data to be passed to each call.
+	 *
+	 * The signature of the callback is expected to be:
+	 * `function(&$value, $index [, &$userdata])` */
+	public static function apply(&$list, $callback, $userdata = null) {
+		return array_walk($list, $callback, $userdata);
+	}
+
+	/* Return the number of key-value pairs in a map. */
+	public static function size($map) {
+		return count($map);
 	}
 }
 

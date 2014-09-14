@@ -222,6 +222,11 @@ class ListUtil {
 	public static function unshift(&$list, $value) {
 		array_unshift($list, $value);
 	}
+
+	/* Return the length of a list. */
+	public static function length($list) {
+		return count($list);
+	}
 }
 
 ?>

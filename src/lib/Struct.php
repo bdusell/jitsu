@@ -18,6 +18,14 @@ class Struct {
 	public function __set($name, $value) {
 		$this->attrs[$name] = $value;
 	}
+
+	public function __isset($name) {
+		return isset($this->attrs[$name]);
+	}
+
+	public function __unset($name) {
+		unset($this->attrs[$name]);
+	}
 }
 
 ?>

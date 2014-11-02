@@ -17,6 +17,10 @@ class Escape {
 	public static function sql_like($text) {
 		return str_replace(array('%', '_'), array('\\%', '\\_'), $text);
 	}
+
+	public static function url($text) {
+		return urlencode($text);
+	}
 }
 
 ?>

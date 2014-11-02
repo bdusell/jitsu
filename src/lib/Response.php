@@ -11,6 +11,10 @@ class Response {
 		header("$name: $value");
 	}
 
+	public static function content_type($type) {
+		self::header('Content-Type', $type);
+	}
+
 	public static function cookie($name, $value, $lifespan = null, $path = null) {
 		setcookie(
 			$name,
@@ -25,8 +29,13 @@ class Response {
 	}
 
 	public static function json($obj, $pretty = true) {
-		self::header('Content-Type', 'application/json');
+		self::content_type('application/json');
 		?><?= Serialize::json($obj, $pretty) ?><?php
+	}
+
+	public static function file($path, $content_type) {
+		self::content_type($content_type);
+		readfile($path);
 	}
 }
 

@@ -45,9 +45,7 @@ class Util {
 	}
 
 	public static function print_html($s) {
-?>
-<code><?= Escape::html($s) ?></code>
-<?php
+?><code><?= Escape::html($s) ?></code><?php
 	}
 
 	public static function print_repr($var) {

@@ -64,6 +64,12 @@ abstract class SQLDatabase {
 		}
 	}
 
+	/* Return the first row of a query and ignore the rest. */
+	public static function row(/* $query, ... */) {
+		$args = func_get_args();
+		return call_user_func_array(array('Database', 'query'), $args)->first();
+	}
+
 	/* Equivalent to Database::query($query, ... )->value(). */
 	public static function evaluate(/* $query, ... */) {
 		$args = func_get_args();
@@ -83,7 +89,8 @@ abstract class SQLDatabase {
 			return $result;
 		}
 		else {
-			return self::query($statement, $args);
+			$args = func_get_args();
+			return call_user_func_array(array('Database', 'query'), $args);
 		}
 	}
 
@@ -109,11 +116,12 @@ abstract class SQLDatabase {
 	}
 
 	/* Get the id of the last inserted record. */
-	public static function last_id() {
+	public static function last_insert_id() {
 		$result = self::conn()->lastInsertId();
 		if(self::conn()->errorCode() === 'IM001') {
 			self::result_error('unable to get last insert id');
 		}
+		return $result;
 	}
 
 	/* Transaction handling. */
@@ -236,7 +244,7 @@ abstract class SQLDatabase {
 			$str = null;
 			$user = null;
 			$password = null;
-			if($driver == 'mysql') {
+			if($driver === 'mysql') {
 				$settings = array(
 					'host=' . $this->host(),
 					'dbname=' . $this->database()
@@ -246,13 +254,16 @@ abstract class SQLDatabase {
 				}
 				$str = $driver . ':' . join(';', $settings);
 			}
-			elseif($driver == 'sqlite' || $driver == 'sqlite2') {
+			elseif($driver === 'sqlite' || $driver === 'sqlite2') {
 				$str = $driver . ':' . $this->database();
 			}
 			$this->conn = new PDO($str, $this->user(), $this->password());
 			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			if($driver == 'mysql' && !is_null($charset)) {
+			if($driver === 'mysql' && !is_null($charset)) {
 				$this->conn->exec('set names ' . $this->charset());
+			}
+			if($driver === 'sqlite' || $driver === 'sqlite2') {
+				$this->conn->exec('pragma foreign_keys = on');
 			}
 		}
 		catch(PDOException $e) {

@@ -5,15 +5,28 @@ include 'config.php';
 
 /* Normalize the base directory. */
 $BASE_DIR = trim($BASE_DIR, '/');
+if($BASE_DIR !== '') $BASE_DIR .= '/';
+$DOCUMENT_ROOT = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/';
 
 /* Update the include path. */
-$PATH[] = '../src/lib';
-$PATH[] = '../src/app/views';
-$PATH[] = '../src/app/lib';
-$PATH[] = '../src/app/plugins';
-foreach($PLUGINS as $p) $PATH[] = "../src/plugins/$p";
-$PATH[] = get_include_path();
-set_include_path(join(PATH_SEPARATOR, $PATH));
+
+function phrame_normalize_path($path) {
+	global $BASE_DIR, $DOCUMENT_ROOT;
+	return "$DOCUMENT_ROOT$BASE_DIR../src/$path";
+}
+
+$PATH[] = 'lib';
+$PATH[] = 'app/views';
+$PATH[] = 'app/models';
+$PATH[] = 'app/lib';
+$PATH[] = 'app/plugins';
+foreach($PLUGINS as $p) $PATH[] = "plugins/$p";
+
+$absolute_paths = array();
+foreach($PATH as $p) $absolute_paths[] = phrame_normalize_path($p);
+$absolute_paths[] = get_include_path();
+
+set_include_path(join(PATH_SEPARATOR, $absolute_paths));
 
 /* Set up class autoloading. */
 function __autoload($name) {

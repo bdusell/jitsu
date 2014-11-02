@@ -3,6 +3,7 @@
 /* An exception extension for database-related errors. */
 class SQLError extends Exception {
 
+	private $sql_error_code;
 	private $errstr;
 	private $state;
 	private $sql;
@@ -13,10 +14,16 @@ class SQLError extends Exception {
 	state reported after the error, as well as any SQL code which might be
 	responsible. */
 	public function __construct($msg, $errstr, $code = null, $state = null, $sql = null) {
-		parent::__construct($msg, $code);
+		parent::__construct($msg);
+		$this->sql_error_code = $code;
 		$this->errstr = $errstr;
 		$this->state = $state;
 		$this->sql = $sql;
+	}
+
+	/* Get the SQL engine's error code. */
+	public function getSqlErrorCode() {
+		return $this->sql_error_code;
 	}
 
 	/* Get the SQL state abbreviation, as a string, reported by the
@@ -41,6 +48,7 @@ class SQLError extends Exception {
 	public function __toString() {
 		$result = parent::__toString();
 		if(!is_null($this->errstr)) $result .= "\nerror string: " . $this->errstr;
+		if(!is_null($this->sql_error_code)) $result .= ' [' . $this->sql_error_code . ']';
 		if(!is_null($this->state)) $result .= "\nSQL state: " . $this->state;
 		if(!is_null($this->sql)) $result .= "\nSQL code: " . $this->sql;
 		return $result;

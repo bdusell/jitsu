@@ -1,31 +1,18 @@
 <?php
 
-/* Load essential settings. */
-include 'config.php';
-
 /* Normalize the base directory. */
 $BASE_DIR = trim($BASE_DIR, '/');
 if($BASE_DIR !== '') $BASE_DIR .= '/';
 $DOCUMENT_ROOT = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/';
 
 /* Update the include path. */
-
-function phrame_normalize_path($path) {
-	global $BASE_DIR, $DOCUMENT_ROOT;
-	return "$DOCUMENT_ROOT$BASE_DIR../src/$path";
-}
-
-$PATH[] = 'lib';
-$PATH[] = 'app/views';
-$PATH[] = 'app/models';
 $PATH[] = 'app/lib';
-$PATH[] = 'app/plugins';
-foreach($PLUGINS as $p) $PATH[] = "plugins/$p";
-
+$PATH[] = 'app/pages';
+$PATH[] = 'app/models';
+foreach($MODULES as $p) $PATH[] = "lib/$p";
 $absolute_paths = array();
-foreach($PATH as $p) $absolute_paths[] = phrame_normalize_path($p);
+foreach($PATH as $p) $absolute_paths[] = "$DOCUMENT_ROOT$BASE_DIR$SOURCE_DIR$p";
 $absolute_paths[] = get_include_path();
-
 set_include_path(join(PATH_SEPARATOR, $absolute_paths));
 
 /* Set up class autoloading. */
@@ -64,13 +51,5 @@ Stack trace:
 	}
 }
 set_exception_handler('phrame_exception_handler');
-
-/* Initialize plugins. */
-foreach($PLUGINS as $p) {
-	$name = "../src/plugins/$p/init.php";
-	if(is_file($name)) {
-		include $name;
-	}
-}
 
 ?>

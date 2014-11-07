@@ -72,6 +72,10 @@ class Request {
 	public static function has_exact_post_params($names) {
 		return Util::has_exact_keys($_POST, $names);
 	}
+
+	public static function url() {
+		return $_SERVER['REQUEST_URI'];
+	}
 }
 
 ?>

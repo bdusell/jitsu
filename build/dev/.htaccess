@@ -1,0 +1,6 @@
+RewriteEngine On
+DirectorySlash Off
+Options -Indexes
+
+RewriteBase /goldlist-dev/
+RewriteRule !^(assets|js|css)/ index.php [L]

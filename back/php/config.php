@@ -1,12 +1,14 @@
 <?php
 
 /* Debug switch. Set to true in development mode, false in production mode. */
-$DEBUG = true;
+$DEBUG = false;
 
 /* A prefix for all relative URLs used by the site. For example, if set to
-'dev1', the index of this site is accessed through the URL
-<server-address>/dev1/index.php. */
+'foobar', the index of this site is accessed through the URL
+<server>/foobar/index.php. */
 $BASE_DIR = '';
+
+$SOURCE_DIR = '../../back/php/';
 
 /* The name of your website, used in page titles by default. */
 $SITE_NAME = 'Example Website Name';
@@ -23,7 +25,7 @@ $DOMAIN = 'example.com';
 /* Your site's contact e-mail. */
 $EMAIL = "admin@$DOMAIN";
 
-/* Names of active plugins (see plugins/ directory) */
-$PLUGINS = array('sql', 'logs');
+/* Names of active modules (see lib/ directory). */
+$MODULES = array('core', 'sql');
 
 ?>

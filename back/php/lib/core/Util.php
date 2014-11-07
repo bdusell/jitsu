@@ -44,6 +44,16 @@ class Util {
 		return print_r($var, true);
 	}
 
+	public static function p(/* *args */) {
+		$first = true;
+		foreach(func_get_args() as $arg) {
+			if(!$first) echo ' ';
+			echo self::repr($arg);
+			$first = false;
+		}
+		echo "\n";
+	}
+
 	public static function print_html($s) {
 ?><code><?= Escape::html($s) ?></code><?php
 	}
@@ -152,7 +162,7 @@ class Util {
 	}
 
 	public static function template($filename, $vars = null) {
-		if(!is_null($vars)) extract($vars);
+		if($vars) extract($vars);
 		include $filename;
 	}
 

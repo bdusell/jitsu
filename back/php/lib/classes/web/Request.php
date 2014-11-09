@@ -16,6 +16,7 @@ class Request {
 	private static $_FORM = null;
 
 	private static function _form_array() {
+		// TODO take care of DELETE
 		switch(self::method()) {
 		case 'GET':
 			return $_GET;

@@ -10,6 +10,16 @@ class MapUtil {
 		return is_array($x);
 	}
 
+	/* Get the value stored at `$key` in `$map`. */
+	public static function get($map, $key) {
+		return $map[$key];
+	}
+
+	/* Set the value stored at `$key` in `$map` to `$value`. */
+	public static function set($map, $key, $value) {
+		return $map[$key] = $value;
+	}
+
 	/* Return a map with all the key-value pairs of `$map1` and `$map2`,
 	 * where values in `$map2` overwrite those in `$map1`. Equivalent
 	 * to making a copy of `$map1` and then setting all of the key-value
@@ -47,13 +57,11 @@ class MapUtil {
 
 	/* Return a copy of a map with all keys converted to upper case. */
 	public static function with_upper_keys($map) {
-		// PHP 4.2.0
 		return array_change_key_case($map, CASE_UPPER);
 	}
 
 	/* Return a copy of a map with all keys converted to lower case. */
 	public static function with_lower_keys($map) {
-		// PHP 4.2.0
 		return array_change_key_case($map);
 	}
 
@@ -75,7 +83,7 @@ class MapUtil {
 	 * precedence over earlier ones. If any of the maps does not contain
 	 * this key, the result is undefined. */
 	public static function index($maps, $key) {
-		return array_column($maps, NULL, $key);
+		return array_column($maps, null, $key);
 	}
 
 	/* Generate a map from a list of keys and a list of corresponding
@@ -104,7 +112,7 @@ class MapUtil {
 
 	/* Return a map where the keys of `$map` have been exchanged with their
 	 * values. Since the map's keys are unordered, the choice in case of
-	 * diplicates is undefined. */
+	 * duplicates is undefined. */
 	public static function invert($map) {
 		return array_flip($map);
 	}
@@ -125,7 +133,7 @@ class MapUtil {
 	}
 
 	/* Return whether a map contains a certain key. */
-	public static function contains($map, $key) {
+	public static function has_key($map, $key) {
 		return array_key_exists($key, $map);
 	}
 
@@ -167,7 +175,7 @@ class MapUtil {
 	 * When merged contents are both maps, they are merged recursively.
 	 *
 	 * When merged contents are a list and a non-array, the elements of
-	 * the list and the non-array are concatenated into one list.
+	 * the list, and the non-array, are concatenated into one list.
 	 *
 	 * When merged contents are a map with no integer keys and a non-array,
 	 * the non-array is placed in the map under key 0. If the map has
@@ -196,13 +204,15 @@ class MapUtil {
 	}
 
 	/* Return the key under which a value is stored. Comparison is
-	 * non-strict. */
+	 * non-strict. If there is more than one such key, the choice is
+	 * undefined. */
 	public static function loose_key_of($map, $value) {
 		return array_search($map, $value);
 	}
 
 	/* Return the key under which a value is stored. Comparison is
-	 * strict. */
+	 * strict. If there is more than one such key, the choice is
+	 * undefined. */
 	public static function key_of($map, $value) {
 		return array_search($map, $value, true);
 	}
@@ -219,7 +229,7 @@ class MapUtil {
 		return array_values($map);
 	}
 
-	/* Apply a callback to every element in a list. Optionally provide
+	/* Apply a callback to every value in a map. Optionally provide
 	 * user data to be passed to each call.
 	 *
 	 * The signature of the callback is expected to be:

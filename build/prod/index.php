@@ -1,5 +1,3 @@
 <?php
-include '../../back/config.php';
-$DEBUG = false;
-include '../../back/init.php';
+include dirname(dirname(__DIR__)) . '/back/php/init.php';
 ?>

@@ -11,7 +11,7 @@ class Response {
 		header("$name: $value");
 	}
 
-	public static function content_type($type) {
+	public static function type($type) {
 		self::header('Content-Type', $type);
 	}
 
@@ -19,8 +19,8 @@ class Response {
 		setcookie(
 			$name,
 			$value,
-			is_null($lifespan) ? 0 : time() + $lifespan,
-			is_null($path) ? '' : $path
+			$lifespan === null ? 0 : time() + $lifespan,
+			$path === null ? '' : $path
 		);
 	}
 
@@ -29,13 +29,22 @@ class Response {
 	}
 
 	public static function json($obj, $pretty = true) {
-		self::content_type('application/json');
-		?><?= Serialize::json($obj, $pretty) ?><?php
+		self::type('application/json');
+		echo Serialize::json($obj, $pretty);
 	}
 
 	public static function file($path, $content_type) {
-		self::content_type($content_type);
+		self::type($content_type);
 		readfile($path);
+	}
+
+	public static function error($code, $vars = null) {
+		self::code($code);
+		$root = dirname(dirname(dirname(__DIR__)));
+		$filename = "$root/app/views/errors/$code.php";
+		if(file_exists($filename)) {
+			Util::template($filename, $vars);
+		}
 	}
 }
 

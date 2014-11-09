@@ -145,7 +145,7 @@ class ListUtil {
 		return $result;
 	}
 
-	/* Reduce a list of a values to a single one using a binary
+	/* Reduce a list of values to a single one using a binary
 	 * callback. Optionally pass a non-null third argument as an initial
 	 * value. If the initial value is omitted, null will be returned for
 	 * an empty list, and for a list of length 1 the element inside it. */
@@ -153,7 +153,7 @@ class ListUtil {
 		return array_reduce($list, $callback, $initial);
 	}
 
-	/* Return a the given list, reversed. */
+	/* Return the given list, reversed. */
 	public static function reversed($list) {
 		return array_reverse($list);
 	}
@@ -278,7 +278,7 @@ class ListUtil {
 		return $list;
 	}
 
-	/* Randomize the ordering of elements in a list Returns a copy of the
+	/* Randomize the ordering of elements in a list. Returns a copy of the
 	 * shuffled list. */
 	public static function shuffle(&$list) {
 		shuffle($list);
@@ -297,7 +297,7 @@ class ListUtil {
 	}
 
 	/* Sort an array according to the rules defined by the current
-	 * locale. Returns the sorted list. */
+	 * locale. Returns a copy of the sorted list. */
 	public static function locale_sort(&$list) {
 		sort($list, SORT_LOCALE_STRING);
 		return $list;

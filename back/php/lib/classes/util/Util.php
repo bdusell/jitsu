@@ -3,45 +3,12 @@
 /* General-purpose utility functions. */
 class Util {
 
-	public static function has($array, $key) {
-		return isset($array[$key]);
-	}
-
-	public static function get($array, $key, $default = null, $valid = null) {
-		return isset($array[$key]) &&
-			(!is_array($valid) || in_array($array[$key], $valid, true)) ?
-			$array[$key] : $default;
-	}
-
-	public static function id_cast($value, $min = 0) {
-		if(is_null($value) || is_string($value) && !ctype_digit($value)) return null;
-		$int = (int) $value;
-		return $int < $min ? null : $int;
-	}
-
-	public static function uint_cast($value, $min = 0) {
-		return self::id_cast($value, $min);
-	}
-
-	public static function bool_cast($value) {
-		if(is_string($value)) {
-			return strcasecmp($value, 'true') === 0
-				|| strcasecmp($value, 'yes') === 0
-				|| strcmp($value, '1') === 0;
-		}
-		return (bool) $value;
-	}
-
-	public static function is_empty_value($str) {
-		return is_null($str) || $str === '';
+	public static function str($var) {
+		return print_r($var, true);
 	}
 
 	public static function repr($var) {
 		return var_export($var, true);
-	}
-
-	public static function str($var) {
-		return print_r($var, true);
 	}
 
 	public static function p(/* *args */) {
@@ -52,25 +19,12 @@ class Util {
 			$first = false;
 		}
 		echo "\n";
+		if(func_num_args() > 0) {
+			return func_get_arg(0);
+		}
 	}
 
-	public static function print_html($s) {
-?><code><?= Escape::html($s) ?></code><?php
-	}
-
-	public static function print_repr($var) {
-		self::print_html(self::repr($var));
-	}
-
-	public static function print_str($var) {
-		self::print_html(self::str($var));
-	}
-
-	public static function hilight($text, $substr, $tag) {
-		return preg_replace('/' . preg_quote($substr) . '/u', "<$tag>\$0</$tag>", $text);
-	}
-
-	public static function get_extension($filename) {
+	public static function file_extension($filename) {
 		return pathinfo($filename, PATHINFO_EXTENSION);
 	}
 
@@ -93,9 +47,7 @@ class Util {
 	}
 
 	public static function to_set($array) {
-		$result = array();
-		foreach($array as $x) $result[$x] = true;
-		return $result;
+		return array_fill_keys($array, true);
 	}
 
 	public static function has_only_keys($array, $keys, &$unexpected = null) {
@@ -146,14 +98,14 @@ class Util {
 	}
 
 	public static function pluralize($s) {
-		// Irregular vowel y
+		// Vowel y
 		// -y => -ies
 		$result = preg_replace('/([^aeiou])y$/', '$1ies', $s, 1, $count);
 		if($count) return $result;
 
 		// Sibilants
 		// -s, -z, -x, -j, -sh, -tch, -zh => -ses, -zes, etc.
-		$result = preg_replace('/(tch|sh|zh|[szxj])$/', '$1es', $s, 1, $count);
+		$result = preg_replace('/([^aeiouy]ch|[sz]h|[szxj])$/', '$1es', $s, 1, $count);
 		if($count) return $result;
 
 		// Simple addition of s
@@ -225,32 +177,6 @@ class Util {
 		}
 		return $result;
 	}
-
-	public static function format_stack_trace($trace) {
-		$levels = array();
-		foreach($trace as $level) {
-
-			$func_name = '';
-			if(isset($level['class'])) $func_name .= $level['class'];
-			if(isset($level['type'])) $func_name .= $level['type'];
-			$func_name .= $level['function'];
-
-			$args = array();
-			foreach($level['args'] as $arg) {
-				$args[] = var_export($arg, true);
-			}
-			$args = join(', ', $args);
-
-			if(isset($level['file']) && isset($level['line'])) {
-				$levels[] = <<<TXT
-{$level['file']}:{$level['line']}
-$func_name($args)
-TXT;
-			}
-		}
-		return join("\n\n", $levels);
-	}
-
 }
 
 ?>

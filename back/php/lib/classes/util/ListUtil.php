@@ -111,7 +111,7 @@ class ListUtil {
 		return array_merge($list1, $list2);
 	}
 
-	/* Pad a list to size `$n` with copies of `$value`. */
+	/* Pad a list to size `$n` with `$value`. */
 	public static function pad($list, $n, $value) {
 		return array_pad($list, $n, $value);
 	}

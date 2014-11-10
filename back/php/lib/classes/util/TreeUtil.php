@@ -17,6 +17,13 @@ class ArrayUtil {
 	public static function count_leaves($array) {
 		return count($array, COUNT_RECURSIVE);
 	}
+
+	public static function at($array, $i) {
+		foreach(array_slice($array, $i, 1, true) as $k => $v) {
+			return array($k, $v);
+		}
+		throw new OutOfBoundsException('no key-value pair exists at position ' . $i);
+	}
 }
 
 ?>

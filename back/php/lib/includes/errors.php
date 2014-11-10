@@ -27,6 +27,11 @@ ini_set('report_memleaks', config::is_production() ? 0 : 1);
  * overridden anyway). */
 ini_set('html_errors', 0);
 
+/* Hide the X-Powered-By header in production. */
+if(config::is_production()) {
+	header_remove('X-Powered-By');
+}
+
 /* Convert all errors to exceptions. */
 set_error_handler(function($code, $msg, $file, $line) {
 	/* Do NOT throw an exception if the `@` operator was used. */

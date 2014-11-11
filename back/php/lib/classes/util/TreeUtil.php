@@ -1,6 +1,6 @@
 <?php
 
-class ArrayUtil {
+class TreeUtil {
 
 	/* Walk an array recursively, applying a callback in depth-first search
 	 * order. Optionally provide a user data argument to be passed to the

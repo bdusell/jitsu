@@ -32,6 +32,15 @@ class MapUtil {
 		return $map2 + $map1;
 	}
 
+	/* Assign all key-value pairs in `$src` to `$dest`. */
+	public static function extend(&$dest, $src) {
+		foreach($src as $k => $v) {
+			$dest[$k] = $v;
+		}
+		return $dest;
+	}
+
+
 	/* For any keys which exist in `$map2` but not `$map1`, add those key-
 	 * value pairs to `$map1`. Return a copy of the modified `$map1`. */
 	public static function defaults(&$map1, $map2) {
@@ -69,6 +78,23 @@ class MapUtil {
 	 * certain key. Ignore any maps which do not contain this key. */
 	public static function pluck($maps, $key) {
 		return array_column($maps, $key);
+	}
+
+	/* Given a map and a list of keys (as an array or as a variadic
+	 * argument list), return a list of the values under those keys. */
+	public static function pick(/* $array, $keys ... */) {
+		$args = func_get_args();
+		$array = array_shift($args);
+		if(count($args) == 1 && is_array($args[0])) {
+			$keys = $args[0];
+		} else {
+			$keys = $args;
+		}
+		$result = array();
+		foreach($keys as $key) {
+			$result[] = $array[$key];
+		}
+		return $result;
 	}
 
 	/* Given a list of 2-element lists, generate a map whose keys are
@@ -262,6 +288,53 @@ class MapUtil {
 	public static function normalize(&$map) {
 		ksort($map);
 		return $map;
+	}
+
+	public static function has_only_keys($array, $keys, &$unexpected = null) {
+		$gather = func_num_args() > 2;
+		$key_set = self::to_set($keys);
+		foreach($array as $key => $value) {
+			if(!isset($key_set[$key])) {
+				if($gather) {
+					$unexpected[] = $key;
+				} else {
+					return false;
+				}
+			}
+		}
+		return !$unexpected;
+	}
+
+	public static function has_keys($array, $keys, &$missing = null) {
+		$gather = func_num_args() > 2;
+		foreach($keys as $key) {
+			if(!isset($array[$key])) {
+				if($gather) {
+					$missing[] = $key;
+				} else {
+					return false;
+				}
+			}
+		}
+		return !$missing;
+	}
+
+	public static function has_exact_keys($array, $keys, &$unexpected = null, &$missing = null) {
+		$gather = func_num_args() > 2;
+		$key_set = self::to_set($keys);
+		foreach($array as $key => $value) {
+			if(isset($key_set[$key])) {
+				unset($key_set[$key]);
+			} elseif($gather) {
+				$unexpected[] = $key;
+			} else {
+				return false;
+			}
+		}
+		if($gather) {
+			$missing = array_keys($key_set);
+		}
+		return !$key_set && !$unexpected;
 	}
 }
 

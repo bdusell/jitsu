@@ -6,5 +6,6 @@ if(file_exists('config.php')) {
 }
 include __DIR__ . '/lib/includes/errors.php';
 include __DIR__ . '/lib/includes/path.php';
+include __DIR__ . '/lib/includes/globals.php';
 include __DIR__ . '/lib/includes/route.php';
 ?>

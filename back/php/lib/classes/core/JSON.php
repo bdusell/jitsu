@@ -1,8 +1,8 @@
 <?php
 
-class Serialize {
+class JSON {
 
-	public static function json($obj, $pretty = false) {
+	public static function encode($obj, $pretty = false) {
 		return json_encode($obj, $pretty ? JSON_PRETTY_PRINT : 0);
 	}
 }

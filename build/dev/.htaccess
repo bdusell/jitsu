@@ -7,4 +7,5 @@ RewriteEngine On
 DirectorySlash Off
 Options -Indexes
 IndexIgnore *
-RewriteRule !^(assets|js|css)/ index.php [L]
+RewriteCond %{DOCUMENT_ROOT}/(assets|js|css)/.* !-f
+RewriteRule .* index.php [L]

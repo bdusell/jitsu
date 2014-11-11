@@ -31,9 +31,12 @@ class Util {
 	}
 
 	/* Transclude a PHP file (using PHP `include`) within its own symbol
-	 * table scope, which may be populated with an optional array. */
-	public static function template($filename, $symbols = null) {
-		if($symbols) extract($symbols);
+	 * table scope, which may be populated with an optional array. The
+	 * special symbols `$filename` and `$vars` are always passed, where
+	 * `$filename` is the name of the included file and `$vars` is the
+	 * symbol table that was passed. */
+	public static function template($filename, $vars = null) {
+		if($vars) extract($vars);
 		include $filename;
 	}
 }

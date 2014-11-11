@@ -12,7 +12,7 @@ abstract class Router {
 	public abstract function routes();
 
 	protected function not_found($path) {
-		Response::error(404, array('path' => $path));
+		call_user_func(array(config::helper(), 'error'), 404, array('path' => $path));
 	}
 
 	public function route() {
@@ -20,7 +20,7 @@ abstract class Router {
 			list($path, $callback) = $route;
 			if($this->try_route($path, $callback)) return;
 		}
-		$this->not_found($path);
+		$this->not_found($this->path);
 	}
 
 	public function map($pat, $callback) {

@@ -3,7 +3,7 @@
 call_user_func(function() {
 	$base = dirname(dirname(__DIR__));
 	$dirs = array();
-	foreach(array('lib', 'pages', 'models') as $dir) {
+	foreach(array('lib', 'models', 'views', 'controllers') as $dir) {
 		$dirs[] = "$base/app/$dir";
 	}
 	foreach(config::modules() as $dir) {

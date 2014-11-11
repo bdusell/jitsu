@@ -6,7 +6,8 @@ class config {
 		'is_production' => false,
 		'base_url'      => '',
 		'base_path'     => '',
-		'router'        => 'AppRouter'
+		'router'        => 'AppRouter',
+		'helper'        => 'AppHelper'
 	);
 
 	private static $post_process = array(

@@ -37,15 +37,6 @@ class Response {
 		self::type($content_type);
 		readfile($path);
 	}
-
-	public static function error($code, $vars = null) {
-		self::code($code);
-		$root = dirname(dirname(dirname(__DIR__)));
-		$filename = "$root/app/views/errors/$code.php";
-		if(file_exists($filename)) {
-			Util::template($filename, $vars);
-		}
-	}
 }
 
 ?>

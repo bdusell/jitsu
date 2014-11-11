@@ -9,7 +9,7 @@ call_user_func(function() {
 		$router->routes();
 		$router->route();
 	} else {
-		include dirname(dirname(__DIR__)) . '/app/views/500.php';
+		call_user_func(array(config::helper(), 'error'), 500, array('path' => $url));
 	}
 });
 

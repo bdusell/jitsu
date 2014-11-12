@@ -1,4 +1,4 @@
 <?php
-config::base_path('goldlist-dev');
+config::path('goldlist-dev');
 config::is_production(false);
 ?>

@@ -20,6 +20,7 @@ class AppHelper {
 	}
 
 	public static function page($template, $vars) {
+		$vars['base'] = config::base_url();
 		$vars['body'] = $template;
 		Util::template('main.html.php', $vars);
 	}

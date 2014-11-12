@@ -23,8 +23,10 @@ abstract class Router {
 		$this->not_found($this->path);
 	}
 
-	public function map($pat, $callback) {
-		array_unshift($this->routes, array($pat, $callback));
+	public function map($method, $pat, $callback) {
+		if(strcasecmp($method, Request::method()) == 0) {
+			array_unshift($this->routes, array($pat, $callback));
+		}
 	}
 
 	private function try_route($pat, $func) {

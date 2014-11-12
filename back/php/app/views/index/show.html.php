@@ -1,1 +1,3 @@
-<p>This is the index.</p>
+<ul>
+  <li><a href="users/">Users</a></li>
+</ul>

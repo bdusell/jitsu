@@ -1,19 +1,24 @@
 <?php
 
-/* Object-oriented interface to your application's main database. */
-class Database extends SQLDatabase {
+class _DatabaseHelper extends SQLDatabase {
+
+	use Singleton;
 
 	public function __construct() {
-		/* XXX Won't work if this contructor isn't defined. */
+		$this->driver = 'sqlite';
+		$this->database = dirname(dirname(dirname(__DIR__))) . '/sql/database.db';
 		parent::__construct();
 	}
+}
 
-	protected function driver()   { return 'sqlite'; /* 'sqlite' or 'mysql' */ }
-	protected function database() { return './database.db'; }
-	protected function user()     { return null; }
-	protected function password() { return null; }
-	protected function charset()  { return null; }
+class Database {
 
+	public static function __callStatic($name, $args) {
+		return call_user_func_array(
+			array(_DatabaseHelper::instance(), $name),
+			$args
+		);
+	}
 };
 
 ?>

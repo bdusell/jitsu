@@ -7,6 +7,7 @@ abstract class Router {
 
 	public function __construct($path) {
 		$this->path = $path;
+		$this->method = Request::method();
 	}
 
 	public abstract function routes();
@@ -24,7 +25,7 @@ abstract class Router {
 	}
 
 	public function map($method, $pat, $callback) {
-		if(strcasecmp($method, Request::method()) == 0) {
+		if(strcasecmp($method, $this->method) == 0) {
 			array_unshift($this->routes, array($pat, $callback));
 		}
 	}

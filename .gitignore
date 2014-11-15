@@ -1,1 +1,7 @@
 back/sql/database.db
+node_modules/
+.sass-cache/
+build/dev/css/
+build/dev/js/
+build/prod/css/
+build/prod/js/

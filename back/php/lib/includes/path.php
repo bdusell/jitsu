@@ -6,9 +6,7 @@ call_user_func(function() {
 	foreach(array('lib', 'models', 'views', 'controllers') as $dir) {
 		$dirs[] = "$base/app/$dir";
 	}
-	foreach(config::modules() as $dir) {
-		$dirs[] = "$base/lib/classes/$dir";
-	}
+	$dirs[] = "$base/lib/classes";
 	$dirs[] = get_include_path();
 	set_include_path(join(PATH_SEPARATOR, $dirs));
 });

@@ -31,16 +31,6 @@ class config {
 		return self::$vars[$name];
 	}
 
-	public static function modules(/* $name1, ... */) {
-		if(func_num_args() > 0) {
-			foreach(func_get_args() as $arg) {
-				self::$modules[] = $arg;
-			}
-		} else {
-			return self::$modules;
-		}
-	}
-
 	public static function base_url($url = null) {
 		if($url === null) {
 			$path = self::path();

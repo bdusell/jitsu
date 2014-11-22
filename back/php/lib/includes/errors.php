@@ -42,6 +42,7 @@ set_error_handler(function($code, $msg, $file, $line) {
 
 /* Override the default exception handler. */
 if(config::is_production()) {
+	/* Silence everything. */
 	set_exception_handler(function($e) {});
 } else {
 	set_exception_handler(function($e) {

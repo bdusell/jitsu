@@ -17,8 +17,8 @@ abstract class Router {
 	}
 
 	public function route() {
-		foreach($this->routes as $route) {
-			list($path, $callback) = $route;
+		while($this->routes) {
+			list($path, $callback) = array_pop($this->routes);
 			if($this->try_route($path, $callback)) return;
 		}
 		$this->not_found($this->path);
@@ -26,7 +26,7 @@ abstract class Router {
 
 	public function map($method, $pat, $callback) {
 		if(strcasecmp($method, $this->method) == 0) {
-			array_unshift($this->routes, array($pat, $callback));
+			$this->routes[] = array($pat, $callback);
 		}
 	}
 

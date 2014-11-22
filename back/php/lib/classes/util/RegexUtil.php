@@ -21,7 +21,7 @@ class RegexUtil {
 
 	private static function _throw_error($code = null) {
 		if($code === null) $code = preg_last_error();
-		throw RuntimeException(
+		throw new RuntimeException(
 			'regular expression error: ' . self::error_string($code),
 			$code
 		);

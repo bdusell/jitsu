@@ -1,60 +1,80 @@
 <?php
 
-/* A set of convenient wrappers around the PDO MySQL library. */
+/* A useful wrapper around the PDO library. Currently only tested against the
+ * mysql and sqlite drivers. */
 abstract class SQLDatabase {
-
-	public $driver   = null;
-	public $host     = 'localhost';
-	public $database = null;
-	public $user     = null;
-	public $password = null;
-	public $charset  = null;
 
 	private $conn = null;
 
-	private static $attrs = array(
-		'autocommit',
-		'case',
-		'client_version',
-		'connection_status',
-		'driver_name',
-		'errmode',
-		'oracle_nulls',
-		'persistent',
-		'prefetch',
-		'server_info',
-		'server_version',
-		'timeout'
-	);
+	/* Driver constants. */
+	const mysql = 'mysql';
+	const sqlite = 'sqlite';
+	const sqlite2 = 'sqlite2';
+
+	/* Protected members for configuring the database. Set these in the
+	 * constructor of a class which inherits from `SQLDatabase`,
+	 * before calling `parent::__construct()`. */
+
+	/* Database driver. Use one of the driver constants. */
+	protected $driver = null;
+
+	/* MySQL host. Default is `localhost`. */
+	protected $host = 'localhost';
+
+	/* Database name. For MySQL this is the name of the database. For
+	 * SQLite this is the path of the database file. */
+	protected $database = null;
+
+	/* MySQL username. */
+	protected $user = null;
+
+	/* MySQL password. */
+	protected $password = null;
+
+	/* MySQL character set. The default, `utf8mb4`, supports all Unicode
+	 * characters. */
+	protected $charset = 'utf8mb4';
+
+	/* Fetch mode. Determines what kind of object rows are fetched as. Use
+	 * the `PDO::FETCH_*` constants directly. The default,
+	 * `PDO::FETCH_OBJ`, causes rows to be returned as objects with
+	 * property names corresponding to column names. */
+	protected $mode = PDO::FETCH_OBJ;
 
 	/* Connect to the database upon construction. */
 	public function __construct() {
 		try {
+			/* Create the appropriate driver string. */
 			$driver = $this->driver;
-			$str = null;
-			if($driver === 'mysql') {
+			$driver_str = null;
+			$is_sqlite = false;
+			if($driver === self::mysql) {
 				$settings = array(
 					'host=' . $this->host,
 					'dbname=' . $this->database
 				);
-				if(!is_null($charset = $this->charset)) {
-					$settings[] = "charset=$charset";
+				if($this->charset !== null) {
+					$settings[] = 'charset=' . $this->charset;
 				}
-				$str = $driver . ':' . join(';', $settings);
+				$driver_str = 'mysql:' . join(';', $settings);
+			} elseif($driver === self::sqlite || $driver === self::sqlite2) {
+				$is_sqlite = true;
+				$driver_str = $driver . ':' . $this->database;
 			}
-			elseif($driver === 'sqlite' || $driver === 'sqlite2') {
-				$str = $driver . ':' . $this->database;
-			}
-			$this->conn = new PDO($str, $this->user, $this->password);
+
+			/* Instantiate the PDO connection. */
+			$this->conn = new PDO($driver_str, $this->user, $this->password);
+
+			/* Raise exceptions on errors. */
 			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			if($driver === 'mysql' && !is_null($charset)) {
+
+			/* Execute certain commands upon startup depending on the driver. */
+			if($driver === self::mysql && $charset !== null) {
 				$this->conn->exec('set names ' . $this->charset);
-			}
-			if($driver === 'sqlite' || $driver === 'sqlite2') {
+			} elseif($is_sqlite) {
 				$this->conn->exec('pragma foreign_keys = on');
 			}
-		}
-		catch(PDOException $e) {
+		} catch(PDOException $e) {
 			self::exception_error('database connection failed', $e);
 		}
 	}
@@ -62,7 +82,7 @@ abstract class SQLDatabase {
 	/* Querying. */
 
 	/* Execute a one-shot SQL query and return the resulting rows in an
-	iterable SQLStatement object. The remaining parameters may be used to
+	iterable `SQLStatement` object. The remaining parameters may be used to
 	pass arguments to the query. If there is only a single array passed as
 	an additional argument, its contents are used as the parameters.
 
@@ -70,78 +90,101 @@ abstract class SQLDatabase {
 		$stmt = $db->query($sql_code);
 		$stmt = $db->query($sql_code, $arg1, $arg2, ...);
 		$stmt = $db->query($sql_code, $arg_array);
-		foreach($stmt as $row) { $row->column ... }
+		foreach($stmt as $row) { $row->column_name ... }
 
 	*/
-	public function query(/* $query, [ $arg_array | $arg1, $arg2, ... ] */) {
-		$args = func_get_args();
-		$query = array_shift($args);
-		if(!$args) {
+	public function query(/* $query, [ $args | $arg1, $arg2, ... ] */) {
+		self::args(func_get_args(), $query, $args);
+		return $this->query_with($query, $args);
+	}
+
+	/* Same as `query`, but arguments are always passed in a single `$args`
+	 * array. */
+	public function query_with($query, $args) {
+		if($args) {
+			/* If there are arguments, prepare the statement and
+			 * execute it. */
+			$stmt = $this->prepare($query);
+			$stmt->assign($args);
+			$stmt->execute();
+			return $stmt;
+		} else {
 			if(($result = $this->conn->query($query)) === false) {
 				$this->result_error('unable to execute SQL query', $query);
 			}
-			return self::wrap_statement($result);
-		}
-		else {
-			$stmt = $this->prepare($query);
-			if(count($args) === 1 && is_array($args[0])) {
-				$args = $args[0];
-			}
-			$stmt->execute($args);
-			return $stmt;
+			return $this->wrap_statement($result);
 		}
 	}
 
 	/* Return the first row of a query and ignore the rest. */
 	public function row(/* $query, ... */) {
-		$args = func_get_args();
-		return call_user_func_array(array($this, 'query'), $args)->first();
+		self::args(func_get_args(), $query, $args);
+		return $this->row_with($query, $args);
+	}
+
+	public function row_with($query, $args) {
+		return self::query_with($query, $args)->first();
 	}
 
 	/* Return the first column of the first row and ignore everything
 	 * else. */
 	public function evaluate(/* $query, ... */) {
-		$args = func_get_args();
-		return call_user_func_array(array($this, 'query'), $args)->value();
+		self::args(func_get_args(), $query, $args);
+		return $this->evaluate_with($query, $args);
+	}
+
+	public function evaluate_with($query, $args) {
+		return $this->query_with($query, $args)->value();
 	}
 
 	/* Execute a SQL statement. If there are no arguments after the SQL
 	statement, return the number of affected rows. Otherwise, return
-	a SQLStatement. */
-	public function execute(/* $statement, [ $arg_array | $arg1, $arg2, ... ] */) {
-		$args = func_get_args();
-		$statement = array_shift($args);
-		if(!$args) {
+	a `SQLStatement`. */
+	public function execute(/* $statement, ... */) {
+		self::args(func_get_args(), $statement, $args);
+		return $this->execute_with($statement, $args);
+	}
+
+	public function execute_with($statement, $args) {
+		if($args) {
+			return $this->query_with($statement, $args);
+		} else {
 			if(($result = $this->conn->exec($statement)) === false) {
 				$this->result_error('unable to execute SQL statement', $statement);
 			}
 			return $result;
 		}
-		else {
-			$args = func_get_args();
-			return call_user_func_array(array($this, 'query'), $args);
-		}
 	}
 
-	/* Create a prepared SQL statement. */
+	/* Prepare a SQL statement and return it as a `SQLStatement`. */
 	public function prepare($statement) {
 		try {
 			if(($result = $this->conn->prepare($statement)) === false) {
 				$this->result_error('unable to prepare statement', $statement);
 			}
-		}
-		catch(PDOException $e) {
+		} catch(PDOException $e) {
 			self::exception_error('unable to prepare statement', $e, $statement);
 		}
-		return self::wrap_statement($result);
+		return $this->wrap_statement($result);
 	}
 
-	/* Escape and quote a string value for interpolation in a SQL query. */
+	/* Escape and quote a string value for interpolation in a SQL query.
+	 * Note that the result includes quotes added around the string. */
 	public function quote($s) {
 		if(($result = $this->conn->quote()) === false) {
 			$this->result_error("unable to quote string value '$s'");
 		}
 		return $result;
+	}
+
+	/* Escape characters in a string that have special meaning in SQL like
+	 * patterns. */
+	public function escape_like($s, $esc = '\\') {
+		return str_replace(
+			array('%', '_'),
+			array($esc . '%', $esc . '_'),
+			$text
+		);
 	}
 
 	/* Get the id of the last inserted record. */
@@ -173,8 +216,7 @@ abstract class SQLDatabase {
 			if(!$this->conn->rollBack()) {
 				$this->result_error('unable to roll back transaction because no transaction is active');
 			}
-		}
-		catch(PDOException $e) {
+		} catch(PDOException $e) {
 			self::exception_error('unable to roll back transaction', $e);
 		}
 	}
@@ -188,8 +230,23 @@ abstract class SQLDatabase {
 
 	/* Database connection attributes. */
 
+	private static $attrs = array(
+		'autocommit',
+		'case',
+		'client_version',
+		'connection_status',
+		'driver_name',
+		'errmode',
+		'oracle_nulls',
+		'persistent',
+		'prefetch',
+		'server_info',
+		'server_version',
+		'timeout'
+	);
+
 	/* Get a database connection attribute. The name passed should be a
-	string (case-insensitive) and corresponds to a PDO constant with the
+	string (case-insensitive) and correspond to a PDO constant with the
 	PDO::ATTR_ prefix dropped. */
 	public function attribute($name) {
 		if(is_null($result = $this->conn->getAttribute(self::attr_value($name)))) {
@@ -226,6 +283,16 @@ abstract class SQLDatabase {
 
 	/* Private implementation details. */
 
+	// Parse the argument list to a method.
+	private static function args($args, &$query, &$sql_args) {
+		$query = array_shift($args);
+		if(count($args) == 1 && is_array($args[0])) {
+			$sql_args = $args[0];
+		} else {
+			$sql_args = $args;
+		}
+	}
+
 	// Raise an error based on a false return value.
 	private function result_error($msg, $sql = null) {
 		list($state, $code, $errstr) = $this->conn->errorInfo();
@@ -247,9 +314,9 @@ abstract class SQLDatabase {
 		return constant('PDO::ATTR_' . strtoupper($name));
 	}
 
-	// Wrap a statement
-	private static function wrap_statement($stmt) {
-		return new SQLStatement($stmt);
+	// Wrap a statement.
+	private function wrap_statement($stmt) {
+		return new SQLStatement($stmt, $this->mode);
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-/* An exception extension for database-related errors. */
+/* An exception class for database-related errors. */
 class SQLError extends Exception {
 
 	private $sql_error_code;
@@ -53,7 +53,6 @@ class SQLError extends Exception {
 		if(!is_null($this->sql)) $result .= "\nSQL code: " . $this->sql;
 		return $result;
 	}
-
 }
 
 ?>

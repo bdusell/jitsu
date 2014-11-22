@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var sass = require('gulp-ruby-sass');
+var autoprefixer = require('gulp-autoprefixer');
 var del = require('del');
 
 gulp.task('clean', function(cb) {
@@ -11,9 +12,10 @@ gulp.task('clean', function(cb) {
   ], cb);
 });
 
-gulp.task('sass', function() {
-  gulp.src('front/stylesheets/**/*.scss')
+gulp.task('css', function() {
+  gulp.src('front/stylesheets/main.scss')
     .pipe(sass())
+    .pipe(autoprefixer())
     .pipe(gulp.dest('build/dev/css/style.css'))
     .pipe(gulp.dest('build/prod/css/style.min.css'));
 });

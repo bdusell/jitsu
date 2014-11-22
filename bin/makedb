@@ -1,0 +1,15 @@
+#!/bin/bash
+echo -n 'working...'
+{
+  cd "$(dirname "$BASH_SOURCE")"/../back/sql
+} && {
+  rm -f database.db
+} && {
+  sqlite3 database.db < schema.sql
+} && {
+  if [[ -f data.sql ]]; then
+    sqlite3 database.db < data.sql
+  fi
+} && {
+  echo 'done'
+}

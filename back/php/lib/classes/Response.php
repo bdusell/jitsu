@@ -37,6 +37,10 @@ class Response {
 		self::type($content_type);
 		readfile($path);
 	}
+
+	public static function redirect($url, $code) {
+		header('Location: ' . $url, true, $code);
+	}
 }
 
 ?>

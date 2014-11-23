@@ -6,7 +6,7 @@ class _DatabaseHelper extends SQLDatabase {
 
 	public function __construct() {
 		$this->driver = 'sqlite';
-		$this->database = dirname(dirname(dirname(__DIR__))) . '/sql/database.db';
+		$this->database = dirname(dirname(dirname(dirname(__DIR__)))) . '/db/database.db';
 		parent::__construct();
 	}
 }

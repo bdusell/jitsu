@@ -3,14 +3,14 @@
 /* Get data sent to the server from the client via POST and GET. */
 class Request {
 
-	/* Get a GET parameter, or null if none by the given name was sent. */
-	public static function get($name, $default = null, $valid = null) {
-		return Util::get($_GET, $name, $default, $valid);
+	/* Get a GET parameter. */
+	public static function get($name, $default = null) {
+		return Util::get($_GET, $name, $default);
 	}
 
-	/* Get a POST parameter, or null if none by the given name was sent. */
-	public static function post($name, $default = null, $valid = null) {
-		return Util::get($_POST, $name, $default, $valid);
+	/* Get a POST parameter. */
+	public static function post($name, $default = null) {
+		return Util::get($_POST, $name, $default);
 	}
 
 	private static $_FORM = null;
@@ -64,14 +64,6 @@ class Request {
 
 	public static function method() {
 		return strtoupper($_SERVER['REQUEST_METHOD']);
-	}
-
-	public static function has_exact_get_params($names) {
-		return Util::has_exact_keys($_GET, $names);
-	}
-
-	public static function has_exact_post_params($names) {
-		return Util::has_exact_keys($_POST, $names);
 	}
 
 	public static function url() {

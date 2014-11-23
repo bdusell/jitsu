@@ -1,4 +1,4 @@
-back/sql/database.db
+db/
 node_modules/
 .sass-cache/
 build/dev/css/

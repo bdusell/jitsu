@@ -11,5 +11,7 @@ echo -n 'working...'
     sqlite3 database.db < data.sql
   fi
 } && {
+  chmod -R a+w .
+} && {
   echo 'done'
 }

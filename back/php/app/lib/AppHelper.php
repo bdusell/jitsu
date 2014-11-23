@@ -20,6 +20,10 @@ class AppHelper {
 		Util::template('main.html.php', $vars);
 	}
 
+	public static function redirect($url, $code = 303) {
+		Response::redirect(config::base_url() . $url, $code);
+	}
+
 	public static function page($template, $vars) {
 		$vars['base'] = config::base_url();
 		$vars['body'] = $template;

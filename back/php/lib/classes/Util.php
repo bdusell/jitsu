@@ -39,6 +39,14 @@ class Util {
 		if($vars) extract($vars);
 		include $filename;
 	}
+
+	public static function get($array, $key, $default = null) {
+		if(array_key_exists($key, $array)) {
+			return $array[$key];
+		} else {
+			return $default;
+		}
+	}
 }
 
 ?>

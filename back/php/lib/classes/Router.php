@@ -41,7 +41,7 @@ abstract class Router {
 			if($this->try_route($method, $path, $callback)) return true;
 		}
 		if($this->matched_methods) {
-			$this->bad_method($this->method, $this->path, $this->matched_methods);
+			$this->bad_method($this->method, $this->path, array_keys($this->matched_methods));
 		} else {
 			$this->not_found($this->method, $this->path);
 		}
@@ -55,16 +55,16 @@ abstract class Router {
 	private function try_route($method, $pat, $func) {
 		$regex = self::pattern_to_regex($pat, $trailing_slash);
 		if(preg_match(Util::p($regex), $this->path, $matches)) {
-			if(strcasecmp($method, $this->method) == 0) {
-				if($trailing_slash && substr($this->path, -1) !== '/') {
-					$this->redirect($this->path, $this->path . '/');
-				} else {
+			if($trailing_slash && substr($this->path, -1) !== '/') {
+				$this->redirect($this->path, $this->path . '/');
+			} else {
+				if(strcasecmp($method, $this->method) == 0) {
 					array_shift($matches);
 					call_user_func_array($func, $matches);
 					return true;
+				} else {
+					$this->matched_methods[$method] = true;
 				}
-			} else {
-				$this->matched_methods[$method] = true;
 			}
 		}
 		return false;

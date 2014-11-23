@@ -62,17 +62,25 @@ abstract class Router {
 	}
 
 	public static function pattern_to_regex($pat) {
-		$regex = preg_replace_callback('!(:[A-Za-z_]+)|(\\*[A-Za-z_]+)|(/$)|([^:*]+?)!', function($matches) {
-			if($matches[1] !== '') {
-				return '([^/]+)';
-			} elseif($matches[2] !== '') {
-				return '(.*?)';
-			} elseif($matches[3] !== '') {
-				return '/?';
-			} else {
-				return preg_quote($matches[4], '|');
-			}
-		}, $pat);
+		$regex = preg_replace_callback(
+			'!(:[A-Za-z_]+)|(\\*[A-Za-z_]+)|(/$)|(\\()|(\\))|(.+?)!',
+			function($matches) {
+				if($matches[1] !== '') {
+					return '([^/]+)';
+				} elseif($matches[2] !== '') {
+					return '(.*?)';
+				} elseif($matches[3] !== '') {
+					return '/?';
+				} elseif($matches[4] !== '') {
+					return '(?:';
+				} elseif($matches[5] !== '') {
+					return ')?';
+				} else {
+					return preg_quote($matches[6], '|');
+				}
+			},
+			$pat
+		);
 		return "|^$regex$|";
 	}
 }

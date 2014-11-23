@@ -75,6 +75,10 @@ class Request {
 	}
 
 	public static function url() {
+		return rawurldecode(self::raw_url());
+	}
+
+	public static function raw_url() {
 		return $_SERVER['REQUEST_URI'];
 	}
 }

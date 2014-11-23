@@ -65,7 +65,7 @@ class RequestRouter {
 
 	private function try_route($method, $pat, $func) {
 		$regex = self::pattern_to_regex($pat, $trailing_slash);
-		if(preg_match(Util::p($regex), $this->path, $matches)) {
+		if(preg_match($regex, $this->path, $matches)) {
 			if($trailing_slash && substr($this->path, -1) !== '/') {
 				call_user_func($this->redirect_func, $this->path, $this->path . '/');
 			} else {

@@ -11,16 +11,6 @@ class config {
 		'helper'        => 'AppHelper'
 	);
 
-	/*
-	private static $setters = array(
-		'base_url' => array('self', 'set_base_url')
-	);
-
-	private static $getters = array(
-		'base_url' => array('self', 'get_base_url')
-	);
-	 */
-
 	private static $modules = array();
 
 	public static function set($name, $value) {

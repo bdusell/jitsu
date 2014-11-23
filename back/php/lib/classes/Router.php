@@ -29,7 +29,12 @@ abstract class Router {
 		));
 	}
 
-	public function route() {
+	protected function redirect($from, $to) {
+		header('Location: ' . config::base_url() . $to, true, 301);
+		exit; // this can be extremely important
+	}
+
+	public final function route() {
 		$this->matched_methods = array();
 		foreach($this->routes as $route) {
 			list($method, $path, $callback) = $route;
@@ -43,17 +48,21 @@ abstract class Router {
 		return false;
 	}
 
-	public function map($method, $pat, $callback) {
+	public final function map($method, $pat, $callback) {
 		$this->routes[] = array(strtoupper($method), $pat, $callback);
 	}
 
 	private function try_route($method, $pat, $func) {
-		$regex = self::pattern_to_regex($pat);
+		$regex = self::pattern_to_regex($pat, $trailing_slash);
 		if(preg_match(Util::p($regex), $this->path, $matches)) {
 			if(strcasecmp($method, $this->method) == 0) {
-				array_shift($matches);
-				call_user_func_array($func, $matches);
-				return true;
+				if($trailing_slash && substr($this->path, -1) !== '/') {
+					$this->redirect($this->path, $this->path . '/');
+				} else {
+					array_shift($matches);
+					call_user_func_array($func, $matches);
+					return true;
+				}
 			} else {
 				$this->matched_methods[$method] = true;
 			}
@@ -61,15 +70,17 @@ abstract class Router {
 		return false;
 	}
 
-	public static function pattern_to_regex($pat) {
+	public static function pattern_to_regex($pat, &$trailing_slash) {
+		$trailing_slash = false;
 		$regex = preg_replace_callback(
 			'!(:[A-Za-z_]+)|(\\*[A-Za-z_]+)|(/$)|(\\()|(\\))|(.+?)!',
-			function($matches) {
+			function($matches) use(&$trailing_slash) {
 				if($matches[1] !== '') {
 					return '([^/]+)';
 				} elseif($matches[2] !== '') {
 					return '(.*?)';
 				} elseif($matches[3] !== '') {
+					$trailing_slash = true;
 					return '/?';
 				} elseif($matches[4] !== '') {
 					return '(?:';

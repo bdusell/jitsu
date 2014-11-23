@@ -4,7 +4,7 @@ class RegexUtil {
 
 	/* Create a regular expression for use with this module. */
 	public static function create($pat, $flags = '') {
-		return "/$pat/$flags";
+		return '/' . str_replace('/', '\\/') . '/' . $flags;
 	}
 
 	public static function error_string($code) {

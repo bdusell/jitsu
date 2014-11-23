@@ -1,37 +1,48 @@
 <?php
 
-abstract class Router {
+class RequestRouter {
 
 	private $method;
 	private $path;
 	private $routes = array();
 	private $matched_methods;
 
+	private $not_found_func;
+	private $bad_method_func;
+	private $redirect_func;
+
 	public function __construct($path) {
 		$this->path = $path;
 		$this->method = Request::method();
+		$this->not_found_func = function($method, $path) {
+			call_user_func(array(config::helper(), 'error'), 404, array(
+				'method' => $method,
+				'path' => $path
+			));
+		};
+		$this->bad_method_func = function($method, $path, $methods) {
+			call_user_func(array(config::helper(), 'error'), 405, array(
+				'method' => $method,
+				'path' => $path,
+				'methods' => $methods
+			));
+		};
+		$this->redirect_func = function($from, $to) {
+			header('Location: ' . config::base_url() . $to, true, 301);
+			exit; // this can be extremely important
+		};
 	}
 
-	public abstract function routes();
-
-	protected function not_found($method, $path) {
-		call_user_func(array(config::helper(), 'error'), 404, array(
-			'method' => $method,
-			'path' => $path
-		));
+	public function not_found($callback) {
+		$this->not_found_func = $callback;
 	}
 
-	protected function bad_method($method, $path, $methods) {
-		call_user_func(array(config::helper(), 'error'), 405, array(
-			'method' => $method,
-			'path' => $path,
-			'methods' => $methods
-		));
+	public function bad_method($callback) {
+		$this->bad_method_func = $callback;
 	}
 
-	protected function redirect($from, $to) {
-		header('Location: ' . config::base_url() . $to, true, 301);
-		exit; // this can be extremely important
+	public function redirect($callback) {
+		$this->redirect_func;
 	}
 
 	public final function route() {
@@ -41,9 +52,9 @@ abstract class Router {
 			if($this->try_route($method, $path, $callback)) return true;
 		}
 		if($this->matched_methods) {
-			$this->bad_method($this->method, $this->path, array_keys($this->matched_methods));
+			call_user_func($this->bad_method_func, $this->method, $this->path, array_keys($this->matched_methods));
 		} else {
-			$this->not_found($this->method, $this->path);
+			call_user_func($this->not_found_func, $this->method, $this->path);
 		}
 		return false;
 	}
@@ -56,7 +67,7 @@ abstract class Router {
 		$regex = self::pattern_to_regex($pat, $trailing_slash);
 		if(preg_match(Util::p($regex), $this->path, $matches)) {
 			if($trailing_slash && substr($this->path, -1) !== '/') {
-				$this->redirect($this->path, $this->path . '/');
+				call_user_func($this->redirect_func, $this->path, $this->path . '/');
 			} else {
 				if(strcasecmp($method, $this->method) == 0) {
 					array_shift($matches);

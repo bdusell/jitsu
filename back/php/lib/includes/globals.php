@@ -10,4 +10,9 @@ function htmlattr($str) {
 	return htmlspecialchars($str, ENT_QUOTES);
 }
 
+/* Return a PHP-code representation of a value as a string. */
+function repr($x) {
+	return var_export($x, true);
+}
+
 ?>

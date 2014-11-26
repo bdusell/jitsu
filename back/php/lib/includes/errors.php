@@ -56,7 +56,7 @@ if(config::is_production()) {
 				'line' => ''
 			);
 			extract($level);
-			if($file !== '' || $line !== '') {
+			if($file !== '') {
 				echo '  ', str_pad($class . $type . $function, 15), ' at ', $file, ':', $line;
 			} else {
 				echo '  ', $class, $type, $function;

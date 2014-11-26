@@ -105,7 +105,7 @@ abstract class SQLDatabase {
 			/* If there are arguments, prepare the statement and
 			 * execute it. */
 			$stmt = $this->prepare($query);
-			$stmt->assign($args);
+			$stmt->assign_with($args);
 			$stmt->execute();
 			return $stmt;
 		} else {
@@ -177,8 +177,11 @@ abstract class SQLDatabase {
 		return $result;
 	}
 
-	/* Escape characters in a string that have special meaning in SQL like
-	 * patterns. */
+	/* Escape characters in a string that have special meaning in SQL
+	 * "like" patterns. Note that this should be coupled with an `ESCAPE`
+	 * clause in the SQL; for example,
+	 *     "percentage" LIKE "%0\%" ESCAPE '\'
+	 * A `\` is the default escape character. */
 	public function escape_like($s, $esc = '\\') {
 		return str_replace(
 			array('%', '_'),

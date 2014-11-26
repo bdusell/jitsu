@@ -14,8 +14,9 @@ class router {
 }
 
 call_user_func(function() {
-	$url = Request::url();
-	$pat = '/^\/?' . preg_quote(trim(config::path(), '/'), '/') . '\/([^?]*)/';
+	$url = Request::path();
+	// TODO consider using string lengths instead
+	$pat = '/^\/?' . preg_quote(trim(config::path(), '/'), '/') . '\/(.*)$/';
 	if(preg_match($pat, $url, $matches)) {
 		$router = new RequestRouter($matches[1]);
 		router::set($router);

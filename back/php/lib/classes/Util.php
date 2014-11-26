@@ -16,8 +16,9 @@ class Util {
 
 	/* Print the arguments to stdout as PHP code (using `var_export`),
 	 * separated by spaces and terminated with a newline. Return the
-	 * first argument, which is useful for printing anonymous values. */
-	public static function p(/* *args */) {
+	 * first argument, which is useful for printing anonymous values in
+	 * expressions. */
+	public static function p(/* $arg1, ... */) {
 		$first = true;
 		foreach(func_get_args() as $arg) {
 			if(!$first) echo ' ';
@@ -40,6 +41,8 @@ class Util {
 		include $filename;
 	}
 
+	/* Get a value from an array, or a default value if the key is not
+	 * present. */
 	public static function get($array, $key, $default = null) {
 		if(array_key_exists($key, $array)) {
 			return $array[$key];

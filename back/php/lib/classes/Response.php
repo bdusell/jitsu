@@ -38,7 +38,7 @@ class Response {
 
 	/* Request that a cookie be deleted from the client. */
 	public static function delete_cookie($name, $domain = null, $path = null) {
-		self::cookie($name, '', -3600, $domain, $path);
+		setcookie($name, '', 1, $path, $domain);
 	}
 
 	/* Shorthand for sending a PHP array as a JSON object in the
@@ -57,11 +57,11 @@ class Response {
 
 	/* Issue a redirect to another URL. Note that this does NOT exit the
 	 * current process. Keep in mind that relying on the client to respect
-	 * this header and close the connection for you is a huge security
-	 * hole.
+	 * this header and close the connection for you is potentially a huge
+	 * security hole.
 	 *
-	 * The response code should be a 3XX code.
-	 */
+	 * The response code is also set here. The response code should be a
+	 * 3XX code. */
 	public static function redirect($url, $code) {
 		header('Location: ' . $url, true, $code);
 	}

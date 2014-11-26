@@ -2,7 +2,11 @@
 
 class StringUtil {
 
-	public static function from_camel_case($str) {
+	public static function cmp($a, $b) {
+		return strcmp($a, $b);
+	}
+
+	public static function split_camel_case($str) {
 		return preg_split('/(?<=[^A-Z])(?=[A-Z])/', $str);
 	}
 
@@ -12,6 +16,18 @@ class StringUtil {
 
 	public static function ends_with($str, $suffix) {
 		return substr($str, -strlen($suffix)) === $suffix;
+	}
+
+	public static function escape_html($text) {
+		return html($text);
+	}
+
+	public static function escape_html_attr($text) {
+		return html_attr($text);
+	}
+
+	public static function escape_url($text) {
+		return urlencode($text);
 	}
 
 	public static function naive_pluralize($s) {

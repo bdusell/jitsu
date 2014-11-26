@@ -5,7 +5,6 @@
  * the elements of these sets to strings and integers. Since integer-strings
  * are always converted to integers, the two cannot be distinguished, so
  * strict comparison of set elements has no meaning. */
-
 class SetUtil {
 
 	/* Return whether a value is a valid set-like array which may be used

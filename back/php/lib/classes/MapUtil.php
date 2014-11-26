@@ -1,7 +1,6 @@
 <?php
 
 /* A set of utilities for dealing with associative PHP arrays. */
-
 class MapUtil {
 
 	/* Return whether a value is an associative array which may be used

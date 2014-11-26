@@ -45,7 +45,7 @@ class Response {
 	 * response. */
 	public static function json($obj, $pretty = true) {
 		self::content_type('application/json');
-		echo Serialize::json($obj, $pretty);
+		echo JSONUtil::encode($obj, $pretty);
 	}
 
 	/* Shorthand for sending a file with a given content type in the

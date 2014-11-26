@@ -1,6 +1,6 @@
 <?php
 
-/* A set of utilties for dealing with sequential PHP arrays. */
+/* A set of utilities for dealing with sequential PHP arrays. */
 
 class ListUtil {
 

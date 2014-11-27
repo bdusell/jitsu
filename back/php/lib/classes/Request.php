@@ -106,6 +106,16 @@ class Request {
 		return $result;
 	}
 
+	/* Get the HTTP referrer URI or null if it was not sent. */
+	public static function referer() {
+		return Util::get($_SERVER, 'HTTP_REFERER');
+	}
+
+	/* Correctly spelled alias of `referer`. */
+	public static function referrer() {
+		return self::referer();
+	}
+
 	private static $_parsed_url = false;
 	private static $_path = null;
 	private static $_query_string = null;

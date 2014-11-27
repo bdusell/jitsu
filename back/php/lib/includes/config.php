@@ -39,6 +39,14 @@ class config {
 		}
 	}
 
+	public static function locale(/* $arg1, ... */) {
+		if(func_num_args() > 0) {
+			setlocale(LC_ALL, func_get_args());
+		} else {
+			return setlocale('0');
+		}
+	}
+
 	public static function __callStatic($name, $args) {
 		if(!array_key_exists($name, self::$vars)) {
 			self::_nomethod($name);

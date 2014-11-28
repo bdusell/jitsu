@@ -2,6 +2,26 @@
 
 class StringUtil {
 
+	/* Return the length of (number of bytes in) a string. */
+	public static function length($s) {
+		return strlen($s);
+	}
+
+	/* Alias for `length`. */
+	public static function size($s) {
+		return strlen($s);
+	}
+
+	/* Return whether two strings are equal. */
+	public static function equal($a, $b) {
+		return strcmp($a, $b) == 0;
+	}
+
+	/* Like `equal` but case-insensitive. */
+	public static function iequal($a, $b) {
+		return strcasecmp($a, $b) == 0;
+	}
+
 	/* Return the characters of a string as an array. */
 	public static function chars($s) {
 		return str_split($s);
@@ -27,6 +47,18 @@ class StringUtil {
 		}
 	}
 
+	/* Split a string into tokens, where all characters in `$chars` count
+	 * as delimiting characters. */
+	public static function tokenize($s, $chars) {
+		$result = array();
+		$r = strtok($s, $chars);
+		while($r !== false) {
+			$result[] = $r;
+			$r = strtok($chars);
+		}
+		return $result;
+	}
+
 	/* Join array elements into a single string with a separator (default
 	 * is empty string). */
 	public static function join(/* $sep = '', $strs */) {
@@ -36,28 +68,62 @@ class StringUtil {
 		);
 	}
 
-	/* Strip whitespace and null bytes from the end of a string. Optionally
-	 * provide a string listing the characters to strip instead. */
-	public static function rtrim(/* $s, $chars */) {
-		return call_user_func_array(
-			'rtrim',
-			func_get_args()
-		);
+	/* Strip whitespace and null bytes from the beginning and end of a
+	 * string. Optionally provide a string listing the characters to strip
+	 * instead. */
+	public static function trim($s, $chars = null) {
+		return trim($s, $chars);
 	}
 
-	/* Strip whitespace and null bytes from the beginning of a string.
-	 * Optionally provide a string listing the characters to strip instead.
-	 */
-	public static function ltrim(/* $s, $chars */) {
-		return call_user_func_array(
-			'ltrim',
-			func_get_args()
-		);
+	/* Like `trim`, but only strips characters from the end. */
+	public static function rtrim($s, $chars = null) {
+		return rtrim($s, $chars);
+	}
+
+	/* Like `trim`, but only strips characters from the beginning. */
+	public static function ltrim($s, $chars = null) {
+		return ltrim($s, $chars);
+	}
+
+	/* Convert a string to lower case. */
+	public static function lower($s) {
+		return strtolower($s);
+	}
+
+	/* Convert a string to upper case. */
+	public static function upper($s) {
+		return strtoupper($s);
 	}
 
 	/* Convert a string's first character to lower case. */
 	public static function lcfirst($s) {
 		return lcfirst($s);
+	}
+
+	/* Alias for `lcfirst`. */
+	public static function lower_first($s) {
+		return lcfirst($s);
+	}
+
+	/* Convert a string's first character to upper case. */
+	public static function ucfirst($s) {
+		return ucfirst($s);
+	}
+
+	/* Alias for `ucfirst`. */
+	public static function upper_first($s) {
+		return ucfirst($s);
+	}
+
+	/* Convert any alphabetic character that appears after whitespace to
+	 * upper case. */
+	public static function ucwords($s) {
+		return ucwords($s);
+	}
+
+	/* Alias for `ucwords`. */
+	public static function upper_words($s) {
+		return ucwords($s);
 	}
 
 	/* Replace all non-overlapping instances of a substring with another
@@ -80,6 +146,38 @@ class StringUtil {
 		}
 	}
 
+	/* Translate characters in a string. Characters in `$old` are changed
+	 * to the corresponding characters in `$new`. */
+	public static function translate($s, $old, $new) {
+		return strtr($s, $old, $new);
+	}
+
+	/* Get a substring of a string given an offset and length. If a length
+	 * is not given, the substring runs to the end of the string. */
+	public static function substring($s, $offset, $length = null) {
+		return substr($s, $offset, $length);
+	}
+
+	/* Replace a portion of a string with another. */
+	public static function assign_substring($s, $new, $offset, $length = null) {
+		return substr_replace($s, $new, $offset, $length);
+	}
+
+	/* Get a substring of a string given a beginning and ending index. */
+	public static function slice($s, $start = 0, $end = null) {
+		return substr($s, $start || 0, $end === null ? null : $start + $end);
+	}
+
+	/* Replace a slice of a string with another. */
+	public static function assign_slice($s, $new, $start = 0, $end = null) {
+		return substr_replace($s, $new, $start || 0, $end === null ? null : $start + $end);
+	}
+
+	/* Insert a string at a given offset in the string. */
+	public static function insert($s, $new, $offset) {
+		return substr_replace($s, $new, $offset, 0);
+	}
+
 	/* Pad the beginning and end of a string with another string so that
 	 * the result is `$n` characters long. */
 	public static function pad($s, $n, $pad = ' ') {
@@ -96,20 +194,48 @@ class StringUtil {
 		return str_pad($s, $n, $pad, STR_PAD_RIGHT);
 	}
 
+	/* "Wrap" a string to a certain number of columns by inserting a string
+	 * every `$n` characters. Inserts newlines by default. */
+	public static function wrap($s, $cols, $sep = "\n") {
+		return wordwrap($s, $cols, $dep, true);
+	}
+
 	/* Repeat a string `$n` times. */
 	public static function repeat($s, $n) {
 		return str_repeat($s, $n);
 	}
 
+	/* Reverse a string. */
+	public static function reverse($s) {
+		return strrev($s);
+	}
+
 	/* Return the part of a string starting with another string, or null
 	 * if it does not contain the string. */
 	public static function starting_with($s, $substr) {
-		return strstr($s, $substr);
+		$r = strstr($s, $substr);
+		return $r === false ? null : $r;
 	}
 
 	/* Like `starting_with` but case-insenstive. */
 	public static function istarting_with($s, $substr) {
-		return stristr($s, $substr);
+		$r = stristr($s, $substr);
+		return $r === false ? null : $r;
+	}
+
+	/* Return the last part of a string starting with a certain character,
+	 * or null if it does not contain that character. Note that `$char` is
+	 * a single character, not a string. */
+	public static function rstarting_with($s, $char) {
+		$r = strrchr($s, $char);
+		return $r === false ? null : $r;
+	}
+
+	/* Like `starting_with`, except that `$chars` is a string listing
+	 * characters to look for. */
+	public static function starting_with_chars($s, $chars) {
+		$r = strpbrk($s, $chars);
+		return $r === false ? null : $r;
 	}
 
 	/* Return the part of a string before a certain substring, or null if
@@ -123,22 +249,28 @@ class StringUtil {
 		return stristr($s, $substr, true);
 	}
 
-	/* Split a string into words (same rules as `word_count`). */
+	/* Split a string into words. What constitutes as word characters is
+	 * defined by the current locale. Optionally provide a string of
+	 * additional characters to consider as word characters. */
 	public static function words($s, $chars = null) {
 		return str_word_count($s, 1, $chars);
 	}
 
-	/* Count the number of words in a string. What constitues as a word is
-	 * defined by the current locale. Optionally provide a string of
-	 * additional characters to consider as word characters. */
+	/* Count the number of words in a string (same rules as `words`). */
 	public static function word_count($s, $chars = null) {
 		return str_word_count($s, 0, $chars);
 	}
 
 	/* Return an array mapping the starting indexes of words to their
-	 * corresponding words. */
+	 * corresponding words (same rules as `words`). */
 	public static function word_indexes($s, $chars = null) {
 		return str_word_count($s, 2, $chars);
+	}
+
+	/* Wrap words in a string. Long words are split. Optionally provide a
+	 * character other than newline to terminate lines. */
+	public static function word_wrap($s, $width, $sep = "\n") {
+		return wordwrap($s, $width, $sep);
 	}
 
 	/* Lexicographically compare two strings. Return a negative number if
@@ -153,20 +285,72 @@ class StringUtil {
 		return strcasecmp($a, $b);
 	}
 
+	/* Like `cmp` but only checks the first `$n` characters. */
+	public static function ncmp($a, $b, $n) {
+		return strncmp($a, $b, $n);
+	}
+
+	/* Like `ncmp` but case-insensitive. */
+	public static function nicmp($a, $b, $n) {
+		return strncasecmp($a, $b, $n);
+	}
+
 	/* Like `cmp` but dependent on the current locale. */
-	public static function lcmp($a, $b) {
+	public static function locale_cmp($a, $b) {
 		return strcoll($a, $b);
+	}
+
+	/* Like `cmp` but orders strings in a way that seems more natural for
+	 * human viewers (e.g. numbers are sorted in increasing order). */
+	public static function human_cmp($a, $b) {
+		return strnatcmp($a, $b);
+	}
+
+	/* Like 'human_cmp' but case-insensitive. */
+	public static function human_icmp($a, $b) {
+		return strnatcasecmp($a, $b);
+	}
+
+	/* Like `cmp` but uses only a substring of the first string in the
+	 * comparison. */
+	public static function substring_cmp($a, $b, $offset, $length = null) {
+		return substr_compare($a, $b, $offset, $length);
+	}
+
+	/* Like `substring_cmp` but case-insensitive. */
+	public static function substring_icmp($a, $b, $offset, $length = null) {
+		return substr_compare($a, $b, $offset, $length, true);
 	}
 
 	/* Tell whether a string includes a certain substring. Optionally
 	 * provide a starting offset. */
-	public static function has($s, $substr, $offset = 0) {
+	public static function contains($s, $substr, $offset = 0) {
 		return strpos($s, $substr, $offset) !== false;
 	}
 
-	/* Like `has` but case-insensitive. */
-	public static function ihas($s, $substr, $offset = 0) {
+	/* Like `contains` but case-insensitive. */
+	public static function icontains($s, $substr, $offset = 0) {
 		return stripos($s, $substr, $offset) !== false;
+	}
+
+	/* Tell whether a string begins with a certain prefix. */
+	public static function begins_with($str, $prefix) {
+		return substr_compare($str, $prefix, 0, strlen($prefix)) == 0;
+	}
+
+	/* Like `begins_with` but case-insensitive. */
+	public static function ibegins_with($str, $prefix) {
+		return substr_compare($str, $prefix, 0, strlen($prefix), true) == 0;
+	}
+
+	/* Tell whether a string ends with a certain suffix. */
+	public static function ends_with($str, $suffix) {
+		return substr_compare($str, $suffix, -strlen($suffix)) == 0;
+	}
+
+	/* Like `ends_with` but case-insensitive. */
+	public static function iends_with($str, $suffix) {
+		return substr_compare($str, $suffix, -strlen($suffix), null, true) == 0;
 	}
 
 	/* Get the starting offset of a substring within a string, or null if
@@ -181,6 +365,31 @@ class StringUtil {
 	public static function ifind($s, $substr, $offset) {
 		$r = stripos($s, $substr, $offset);
 		return $r === false ? null : $r;
+	}
+
+	/* Like `find` but starts from the end of the string. The offset may
+	 * also be negative, indicating where to start from the end of the
+	 * string. */
+	public static function rfind($s, $substr, $offset = null) {
+		if($offset === 0) return strlen($substr) == 0 ? 0 : null;
+		$r = strrpos($s, $substr, $offset);
+		return $r === false ? null : $r;
+	}
+
+	/* Count the number of times a string contains a substring, excluding
+	 * overlaps. Optionally provide a starting offset and length. */
+	public static function count($s, $substr, $offset = 0, $length = null) {
+		if($length !== null) {
+			$length = min(strlen($s) - $offset, $length);
+		}
+		return substr_count($s, $substr, $offset, $length);
+	}
+
+	/* Get the length of the initial segment of a string which contains
+	 * only the characters listed in `$chars`. Optionally provide a
+	 * range of indexes to check. */
+	public static function span($s, $chars, $begin = null, $end = null) {
+		return strspn($s, $chars, $begin, $end);
 	}
 
 	/* Escape a string by adding backslashes in front of certain
@@ -201,7 +410,9 @@ class StringUtil {
 		return addslashes($s);
 	}
 
-	/* Remove all backslashes (`\`) from a string. */
+	/* Remove all backslash (`\`) escape characters from a string. Note
+	 * that this does not decode `\n` as a newline, '\t' as tab, etc.,
+	 * but as the literal characters `n`, `t`, etc. */
 	public static function unescape_backslashes($s) {
 		return stripslashes($s);
 	}
@@ -214,6 +425,16 @@ class StringUtil {
 	/* Parse a hexadecimal string into binary data. */
 	public static function decode_hex($s) {
 		return hex2bin($s);
+	}
+
+	/* Encode a binary string in base 64. */
+	public static function encode_base64($s) {
+		return base64_encode($s);
+	}
+
+	/* Decode a base 64 string to binary. */
+	public static function decode_base64($s) {
+		return base64_decode($s);
 	}
 
 	/* Given an integer, return a string containing the corresponding ASCII
@@ -236,11 +457,6 @@ class StringUtil {
 	/* Alias for `to_ascii`. */
 	public static function ord($c) {
 		return ord($c);
-	}
-
-	/* Insert the string `$end` every `$n` characters into `$s`. */
-	public static function insert_line_endings($s, $n, $end) {
-		return chunk_split($s, $n, $end);
 	}
 
 	/* Get the frequencies of the 256 possible byte values (0 through 255)
@@ -280,9 +496,9 @@ class StringUtil {
 
 	/* Inverse of `encode_html`. Note that this will not decode every
 	 * possible entity. This does not decode named entities except for
-	 * those encoded by `encode_html`, which include `&apos`. It will
+	 * those encoded by `encode_html`, which include `&apos;`. It will
 	 * decode numeric entities except for those corresponding to non-
-	 * printable characters. */
+	 * printable characters, which it will leave encoded. */
 	public static function unencode_html($s) {
 		return html_entity_decode($s, ENT_QUOTES | ENT_HTML5);
 	}
@@ -326,12 +542,44 @@ class StringUtil {
 
 	/* URL-decode and parse a query string into an associative array of
 	 * values. Note that this assumes the PHP convention of parameter names
-	 * ending with `[]` to denote arrays of values. Also note that this
-	 * automatically URL-decodes the query string; it is incorrect to
-	 * pass a string which is not URL-encoded. */
+	 * ending with `[]` to denote arrays of values; in cases where
+	 * parameters share the same name, only the last one is included. Also
+	 * note that this automatically URL-decodes the query string; it is
+	 * incorrect to pass a string which is not URL-encoded. */
 	public static function parse_raw_query_string($s) {
 		parse_str($s, $result);
 		return $result;
+	}
+
+	/* Generate and URL-encode a query string given an array or object of
+	 * data. Optionally provide a separator instead of `&`, e.g. `;`. */
+	public static function make_query_string($data, $sep = '&') {
+		return http_build_query($data, '', $sep, PHP_QUERY_RFC3986);
+	}
+
+	/* Like `make_query_string`, but encode spaces with `+`. */
+	public static function make_php_query_string($data, $sep = '&') {
+		return http_build_query($data, '', $sep);
+	}
+
+	/* URL-encode a string. */
+	public static function encode_url($s) {
+		return rawurlencode($s);
+	}
+
+	/* Decode a URL-encoded string. */
+	public static function decode_url($s) {
+		return rawurldecode($s);
+	}
+
+	/* URL-encode a string, and use `+` to encode spaces. */
+	public static function encode_php_url($s) {
+		return urlencode($s);
+	}
+
+	/* Decode a URL-encoded string, treating `+` as spaces. */
+	public static function decode_php_url($s) {
+		return urldecode($s);
 	}
 
 	/* Parse a CSV line into an array. Optionally provide a delimiter
@@ -366,7 +614,7 @@ class StringUtil {
 		return sha1($s, false);
 	}
 
-	/* Apply rot13 to a string. */
+	/* Apply rot13 encryption to a string. */
 	public static function rot13($s) {
 		return str_rot13($s);
 	}
@@ -378,8 +626,8 @@ class StringUtil {
 
 	/* Format a number as a currency value using the current locale. Note
 	 * that this requires setting the locale using
-	 * `setlocale(LC_MONETARY, $locale)` for some locale that is installed
-	 * on the system. */
+	 * `setlocale(LC_ALL, $locale)` or `setlocale(LC_MONETARY, $locale)`
+	 * for some locale that is installed on the system. */
 	public static function format_money($amount) {
 		return money_format('%n', $amount);
 	}
@@ -399,7 +647,7 @@ class StringUtil {
 	/* Compute the Levenshtein distance between two strings, which is the
 	 * minimal number of character replacements, insertions, and deletions
 	 * necessary to transform `$s1` into `$s2`. Optionally provide values
-	 * for the cost of insertions, replacements, and deletions. */
+	 * for the costs of insertions, replacements, and deletions. */
 	public static function levenshtein(/* $s1, $s2, [$ins, $repl, $del] */) {
 		return call_user_func_array(
 			'levenshtein',
@@ -407,22 +655,19 @@ class StringUtil {
 		);
 	}
 
+	/* Split a string in camel case into its components. Runs of
+	 * consecutive capital letters are treated as acronyms and are grouped
+	 * accordingly. For example, the string "XMLHttpRequest" would be split
+	 * into "XML", "Http", "Request". */
 	public static function split_camel_case($str) {
-		return preg_split('/(?<=[^A-Z])(?=[A-Z])/', $str);
+		return preg_split('/(?<=[^A-Z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/', $str);
 	}
 
-	public static function begins_with($str, $prefix) {
-		return substr($str, 0, strlen($prefix)) === $prefix;
-	}
-
-	public static function ends_with($str, $suffix) {
-		return substr($str, -strlen($suffix)) === $suffix;
-	}
-
-	public static function escape_url($text) {
-		return urlencode($text);
-	}
-
+	/* Convert an English word to its plural or "-s" form (one could also
+	 * use this to form the third person singular form of a verb) using a
+	 * naive algorithm. This will not work for irregular forms and certain
+	 * other cases, but it knows enough to convert common endings like "-y"
+	 * to "-ies", "-s" to "-ses", and so on. */
 	public static function naive_pluralize($s) {
 		// Vowel y
 		// -y => -ies
@@ -432,7 +677,7 @@ class StringUtil {
 		// Sibilants
 		// -s, -z, -x, -j, -sh, -tch, -zh => -ses, -zes, etc.
 		// Note that this will fail for hard ch sometimes,
-		// as in "polemarchs"
+		// as in the word "hierarchs"
 		$result = preg_replace('/([^aeiouy]ch|[sz]h|[szxj])$/', '$1es', $s, 1, $count);
 		if($count) return $result;
 
@@ -440,7 +685,6 @@ class StringUtil {
 		// - => -s
 		return $s . 's';
 	}
-
 }
 
 ?>

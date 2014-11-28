@@ -5,6 +5,19 @@
  * significant. Every *Map* is a valid *Set* and *Bag*. */
 class MapUtil {
 
+	/* Return a *Map* of all the key-value pairs that are in `$map1` but
+	 * not in `$map2`. Elements are compared by their string
+	 * representations. Optionally provide a custom comparison function. */
+	public static function difference($map1, $map2, $callback = null) {
+		if($callback === null) {
+			return array_diff_assoc($map1, $map2);
+		} else {
+			return array_diff_uassoc($map1, $map2, $callback);
+		}
+	}
+
+	///-------------------------
+
 	/* Return whether a value is an associative array which may be used
 	 * with the functions in this module. */
 	public static function is_map($x) {

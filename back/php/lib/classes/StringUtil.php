@@ -7,7 +7,7 @@ class StringUtil {
 		return strlen($s);
 	}
 
-	/* Alias for `length`. */
+	/* Alias of `length`. */
 	public static function size($s) {
 		return strlen($s);
 	}
@@ -197,7 +197,7 @@ class StringUtil {
 	/* "Wrap" a string to a certain number of columns by inserting a string
 	 * every `$n` characters. Inserts newlines by default. */
 	public static function wrap($s, $cols, $sep = "\n") {
-		return wordwrap($s, $cols, $dep, true);
+		return wordwrap($s, $cols, $sep, true);
 	}
 
 	/* Repeat a string `$n` times. */
@@ -376,6 +376,63 @@ class StringUtil {
 		return $r === false ? null : $r;
 	}
 
+	/* Return whether all characters in a string are lower case. */
+	public static function is_lower($s) {
+		return ctype_lower($s);
+	}
+
+	/* Return whether all characters in a string are upper case. */
+	public static function is_upper($s) {
+		return ctype_upper($s);
+	}
+
+	/* Return whether all characters in a string are alphanumeric. */
+	public static function is_alphanumeric($s) {
+		return ctype_alnum($s);
+	}
+
+	/* Return whether all characters in a string are alphabetic. */
+	public static function is_alphabetic($s) {
+		return ctype_alpha($s);
+	}
+
+	/* Return whether all characters in a string are control characters. */
+	public static function is_control($s) {
+		return ctype_cntrl($s);
+	}
+
+	/* Return whether all characters in a string are decimal digits. */
+	public static function is_decimal($s) {
+		return ctype_digit($s);
+	}
+
+	/* Return whether all characters in a string are hexadecimal digits. */
+	public static function is_hex($s) {
+		return ctype_xdigit($s);
+	}
+
+	/* Return whether all characters in a string are visible characters (no
+	 * whitespace or control characters). */
+	public static function is_visible($s) {
+		return ctype_graph($s);
+	}
+
+	/* Return whether all characters in a string have printable output (no
+	 * control characters). */
+	public static function is_printable($s) {
+		return ctype_print($s);
+	}
+
+	/* Return whether all characters in a string are punctuation. */
+	public static function is_punctuation($s) {
+		return ctype_punct($s);
+	}
+
+	/* Return whether all characters in a string are whitespace. */
+	public static function is_whitespace($s) {
+		return ctype_space($s);
+	}
+
 	/* Count the number of times a string contains a substring, excluding
 	 * overlaps. Optionally provide a starting offset and length. */
 	public static function count($s, $substr, $offset = 0, $length = null) {
@@ -415,6 +472,24 @@ class StringUtil {
 	 * but as the literal characters `n`, `t`, etc. */
 	public static function unescape_backslashes($s) {
 		return stripslashes($s);
+	}
+
+	/* Parse a string to an integer according to a certain base. If `$base`
+	 * is null, the base is deduced from the prefix of the string (`0x` for
+	 * hexadecimal, `0` for octal, and decimal otherwise). Ignore any
+	 * invalid trailing characters. */
+	public static function parse_int($s, $base = null) {
+		return intval($s, $base === null ? 0 : $base);
+	}
+
+	/* Parse a floating-point value. Throw `RuntimeException` if `$s` is
+	 * not a valid float string. */
+	public static function parse_real($s) {
+		if(is_numeric($s)) {
+			return floatval($s);
+		} else {
+			throw new RuntimeException('invalid real number string');
+		}
 	}
 
 	/* Convert a binary string to a hexadecimal string. */
@@ -577,7 +652,7 @@ class StringUtil {
 		return urlencode($s);
 	}
 
-	/* Decode a URL-encoded string, treating `+` as spaces. */
+	/* Decode a URL-encoded string, treating `+` as space. */
 	public static function decode_php_url($s) {
 		return urldecode($s);
 	}
@@ -636,8 +711,8 @@ class StringUtil {
 	 * point character, and thousands separator. The defaults are 0, ".",
 	 * and ",", respectively. */
 	public static function format_number(
-		/* $number, $decimals, $decimal_point, $thousands_sep */
-	) {
+		/* $number, $decimals, $decimal_point, $thousands_sep */)
+	{
 		return call_user_func_array(
 			'number_format',
 			func_get_args()
@@ -657,7 +732,7 @@ class StringUtil {
 
 	/* Split a string in camel case into its components. Runs of
 	 * consecutive capital letters are treated as acronyms and are grouped
-	 * accordingly. For example, the string "XMLHttpRequest" would be split
+	 * accordingly. For example, the string "XMLHttpRequest" will be split
 	 * into "XML", "Http", "Request". */
 	public static function split_camel_case($str) {
 		return preg_split('/(?<=[^A-Z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/', $str);

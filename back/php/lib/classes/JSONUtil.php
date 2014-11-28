@@ -11,7 +11,9 @@ class JSONUtil {
 	 * encode an empty JSON object, use an empty instance of `stdClass`. */
 	public static function encode($obj) {
 		$r = json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-		self::_check();
+		if($r === false) {
+			throw new RuntimeException(json_last_error_msg(), json_last_error());
+		}
 		return $r;
 	}
 
@@ -19,14 +21,10 @@ class JSONUtil {
 	 * are converted into `stdClass` instances. */
 	public static function parse($str) {
 		$r = json_decode($str);
-		self::_check();
-		return $r;
-	}
-
-	private static function _check() {
 		if(($code = json_last_error()) !== JSON_ERROR_NONE) {
 			throw new RuntimeException(json_last_error_msg(), $code);
 		}
+		return $r;
 	}
 }
 

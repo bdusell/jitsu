@@ -1,6 +1,8 @@
 <?php
 
-/* A set of utilities for dealing with associative PHP arrays. */
+/* A set of utilities for dealing with *Maps*. A *Map* is defined as a PHP
+ * array whose ordering is ignored; only the mapping of keys to values is
+ * significant. Every *Map* is a valid *Set* and *Bag*. */
 class MapUtil {
 
 	/* Return whether a value is an associative array which may be used

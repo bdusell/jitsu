@@ -1,10 +1,9 @@
 <?php
 
-/* A set of utilities for dealing with PHP arrays whose *keys* are used as
- * set elements and whose values are the value `true`. Note that this limits
- * the elements of these sets to strings and integers. Since integer-strings
- * are always converted to integers, the two cannot be distinguished, so
- * strict comparison of set elements has no meaning. */
+/* A set of utilities for dealing with *Sets*. A *Set* is defined as a PHP
+ * arrays whose values and ordering are ignored; only the keys it contains
+ * are significant, and they are treated as the elements of the set. Note that
+ * this restricts the set elements to integers and strings. */
 class SetUtil {
 
 	/* Return whether a value is a valid set-like array which may be used

@@ -1,5 +1,6 @@
 <?php
 
+/* Utilties for dealing with nested PHP arrays. */
 class TreeUtil {
 
 	/* Walk an array recursively, applying a callback in depth-first search

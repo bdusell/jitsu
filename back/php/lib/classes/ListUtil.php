@@ -1,18 +1,17 @@
 <?php
 
-/* A set of utilities for dealing with "Lists". A List is defined as a
- * sequential PHP array whose keys, in order, are the integers 0 through
- * _length_ - 1. Every list is a valid Vector,  (see `VectorUtil`). */
+/* A set of utilities for dealing with *Lists*. A *List* is defined as a PHP
+ * array of size _n_ whose keys, in order, are the integers 0 through _n_ - 1.
+ * Every *List* is a valid *OrderedMap* and *UnorderedList*. */
 class ListUtil {
 
-	/* Return whether a value is a sequential array which may be used with
-	 * the functions in this module. */
+	/* Return whether a value is a *List*. Complexity is linear, so avoid
+	 * use. */
 	public static function is_list($x) {
 		if(!is_array($x)) return false;
 		$i = 0;
 		foreach($x as $k => $v) {
-			if($k !== $i) return false;
-			++$i;
+			if($k !== $i++) return false;
 		}
 		return true;
 	}

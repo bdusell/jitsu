@@ -29,8 +29,8 @@ class Request {
 		return $_SERVER['REQUEST_URI'];
 	}
 
-	/* Get the path part of the requested URI, decoded. This is the part
-	 * between the authority and the query string. */
+	/* Get the path part of the requested URI, decoded. This is the
+	 * hierarchical part between the authority and the query string. */
 	public static function path() {
 		self::_parse_url();
 		return self::$_path;
@@ -95,6 +95,11 @@ class Request {
 		return $name === null ? $_COOKIE : Util::get($_COOKIE, $name, $default);
 	}
 
+	/* Alias for `cookies()`. */
+	public static function cookies() {
+		return $_COOKIE;
+	}
+
 	/* Get the raw input sent in the request body as a single string. The
 	 * result is cached, so calling this function more than once is fine.
 	 */
@@ -114,6 +119,22 @@ class Request {
 	/* Correctly spelled alias of `referer`. */
 	public static function referrer() {
 		return self::referer();
+	}
+
+	/* Get headers sent in the current request (unfortunately this only
+	 * works with Apache).
+	 *
+	 * If called with no arguments, returns an array mapping the names of
+	 * all headers sent in the request to their values.
+	 *
+	 * If called with the name of a header, returns its value, or null if
+	 * it was not sent. */
+	public static function headers($name = null, $default = null) {
+		static $headers = null;
+		if($headers === null) {
+			$headers = apache_request_headers();
+		}
+		return $name === null ? $headers : Util::get($headers, $name, $default);
 	}
 
 	private static $_parsed_url = false;

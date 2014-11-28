@@ -14,11 +14,12 @@ class router {
 }
 
 call_user_func(function() {
-	$url = Request::path();
-	// TODO consider using string lengths instead
-	$pat = '/^\/?' . preg_quote(trim(config::path(), '/'), '/') . '\/(.*)$/';
-	if(preg_match($pat, $url, $matches)) {
-		$router = new RequestRouter($matches[1]);
+	$path = Request::path();
+	$base_path = '/' . trim(config::path(), '/') . '/';
+	$base_path_len = strlen($base_path);
+	if(substr_compare($path, $base_path, 0, $base_path_len) == 0) {
+		$route = substr($path, $base_path_len);
+		$router = new RequestRouter($route);
 		router::set($router);
 		call_user_func(function() {
 			include dirname(dirname(__DIR__)) . '/app/routes.php';

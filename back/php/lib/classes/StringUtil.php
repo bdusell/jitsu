@@ -628,12 +628,12 @@ class StringUtil {
 
 	/* Generate and URL-encode a query string given an array or object of
 	 * data. Optionally provide a separator instead of `&`, e.g. `;`. */
-	public static function make_query_string($data, $sep = '&') {
+	public static function encode_query_string($data, $sep = '&') {
 		return http_build_query($data, '', $sep, PHP_QUERY_RFC3986);
 	}
 
-	/* Like `make_query_string`, but encode spaces with `+`. */
-	public static function make_php_query_string($data, $sep = '&') {
+	/* Like `encode_query_string`, but encode spaces with `+`. */
+	public static function encode_php_query_string($data, $sep = '&') {
 		return http_build_query($data, '', $sep);
 	}
 

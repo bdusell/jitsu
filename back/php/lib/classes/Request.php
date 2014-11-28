@@ -77,6 +77,7 @@ class Request {
 				parse_str(self::raw_query_string(), $form);
 				break;
 			default:
+				// PUT, PATCH
 				parse_str(self::slurp_input(), $form);
 				break;
 			}

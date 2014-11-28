@@ -1,7 +1,8 @@
 <?php
 
-/* A set of utilities for dealing with sequential PHP arrays. */
-
+/* A set of utilities for dealing with "Lists". A List is defined as a
+ * sequential PHP array whose keys, in order, are the integers 0 through
+ * _length_ - 1. Every list is a valid Vector,  (see `VectorUtil`). */
 class ListUtil {
 
 	/* Return whether a value is a sequential array which may be used with

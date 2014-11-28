@@ -10,11 +10,13 @@ class JSONUtil {
 	 * arrays. To encode an empty JSON array, use an empty PHP array. To
 	 * encode an empty JSON object, use an empty instance of `stdClass`. */
 	public static function encode($obj) {
-		$r = json_encode($obj, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-		if($r === false) {
-			throw new RuntimeException(json_last_error_msg(), json_last_error());
-		}
-		return $r;
+		return self::_encode($obj, false);
+	}
+
+	/* Like `encode` but pretty print the result with four spaces of
+	 * indentation. */
+	public static function encode_pretty($obj) {
+		return self::_encode($obj, true);
 	}
 
 	/* Parse a string of JSON into corresponding PHP objects. JSON objects
@@ -23,6 +25,18 @@ class JSONUtil {
 		$r = json_decode($str);
 		if(($code = json_last_error()) !== JSON_ERROR_NONE) {
 			throw new RuntimeException(json_last_error_msg(), $code);
+		}
+		return $r;
+	}
+
+	private static function _encode($obj, $pretty) {
+		$r = json_encode(
+			$obj,
+			JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE |
+			($pretty ? JSON_PRETTY_PRINT : 0)
+		);
+		if($r === false) {
+			throw new RuntimeException(json_last_error_msg(), json_last_error());
 		}
 		return $r;
 	}

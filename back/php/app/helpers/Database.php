@@ -5,8 +5,8 @@ class _DatabaseHelper extends SQLDatabase {
 	use Singleton;
 
 	public function __construct() {
-		$this->driver = 'sqlite';
-		$this->database = dirname(dirname(dirname(dirname(__DIR__)))) . '/db/database.db';
+		$this->driver = config::sql_driver();
+		$this->database = config::sql_database();
 		parent::__construct();
 	}
 }

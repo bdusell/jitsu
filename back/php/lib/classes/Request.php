@@ -89,8 +89,7 @@ class Request {
 	 * Like `form`, if called with no arguments, returns an array mapping
 	 * cookie names to their values. If called with the name of a cookie,
 	 * returns the value of that single cookie, or `$default` if it does
-	 * not exist.
-	 */
+	 * not exist. */
 	public static function cookie($name = null, $default = null) {
 		return $name === null ? $_COOKIE : Util::get($_COOKIE, $name, $default);
 	}

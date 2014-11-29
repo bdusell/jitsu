@@ -12,9 +12,22 @@ class ArrayUtil {
 		return count($array);
 	}
 
+	/* Get the value stored under a key in an array or a default value if
+	 * the key does not exist. */
+	public static function get($array, $key, $default = null) {
+		return array_key_exists($key, $array) ? $array[$key] : $default;
+	}
+
 	/* Return whether an array contains a key. */
 	public static function has_key($array, $key) {
+		// unlike isset, this properly detects null values
 		return array_key_exists($key, $array);
+	}
+
+	/* Remove a key from an array. */
+	public static function remove(&$array, $key) {
+		// what is this absurd syntax
+		unset($array[$key]);
 	}
 
 	/* Return all of the keys of an array as a sequential array. */
@@ -353,6 +366,62 @@ class ArrayUtil {
 		return array_unique($array, SORT_REGULAR);
 	}
 
+	/* Return whether an array does not contain any keys that are not in a
+	 * certain list of keys. Optionally pass an array reference to collect
+	 * the unexpected keys found. */
+	public static function has_only_keys($array, $keys, &$unexpected = null) {
+		$gather = func_num_args() > 2;
+		$key_set = self::to_set($keys);
+		foreach($array as $key => $value) {
+			if(!self::has_key($key_set, $key)) {
+				if($gather) {
+					$unexpected[] = $key;
+				} else {
+					return false;
+				}
+			}
+		}
+		return !$unexpected;
+	}
+
+	/* Return whether an array contains all of the keys in a certain list
+	 * of keys. Optionally pass an array reference to collect the missing
+	 * keys not found. */
+	public static function has_keys($array, $keys, &$missing = null) {
+		$gather = func_num_args() > 2;
+		foreach($keys as $key) {
+			if(!self::has_key($array, $key)) {
+				if($gather) {
+					$missing[] = $key;
+				} else {
+					return false;
+				}
+			}
+		}
+		return !$missing;
+	}
+
+	/* Return whether an array contains exactly the keys in a certain list
+	 * of keys. Optionally pass array references to collection the
+	 * unexpected and missing keys seen. */
+	public static function has_exact_keys($array, $keys, &$unexpected = null, &$missing = null) {
+		$gather = func_num_args() > 2;
+		$key_set = self::to_set($keys);
+		foreach($array as $key => $value) {
+			if(self::has_key($key_set, $key)) {
+				unset($key_set[$key]);
+			} elseif($gather) {
+				$unexpected[] = $key;
+			} else {
+				return false;
+			}
+		}
+		if($gather) {
+			$missing = array_keys($key_set);
+		}
+		return !$key_set && !$unexpected;
+	}
+
 	/* Pick a random key from an array. */
 	public static function random_key($array) {
 		return array_rand($array);
@@ -394,6 +463,12 @@ class ArrayUtil {
 	/* Sort and re-index the values of an array in-place, in reverse. */
 	public static function reverse_sort(&$array) {
 		rsort($array);
+	}
+
+	/* Sort and re-index the values of an array of strings in-place, based
+	 * on the rules of the current locale. */
+	public static function locale_sort(&$array) {
+		sort($array, SORT_LOCALE_STRING);
 	}
 
 	/* Sort the key-value pairs of an array in-place based on their
@@ -464,6 +539,18 @@ class ArrayUtil {
 			return (int) $k;
 		}
 		return $k;
+	}
+
+	/* Return whether a value is a properly indexed sequential array. Note
+	 * that the complexity of this function is linear in the size of the
+	 * array, so avoid its use. */
+	public static function is_sequential($array) {
+		if(!is_array($x)) return false;
+		$i = 0;
+		foreach($x as $k => $v) {
+			if($k !== $i++) return false;
+		}
+		return true;
 	}
 
 	/* Count the number of times each value appears in a list and produce

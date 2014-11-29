@@ -1,3 +1,3 @@
 <?php
-include dirname(dirname(__DIR__)) . '/back/php/init.php';
+include dirname(dirname(__DIR__)) . '/src/php/init.php';
 ?>

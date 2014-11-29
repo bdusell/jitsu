@@ -1,7 +1,7 @@
 <?php
 
 /* A useful wrapper around the PDO library. Currently only tested against the
- * mysql and sqlite drivers. */
+ * `mysql` and `sqlite` drivers. */
 abstract class SQLDatabase {
 
 	private $conn = null;

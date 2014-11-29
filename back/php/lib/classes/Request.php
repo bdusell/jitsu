@@ -95,7 +95,7 @@ class Request {
 		return $name === null ? $_COOKIE : Util::get($_COOKIE, $name, $default);
 	}
 
-	/* Alias for `cookies()`. */
+	/* Alias for `cookie()`. */
 	public static function cookies() {
 		return $_COOKIE;
 	}

@@ -43,7 +43,7 @@ class Response {
 
 	/* Shorthand for sending a PHP array as a JSON object in the
 	 * response. */
-	public static function json($obj, $pretty = true) {
+	public static function json($obj, $pretty = false) {
 		self::content_type('application/json');
 		echo JSONUtil::encode($obj, $pretty);
 	}

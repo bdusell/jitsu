@@ -75,7 +75,7 @@ class SQLStatement implements Iterator {
 	/* Assign a value to an input parameter of a prepared statement. If no
 	 * `$type` is specified, */
 	public function assign_input($param, $value, $type = null, $inout = false) {
-		if(is_null($type)) {
+		if($type === null) {
 			$result = $this->stmt->bindValue($param, $value, self::intuit_type($value));
 		} else {
 			$result = $this->stmt->bindValue($param, $value, self::type_value($type, $inout));
@@ -96,7 +96,11 @@ class SQLStatement implements Iterator {
 	 *     $stmt->assign('John', 'Doe');
 	 */
 	public function assign(/* $values | $value1, $value2, ... */) {
-		return $this->assign_with(func_num_args() > 1 ? func_get_args() : func_get_arg(0));
+		return $this->assign_with(
+			func_num_args() > 1 || !is_array(func_get_arg(0)) ?
+			func_get_args() :
+			func_get_arg(0)
+		);
 	}
 
 	public function assign_with($values) {

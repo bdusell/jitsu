@@ -13,8 +13,8 @@ var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 
 var paths = {
-  scripts: 'front/javascripts/src/**/*.js',
-  stylesheets: 'front/stylesheets/**/*.scss'
+  scripts: 'src/js/**/*.js',
+  stylesheets: 'src/css/**/*.scss'
 };
 
 gulp.task('clean', function(cb) {
@@ -27,7 +27,7 @@ gulp.task('clean', function(cb) {
 });
 
 gulp.task('css', function() {
-  gulp.src('front/stylesheets/main.scss')
+  gulp.src('src/css/main.scss')
     .pipe(sourcemaps.init())
       .pipe(sass())
       .pipe(autoprefixer())

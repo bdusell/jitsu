@@ -2,11 +2,22 @@
 
 class RegexUtil {
 
-	/* Create a regular expression for use with this module. */
-	public static function create($pat, $flags = '') {
-		return '/' . str_replace('/', '\\/') . '/' . $flags;
+	/* Create a regular expression from a PCRE pattern for use with this
+	 * module. Do not include the delimiters; they will be added and
+	 * escaped automatically. Specify the flags in a separate string. If
+	 * you want to avoid the overhead of escaping the delimiters, you may
+	 * optionally provide the start and ending delimiters to use. The
+	 * ending delimiter defaults to the start delimiter if null. */
+	public static function create($pat, $flags = '', $start = null, $end = null) {
+		if($start === null) {
+			return '/' . str_replace($pat, '/', '\\/') . '/' . $flags;
+		} else {
+			if($end === null) $end = $start;
+			return $start . $pat . $end . $flags;
+		}
 	}
 
+	/* Get an error string for a `preg` error code. */
 	public static function error_string($code) {
 		static $codes = array(
 			PREG_NO_ERROR => 'no error',
@@ -101,10 +112,12 @@ class RegexUtil {
 		return $match_objs;
 	}
 
-	/* Escape a string for use in a regular expression (only guaranteed for
-	 * use with this module). */
-	public static function escape($str) {
-		return preg_quote($str, '/');
+	/* Escape a string for use in a regular expression (only use the
+	 * generated pattern with this module). If used with a pattern where
+	 * the delimiter is being explicitly set, provide that delimiter as
+	 * the second argument. */
+	public static function escape($str, $delim = null) {
+		return preg_quote($str, $delim);
 	}
 
 	/* Replace the portion of a string which matches a regular expression
@@ -158,11 +171,10 @@ class RegexUtil {
 	/* Like `replace`, except that the second parameter is always
 	 * interpreted as a callback, allowing function names, etc. to be
 	 * passed. */
-	public static function replace_with_callback(
+	public static function replace_with(
 		$regex, $callback, $str,
 		$limit = null, &$count = null)
 	{
-		
 		$r = preg_replace_callback(
 			$regex, $callback, $str,
 			$limit === null ? -1 : $limit, $count

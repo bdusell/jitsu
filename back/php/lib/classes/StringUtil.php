@@ -2,7 +2,7 @@
 
 class StringUtil {
 
-	/* Return the length of (number of bytes in) a string. */
+	/* Return the length of (i.e., the number of bytes in) a string. */
 	public static function length($s) {
 		return strlen($s);
 	}
@@ -535,7 +535,7 @@ class StringUtil {
 
 	/* Get the frequencies of the 256 possible byte values (0 through 255)
 	 * in a string as an array. */
-	public static function byte_frequencies($s) {
+	public static function count_bytes($s) {
 		return count_chars($s);
 	}
 

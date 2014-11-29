@@ -1,28 +1,31 @@
 <?php
 
-/* A set of utilities for dealing with *Sets*. A *Set* is defined as a PHP
- * arrays whose values and ordering are ignored; only the keys it contains
+/* A set of utilities for dealing with *sets*. A *set* is defined as a PHP
+ * array whose values and ordering are ignored; only the keys it contains
  * are significant, and they are treated as the elements of the set. Note that
- * this restricts the set elements to integers and strings. */
+ * this restricts the set elements to integers and non-integer strings. */
 class SetUtil {
 
-	/* Return the union of two *Sets*. */
+	/* Return the union of two *sets* as a *map*. Where values are defined,
+	 * those in the second *set* take precedence. */
 	public static function union($set1, $set2) {
-		// array_replace would also work
+		// array_replace($set1, $set2) would also work
 		return $set2 + $set1;
 	}
 
-	/* Return a copy of a *Set* with all elements converted to upper
-	 * case. */
+	/* Return a copy of a *set* as an *ordered map* where all keys have
+	 * been converted to upper case. Where values and ordering are defined,
+	 * they are preserved. */
 	public static function upper($set) {
 		return array_change_key_case($map, CASE_UPPER);
 	}
 
-	/* Return a copy of a *Set* with all elements converted to lower
-	 * case. */
+	/* Like `upper`, but lower case. */
 	public static function lower($set) {
 		return array_change_key_case($map);
 	}
+
+	//--------------------------------
 
 	/* Return a *Set* containing all the elements in `$set1` but not in
 	 * `$set2`. Optionally provide a custom comparison function. */
@@ -37,6 +40,11 @@ class SetUtil {
 	/* Convert a list of values to a set of values. */
 	public static function from_list($list) {
 		return array_fill_keys($list, true);
+	}
+
+	/* Create a set of the integers `$start` through `$end` - 1. */
+	public static function range($start, $end) {
+		return array_fill($start, $end - $start, true);
 	}
 
 	/* Return whether two sets have the same contents. Note that there is

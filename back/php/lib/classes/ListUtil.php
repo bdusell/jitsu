@@ -5,6 +5,8 @@
  * Every *List* is a valid *OrderedMap* and *UnorderedList*. */
 class ListUtil {
 
+	//------------------------------------
+
 	/* Return whether a value is a *List*. Complexity is linear, so avoid
 	 * use. */
 	public static function is_list($x) {
@@ -16,18 +18,9 @@ class ListUtil {
 		return true;
 	}
 
-	/* Return a list which begins with all of the elements of `$list1`
-	 * followed by any part of `$list2` which makes `$list2` longer than
-	 * `$list1`, if it is longer. */
-	public static function overlaid($list1, $list2) {
-		return $list1 + $list2;
-	}
-
-	/* If `$list2` is longer than `$list1`, append the elements which
-	 * make it longer to `$list1`. Return a copy of the modified
-	 * `$list1`. */
-	public static function overlay(&$list1, $list2) {
-		return $list1 += $list2;
+	/* Create a *List* with `$n` copies of `$value`. */
+	public static function fill($value, $n) {
+		return array_fill(0, $n, $value);
 	}
 
 	/* Return whether two lists have the same contents according to non-

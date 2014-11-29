@@ -78,16 +78,6 @@ class MapUtil {
 		return true;
 	}
 
-	/* Return a copy of a map with all keys converted to upper case. */
-	public static function with_upper_keys($map) {
-		return array_change_key_case($map, CASE_UPPER);
-	}
-
-	/* Return a copy of a map with all keys converted to lower case. */
-	public static function with_lower_keys($map) {
-		return array_change_key_case($map);
-	}
-
 	/* Given a list of maps, return a list of the values stored under a
 	 * certain key. Ignore any maps which do not contain this key. */
 	public static function pluck($maps, $key) {

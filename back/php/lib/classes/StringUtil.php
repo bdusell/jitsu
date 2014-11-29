@@ -130,20 +130,12 @@ class StringUtil {
 	 * string. If `$count` is given, it is assigned the number of
 	 * replacements performed. */
 	public static function replace($s, $old, $new, &$count = null) {
-		if(func_num_args() <= 3) {
-			return str_replace($old, $new, $s);
-		} else {
-			return str_replace($old, $new, $s, $count);
-		}
+		return str_replace($old, $new, $s, $count);
 	}
 
 	/* Like `replace` but case-insensitive. */
 	public static function ireplace($s, $old, $new, &$count = null) {
-		if(func_num_args() <= 3) {
-			return str_ireplace($old, $new, $s);
-		} else {
-			return str_ireplace($old, $new, $s, $count);
-		}
+		return str_ireplace($old, $new, $s, $count);
 	}
 
 	/* Translate characters in a string. Characters in `$old` are changed
@@ -163,14 +155,20 @@ class StringUtil {
 		return substr_replace($s, $new, $offset, $length);
 	}
 
-	/* Get a substring of a string given a beginning and ending index. */
-	public static function slice($s, $start = 0, $end = null) {
-		return substr($s, $start || 0, $end === null ? null : $start + $end);
+	/* Get a substring of a string given a beginning and ending index.
+	 * Negative indexes, indicating characters from the end of the string,
+	 * may be used. If the start index occurs after the end index, an empty
+	 * string will be returned. */
+	public static function slice($s, $i, $j = null) {
+		list($offset, $len) = Util::convert_slice_indexes($i, $j, strlen($s));
+		return substr($s, $offset, $len);
 	}
 
-	/* Replace a slice of a string with another. */
-	public static function assign_slice($s, $new, $start = 0, $end = null) {
-		return substr_replace($s, $new, $start || 0, $end === null ? null : $start + $end);
+	/* Replace a slice of a string with another. If `$j` is null, the slice
+	 * is until the end of the string. */
+	public static function assign_slice($s, $i, $j, $new) {
+		list($offset, $len) = Util::convert_slice_indexes($i, $j, strlen($s));
+		return substr_replace($s, $new, $offset, $len);
 	}
 
 	/* Insert a string at a given offset in the string. */
@@ -291,7 +289,7 @@ class StringUtil {
 	}
 
 	/* Like `ncmp` but case-insensitive. */
-	public static function nicmp($a, $b, $n) {
+	public static function incmp($a, $b, $n) {
 		return strncasecmp($a, $b, $n);
 	}
 
@@ -312,13 +310,14 @@ class StringUtil {
 	}
 
 	/* Like `cmp` but uses only a substring of the first string in the
-	 * comparison. */
-	public static function substring_cmp($a, $b, $offset, $length = null) {
+	 * comparison. Use a null length to compare to the end of the
+	 * string. */
+	public static function substring_cmp($a, $offset, $length, $b) {
 		return substr_compare($a, $b, $offset, $length);
 	}
 
 	/* Like `substring_cmp` but case-insensitive. */
-	public static function substring_icmp($a, $b, $offset, $length = null) {
+	public static function substring_icmp($a, $offset, $length, $b) {
 		return substr_compare($a, $b, $offset, $length, true);
 	}
 
@@ -356,13 +355,13 @@ class StringUtil {
 	/* Get the starting offset of a substring within a string, or null if
 	 * it does not appear within the string. Optionally provide a starting
 	 * offset. */
-	public static function find($s, $substr, $offset) {
+	public static function find($s, $substr, $offset = 0) {
 		$r = strpos($s, $substr, $offset);
 		return $r === false ? null : $r;
 	}
 
 	/* Like `find` but case-insensitive. */
-	public static function ifind($s, $substr, $offset) {
+	public static function ifind($s, $substr, $offset = 0) {
 		$r = stripos($s, $substr, $offset);
 		return $r === false ? null : $r;
 	}

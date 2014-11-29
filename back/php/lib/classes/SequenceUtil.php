@@ -9,6 +9,12 @@ class SequenceUtil {
 	public static function chunk($seq, $n) {
 		return array_chunk($seq, $n);
 	}
+
+	/* Filter the values in a *Sequence* by a predicate. The predicate
+	 * should have the signature `function($value)`. */
+	public static function filter($seq, $callback) {
+		return array_filter($seq, $callback);
+	}
 }
 
 ?>

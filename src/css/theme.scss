@@ -1,3 +1,6 @@
+$primary-color: #a10000;
+$secondary-color: #f8f8f8;
+$text-color: #222;
 $content-width: 800px;
 
 html, body {
@@ -7,7 +10,95 @@ html, body {
   height: 100%;
 }
 
-.content {
+body {
+  background-color: $secondary-color;
+  font-family: sans-serif;
+  color: $text-color;
+}
+
+a {
+  text-decoration: none;
+  font-weight: bold;
+  color: $primary-color;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+label {
+  display: block;
+  margin: 5px;
+  color: $primary-color;
+  font-weight: bold;
+}
+
+button, input {
+  outline: none;
+}
+
+input[type="text"] {
+  margin: 5px;
+  border-radius: 5px;
+  border: 1px solid $primary-color;
+  padding: 5px;
+  &:focus {
+    box-shadow: 0 0 7px rgba($primary-color, 0.5);
+  }
+}
+
+label + input[type="text"] {
+  margin-top: 0;
+}
+
+pre {
+  padding: 10px;
+  border: 2px solid $primary-color;
+  background-color: darken($secondary-color, 10%);
+  overflow: auto;
+}
+
+button, input[type="submit"] {
+  border: none;
+  background-image: linear-gradient(lighten($primary-color, 10%), $primary-color);
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+  color: $secondary-color;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    background-image: linear-gradient(lighten($primary-color, 12%), lighten($primary-color, 2%));
+  }
+}
+
+.header {
+  margin: 0;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: $primary-color;
+  color: $secondary-color;
+  text-align: center;
+  h1 {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.header-links {
+  list-style: none;
+  float: left;
+  padding: 5px;
+  margin: 0;
+}
+
+.site-width {
   width: $content-width;
   margin: 0 auto;
 }

@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title><?= $title ?></title>
+    <title><?= html(config::site_name()) ?> &ndash; <?= html($title) ?></title>
 <?php if(isset($base)): ?>
     <base href="<?= html($base) ?>" />
 <?php endif; ?>
@@ -23,7 +23,12 @@
 <?php endif; ?>
   </head>
   <body>
-    <div class="content">
+    <nav class="header">
+      <div class="site-width">
+        <h1><?= html($title) ?></h1>
+      </div>
+    </nav>
+    <div class="content site-width">
 <?php Util::template("$body.html.php", $vars); ?>
     </div>
   </body>

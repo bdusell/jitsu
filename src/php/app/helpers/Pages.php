@@ -1,6 +1,6 @@
 <?php
 
-class AppHelper {
+class Pages {
 
 	private static $titles = array(
 		403 => 'Forbidden',
@@ -27,6 +27,16 @@ class AppHelper {
 	public static function page($template, $vars) {
 		$vars['base'] = config::base_url();
 		$vars['body'] = $template;
+		$vars['scripts'] = array(
+			config::is_production() ?
+			'js/main.min.js' :
+			'js/main.js'
+		);
+		$vars['stylesheets'] = array(
+			config::is_production() ?
+			'css/main.min.css' :
+			'css/main.css'
+		);
 		Util::template('main.html.php', $vars);
 	}
 }

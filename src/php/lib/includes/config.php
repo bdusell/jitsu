@@ -7,8 +7,7 @@ class config {
 		'host'          => 'localhost',
 		'path'          => '',
 		'is_production' => false,
-		'router'        => 'AppRouter',
-		'helper'        => 'AppHelper'
+		'helper'        => 'Pages'
 	);
 
 	private static $modules = array();

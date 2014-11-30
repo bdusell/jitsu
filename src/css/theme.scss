@@ -1,3 +1,5 @@
+$content-width: 800px;
+
 html, body {
   margin: 0;
   padding: 0;
@@ -5,9 +7,7 @@ html, body {
   height: 100%;
 }
 
-.special {
-  border-radius: 5px;
-  display: flex;
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
-  background-color: red;
+.content {
+  width: $content-width;
+  margin: 0 auto;
 }

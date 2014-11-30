@@ -23,6 +23,8 @@
 <?php endif; ?>
   </head>
   <body>
+    <div class="content">
 <?php Util::template("$body.html.php", $vars); ?>
+    </div>
   </body>
 </html>

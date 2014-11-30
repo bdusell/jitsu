@@ -1,11 +1,10 @@
 DefaultLanguage en-US
 AddDefaultCharset utf-8
 ServerSignature Off
-# SetEnv TZ America/Los_Angeles
-# SetEnv SERVER_ADMIN example@example.com
 RewriteEngine On
 DirectorySlash Off
 Options -Indexes
 IndexIgnore *
-RewriteCond %{DOCUMENT_ROOT}/(assets|js|css)/.* !-f
+RewriteCond %{REQUEST_FILENAME} !-f [OR]
+RewriteCond %{REQUEST_FILENAME} !^.*?/(css|js|assets)/[^/]+$
 RewriteRule .* index.php [L]

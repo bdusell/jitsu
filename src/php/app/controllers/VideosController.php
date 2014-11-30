@@ -4,7 +4,7 @@ class VideosController {
 
 	public static function index() {
 		$videos = Database::query('select "id" from "videos"');
-		AppHelper::page('videos/index', array(
+		Pages::page('videos/index', array(
 			'title' => 'Videos',
 			'videos' => $videos
 		));
@@ -14,18 +14,18 @@ class VideosController {
 		$video = Database::row('select "id" from "videos" where "id" = ?', $id);
 		if($video) {
 			$tags = Database::query('select "value" from "tags" where "video_id" = ?', $id);
-			AppHelper::page('videos/show', array(
+			Pages::page('videos/show', array(
 				'title' => 'Video ' . $id,
 				'video' => $video,
 				'tags' => $tags
 			));
 		} else {
-			AppHelper::error(404);
+			Pages::error(404);
 		}
 	}
 
 	public static function new_() {
-		AppHelper::page('videos/new', array(
+		Pages::page('videos/new', array(
 			'title' => 'New Video'
 		));
 	}
@@ -33,7 +33,7 @@ class VideosController {
 	public static function create() {
 		$id = Request::form('id');
 		Database::execute('insert into "videos"("id") values (?)', $id);
-		AppHelper::redirect('videos/' . rawurlencode($id));
+		Pages::redirect('videos/' . rawurlencode($id));
 	}
 }
 

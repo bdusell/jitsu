@@ -7,6 +7,7 @@ class config {
 		'host'          => 'localhost',
 		'path'          => '',
 		'is_production' => false,
+		'show_errors'   => true,
 		'helper'        => 'Pages'
 	);
 
@@ -18,6 +19,15 @@ class config {
 
 	public static function get($name) {
 		return self::$vars[$name];
+	}
+
+	public static function is_production($value = null) {
+		if(func_num_args() > 0) {
+			self::set('is_production', $value);
+			self::set('show_errors', !$value);
+		} else {
+			return self::get('is_production');
+		}
 	}
 
 	public static function base_url($url = null) {

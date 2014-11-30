@@ -3,6 +3,7 @@
 class config {
 
 	private static $vars = array(
+		'dir'           => null,
 		'scheme'        => 'http',
 		'host'          => 'localhost',
 		'path'          => '',

@@ -1,14 +1,18 @@
 #!/bin/bash
 echo -n 'working...'
 {
-  cd "$(dirname "$BASH_SOURCE")"/../back/sql
+  cd "$(dirname "$BASH_SOURCE")"/../db
 } && {
   rm -f database.db
 } && {
-  sqlite3 database.db < schema.sql
+  sqlite3 database.db <<SQL
+.read ../src/sql/schema.sql
+SQL
 } && {
   if [[ -f data.sql ]]; then
-    sqlite3 database.db < data.sql
+    sqlite3 database.db <<SQL
+.read ../src/sql/data.sql
+SQL
   fi
 } && {
   chmod -R a+w .

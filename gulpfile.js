@@ -46,10 +46,12 @@ gulp.task('lint', function() {
 });
 
 gulp.task('js', function() {
-  return gulp.src(paths.scripts)
-    .pipe(concat('main.js'))
+  return gulp.src(['bower_components/jquery/dist/jquery.js', paths.scripts])
+    .pipe(sourcemaps.init())
+      .pipe(concat('main.js'))
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest('build/dev/js'))
-    .pipe(uglify())
+    .pipe(uglify({ preserveComments: 'some' }))
     .pipe(rename('main.min.js'))
     .pipe(gulp.dest('build/prod/js'))
 });

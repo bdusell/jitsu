@@ -13,12 +13,12 @@
 <?php endif; ?>
 <?php if(isset($stylesheets)): ?>
 <?php   foreach($stylesheets as $css): ?>
-    <link rel="stylesheet" type="text/css" href="<?= html_attr($css) ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= htmlattr($css) ?>" />
 <?php   endforeach; ?>
 <?php endif; ?>
 <?php if(isset($scripts)): ?>
 <?php   foreach($scripts as $js): ?>
-    <script type="text/javascript" src="<?= Escape::html_attr($js) ?>"></script>
+    <script type="text/javascript" src="<?= htmlattr($js) ?>"></script>
 <?php   endforeach; ?>
 <?php endif; ?>
   </head>

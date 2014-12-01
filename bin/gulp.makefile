@@ -1,13 +1,8 @@
-npm: .make/packages/npm
-gulp: .make/packages/gulp
-gulp-plugins: .make/node-packages
-.PHONY: npm gulp gulp-plugins
-
 .make/packages/npm:
 	$(INSTALL)
 
-.make/node-packages: package.json npm
+.make/node-modules: package.json .make/packages/npm
 	npm install && $(MKFILE)
 
-.make/packages/gulp: npm
+.make/packages/gulp: .make/packages/npm
 	$(INSTALL_NODE_CLI_PACKAGE)

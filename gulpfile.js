@@ -61,4 +61,5 @@ gulp.task('watch', function() {
   gulp.watch(paths.scripts, ['lint', 'js']);
 });
 
-gulp.task('default', ['css', 'lint', 'js', 'watch']);
+gulp.task('build', ['css', 'lint', 'js']);
+gulp.task('default', ['build', 'watch']);

@@ -1,11 +1,3 @@
-# $(call TAIL,n,words)
-#   Return all but the first `n - 1` words.
-TAIL=$(wordlist $1,$(words $2),$2)
-
-# $(call JOIN,sep,words)
-#   Return `words` with the words `sep` in between each element.
-JOIN=$(call TAIL,$(words $1 x),$(foreach w,$2,$1 $(w)))
-
 # $(RM) arg1 arg2 ...
 #   Delete files and directories.
 RM=rm -rf --
@@ -30,7 +22,7 @@ MKFILE={ $(call MKDIRS,$1) && touch $(if $1,$1,$@); }
 # $(call INSTALL,command) # use command name for package name
 # $(call INSTALL,command,package)
 #   Ensure that a command has been installed on the system.
-INSTALL={ { which $(if $1,$1,$(@F)) || $(call INSTALL__PACKAGE,$(if $2,$2,$(if $(1),$(1),$(@F)))); } && $(MKFILE); }
+INSTALL={ { which $(if $1,$1,$(@F)) || $(call INSTALL__PACKAGE,$(if $2,$2,$(if $(1),$(1),$(@F)))); } && $(call MKFILE); }
 INSTALL__PACKAGE=sudo apt-get install $1
 
 # $(FILETYPE)
@@ -47,14 +39,3 @@ UNZIP=unzip -DD -d $(@D) -j $< "**/$(if $(1),$(1),$(@F))"
 # $(call GUNZIP,input)
 #   Uncompress a .tar.gz file.
 UNGZIP=gunzip -k -c $(if $1,$1,$<) > $@
-
-# $(INSTALL_NODE_CLI_PACKAGE) # use basename of target and add -cli for package name
-# $(call INSTALL_NODE_CLI_PACKAGE,command,package)
-#   Install a NodeJS CLI package globally.
-INSTALL_NODE_CLI_PACKAGE={ { which $(if $1,$1,$(@F)) || npm install -g $(if $2,$2,$(@F)-cli); } && $(MKFILE); }
-
-# $(INSTALL_NODE_MODULE) # use basename of target
-# $(call INSTALL_NODE_MODULE,command,package)
-#   Install a NodeJS package locally.
-INSTALL_NODE_MODULE={ { which $(if $1,$1,$(@F)) || npm install $(if $2,$2,$(@F)); } && $(MKFILE); }
-

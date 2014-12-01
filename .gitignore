@@ -6,5 +6,7 @@ bower_components/
 .sass-cache/
 build/dev/css/
 build/dev/js/
+build/dev/.htaccess
 build/prod/css/
 build/prod/js/
+build/prod/.htaccess

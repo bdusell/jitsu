@@ -1,9 +1,10 @@
 <?php ini_set('default_charset', 'UTF-8'); ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title><?= html(config::site_name()) ?> &ndash; <?= html($title) ?></title>
 <?php if(isset($base)): ?>
     <base href="<?= html($base) ?>" />
@@ -23,12 +24,12 @@
 <?php endif; ?>
   </head>
   <body>
-    <nav class="header">
-      <div class="site-width">
+    <nav class="videos-header">
+      <div class="container">
         <h1><?= html($title) ?></h1>
       </div>
     </nav>
-    <div class="content site-width">
+    <div class="container">
 <?php Util::template("$body.html.php", $vars); ?>
     </div>
   </body>

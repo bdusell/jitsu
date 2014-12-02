@@ -103,7 +103,8 @@ class ArrayUtil {
 		return array_slice($array, $i, 1)[0];
 	}
 
-	/* Return the `$i`th key-value pair in an array. */
+	/* Return the `$i`th key-value pair in an array as the pair
+	 * `array($key, $value)`. */
 	public static function pair_at($array, $i) {
 		foreach(array_slice($array, $i, 1, true) as $k => $v) {
 			return array($k, $v);
@@ -121,7 +122,7 @@ class ArrayUtil {
 	 * index and `$j` is one past the last index, or null if all the rest
 	 * of the list should be used. If `$j` is negative, this denotes the
 	 * number of elements from the end of the array where the slice stops.
-	 */
+	 * The result is re-indexed. */
 	public static function slice($array, $i, $j = null) {
 		return self::_slice($array, $i, $j, false);
 	}
@@ -278,8 +279,39 @@ class ArrayUtil {
 	}
 
 	/* Return an associative array containing all key-value pairs which
+	 * exist in the first array but not in the second according to some
+	 * comparison logic determined by the values passed as `$key_cmp` and
+	 * `$value_cmp`. Both `$key_cmp` and `$value_cmp` may be `null`,
+	 * `true`, or a comparison callback and are used to compare the keys
+	 * and values of array elements, respectively. If a comparator is
+	 * `null`, its component ignored in the comparison. If a comparator
+	 * is `true`, then the default string comparison method is used for
+	 * that component. Otherwise, a callback implementing an arbitrary
+	 * comparison function may be used. The default is to compare values
+	 * by string comparison only. */
+	public static function difference($array1, $array2, $key_cmp = null, $value_cmp = true) {
+		if($key_cmp === null) {
+			if($value_cmp === null) {
+				throw new BadMethodCallException('no comparators given to compute array difference');
+			} else {
+				if($value_cmp === true) $value_cmp = null;
+				return self::value_difference($array1, $array2, $value_cmp);
+			}
+		} else {
+			if($key_cmp === true) $key_cmp = null;
+			if($value_cmp === null) {
+				return self::key_difference($array1, $array2, $key_cmp);
+			} else {
+				if($value_cmp === true) $value_cmp = null;
+				return self::pair_difference($array1, $array2, $key_cmp, $value_cmp);
+			}
+		}
+	}
+
+	/* Return an associative array containing all key-value pairs which
 	 * exist in the first array but not in the second. Optionally provide
-	 * comparison functions for the keys and values. */
+	 * comparison functions for the keys and values. String comparison is
+	 * used by default. */
 	public static function pair_difference($array1, $array2, $key_cmp = null, $value_cmp = null) {
 		// Seriously, PHP? seriously?
 		if($key_cmp === null) {
@@ -299,7 +331,8 @@ class ArrayUtil {
 
 	/* Return an associative array containing all key-value pairs in the
 	 * first array whose keys do not exist in the second. Optionally
-	 * provide a comparison function for the keys. */
+	 * provide a comparison function for the keys. String comparison is
+	 * used by default. */
 	public static function key_difference($array1, $array2, $key_cmp = null) {
 		if($key_cmp === null) {
 			return array_diff_key($array1, $array2);
@@ -310,7 +343,7 @@ class ArrayUtil {
 
 	/* Return an associative array containing all key-value pairs in the
 	 * first array whose values do not exist in the second. Uses string
-	 * comparison. Optionally provide a comparison function. */
+	 * comparison by default. Optionally provide a comparison function. */
 	public static function value_difference($array1, $array2, $value_cmp = null) {
 		if($value_cmp === null) {
 			return array_diff($array1, $array2);

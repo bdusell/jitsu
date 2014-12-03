@@ -17,7 +17,7 @@ class Pages {
 			$vars['body'] = "errors/$code";
 		}
 		$vars['title'] = $code . ': ' . self::$titles[$code];
-		Util::template('main.html.php', $vars);
+		Util::template('common/main.html.php', $vars);
 	}
 
 	public static function redirect($url, $code = 303) {
@@ -37,7 +37,7 @@ class Pages {
 			'css/main.min.css' :
 			'css/main.css'
 		);
-		Util::template('main.html.php', $vars);
+		Util::template('common/main.html.php', $vars);
 	}
 }
 

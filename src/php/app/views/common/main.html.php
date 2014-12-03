@@ -24,11 +24,7 @@
 <?php endif; ?>
   </head>
   <body>
-    <nav class="videos-header">
-      <div class="container">
-        <h1><?= html($title) ?></h1>
-      </div>
-    </nav>
+<?php Util::template('common/header.html.php', $vars); ?>
     <div class="container">
 <?php Util::template("$body.html.php", $vars); ?>
     </div>

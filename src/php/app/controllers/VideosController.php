@@ -33,7 +33,28 @@ class VideosController {
 	public static function create() {
 		$id = Request::form('id');
 		Database::execute('insert into "videos"("id") values (?)', $id);
-		Pages::redirect('videos/' . rawurlencode($id));
+		Pages::redirect('videos/' . StringUtil::encode_url($id));
+	}
+
+	public static function search() {
+		$query = Request::form('query');
+		$tags = StringUtil::split($query);
+		if($tags) {
+			$placeholders = StringUtil::join(', ', ArrayUtil::fill('?', ArrayUtil::length($tags)));
+			$videos = Database::query(
+				'select "id" from "videos" ' .
+				'join "tags" on "videos"."id" = "tags"."video_id" ' .
+				'where "value" in (' . $placeholders . ')',
+				$tags
+			);
+		} else {
+			$videos = array();
+		}
+		Pages::page('videos/search', array(
+			'title' => 'Search Results',
+			'videos' => $videos,
+			'tags' => $tags
+		));
 	}
 }
 

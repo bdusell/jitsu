@@ -38,12 +38,18 @@ class StringUtil {
 	 * beginning of the string, with the rest of the string occupying the
 	 * last element, so that no more than `$limit` + 1 elements will be
 	 * returned. If `$limit` is negative, all parts except for the last
-	 * -`$limit` are returned. */
-	public static function split($s, $delim, $limit = null) {
-		if($limit === null) {
-			return explode($s, $delim);
+	 * -`$limit` are returned. If `$delim` is null, the string is tokenized
+	 * on whitespace characters (`$limit` is ignored in this case... for
+	 * now). */
+	public static function split($s, $delim = null, $limit = null) {
+		if($delim === null) {
+			return self::tokenize($s, " \n\t\r\v\f");
 		} else {
-			return explode($s, $delim, $limit + ($limit >= 0));
+			if($limit === null) {
+				return explode($s, $delim);
+			} else {
+				return explode($s, $delim, $limit + ($limit >= 0));
+			}
 		}
 	}
 

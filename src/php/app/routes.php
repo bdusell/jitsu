@@ -3,6 +3,7 @@ router::map('GET',    '(home)', array('StaticPagesController', 'home'));
 router::map('GET',    'videos/', array('VideosController', 'index'));
 router::map('GET',    'videos/new', array('VideosController', 'new_'));
 router::map('POST',   'videos/', array('VideosController', 'create'));
+router::map('GET',    'videos/search', array('VideosController', 'search'));
 router::map('GET',    'videos/:id', array('VideosController', 'show'));
 router::map('GET',    'videos/:id/edit', array('VideosController', 'edit'));
 router::map('PUT',    'videos/:id', array('VideosController', 'update'));

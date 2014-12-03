@@ -41,11 +41,79 @@ class Util {
 		include $filename;
 	}
 
+	/* Tell whether an array or object has a certain key or property, even
+	 * if its value is null. */
+	public static function has($arr_or_obj, $key_or_name) {
+		if(is_array($arr_or_obj)) {
+			return self::has_key($arr_or_obj, $key_or_name);
+		} else {
+			return self::has_prop($arr_or_obj, $key_or_name);
+		}
+	}
+
+	/* Get the value under a key in an array or a property in an object,
+	 * or a default value if the key or property does not exist. */
+	public static function get($arr_or_obj, $key_or_name) {
+		if(is_array($arr_or_obj)) {
+			return self::get_key($arr_or_obj, $key_or_name);
+		} else {
+			return self::get_prop($arr_or_obj, $key_or_name);
+		}
+	}
+
+	/* Set the a key in an array or a property in an object to some
+	 * value. */
+	public static function set($arr_or_obj, $key_or_name, $value) {
+		if(is_array($arr_or_obj)) {
+			$arr_or_obj[$key_or_name] = $value;
+		} else {
+			$arr_or_obj->$key_or_name = $value;
+		}
+	}
+
+	/* Get a reference to the value under a key in an array or a property
+	 * in an object, setting it to a default value if it has not been
+	 * set. */
+	public static function &getref(&$arr_or_obj, $key_or_name, $default) {
+		if(is_array($arr_or_obj)) {
+			if(!self::has_key($arr_or_obj, $key_or_name)) {
+				$arr_or_obj[$key_or_name] = $default;
+			}
+			return $arr_or_obj[$key_or_name];
+		} else {
+			if(!self::has_prop($arr_or_obj, $key_or_name)) {
+				$arr_or_obj->$key_or_name = $default;
+			}
+			return $arr_or_obj->$key_or_name;
+		}
+	}
+
+	/* Tell whether an array contains a key, even if its value is null. */
+	public static function has_key($array, $key) {
+		return array_key_exists($key, $array);
+	}
+
 	/* Get a value from an array, or a default value if the key is not
 	 * present. */
-	public static function get($array, $key, $default = null) {
+	public static function get_key($array, $key, $default = null) {
 		if(array_key_exists($key, $array)) {
 			return $array[$key];
+		} else {
+			return $default;
+		}
+	}
+
+	/* Tell whether an object has a property named `$name`. */
+	public static function has_prop($obj, $name) {
+		return property_exists($obj, $name);
+	}
+
+	/* Get the value of the property named `$name` in the object `$obj` or
+	 * a default value if the object does not have a property by that
+	 * name. */
+	public static function get_prop($obj, $name, $default = null) {
+		if(property_exists($obj, $name)) {
+			return $obj->$name;
 		} else {
 			return $default;
 		}

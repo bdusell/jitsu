@@ -18,7 +18,18 @@ class ArrayUtil {
 		return array_key_exists($key, $array) ? $array[$key] : $default;
 	}
 
-	/* Return whether an array contains a key. */
+	/* Get a reference to the value stored under a key in an array. If it
+	 * does not exist, insert a default value at that key and return a
+	 * reference to the new value. */
+	public static function &getref(&$array, $key, $default = null) {
+		if(!array_key_exists($key, $array)) {
+			$array[$key] = $default;
+		}
+		return $array[$key];
+	}
+
+	/* Return whether an array contains a key, even if its value is
+	 * null. */
 	public static function has_key($array, $key) {
 		// unlike isset, this properly detects null values
 		return array_key_exists($key, $array);
@@ -40,12 +51,13 @@ class ArrayUtil {
 		return array_values($array);
 	}
 
-	/* Append a value to the end of an array. */
+	/* Append a value to the end of a sequential array. Note that this is
+	 * equivalent to the more succinct `$array[] = $value`. */
 	public static function append(&$array, $value) {
 		$array[] = $value;
 	}
 
-	/* Append all of the values in an array to another. */
+	/* Append all of the values in `$array2` to `$array1`. */
 	public static function append_all(&$array1, $array2) {
 		foreach($array2 as $value) {
 			$array1[] = $value;
@@ -147,12 +159,12 @@ class ArrayUtil {
 		return self::assign_slice($array, $i, $j, array());
 	}
 
-	/* Reverse a sequential array. */
+	/* Reverse and re-index a sequential array. */
 	public static function reverse($array) {
 		return array_reverse($array);
 	}
 
-	/* Reverse the ordering of key value pairs in an array. */
+	/* Reverse the ordering of key-value pairs in an array. */
 	public static function reverse_pairs($array) {
 		return array_reverse($array, true);
 	}
@@ -284,11 +296,11 @@ class ArrayUtil {
 	 * `$value_cmp`. Both `$key_cmp` and `$value_cmp` may be `null`,
 	 * `true`, or a comparison callback and are used to compare the keys
 	 * and values of array elements, respectively. If a comparator is
-	 * `null`, its component ignored in the comparison. If a comparator
+	 * `null`, its component is ignored in the comparison. If a comparator
 	 * is `true`, then the default string comparison method is used for
 	 * that component. Otherwise, a callback implementing an arbitrary
 	 * comparison function may be used. The default is to compare values
-	 * by string comparison only. */
+	 * by string comparison. */
 	public static function difference($array1, $array2, $key_cmp = null, $value_cmp = true) {
 		if($key_cmp === null) {
 			if($value_cmp === null) {

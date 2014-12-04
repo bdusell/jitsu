@@ -11,13 +11,9 @@ class Pages {
 
 	public static function error($code, $vars = null) {
 		Response::code($code);
-		$root = dirname(__DIR__);
-		$filename = "$root/views/errors/$code.html.php";
-		if(file_exists($filename)) {
-			$vars['body'] = "errors/$code";
-		}
-		$vars['title'] = $code . ': ' . self::$titles[$code];
-		Util::template('common/main.html.php', $vars);
+		self::page("errors/$code", array(
+			'title' => $code . ': ' . self::$titles[$code]
+		));
 	}
 
 	public static function redirect($url, $code = 303) {

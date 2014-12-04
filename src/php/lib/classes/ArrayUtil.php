@@ -221,6 +221,24 @@ class ArrayUtil {
 		return array_column($arrays, $key);
 	}
 
+	/* Get all of the values under the keys listed from an array as a
+	 * sequential array. Optionally provide a default value to use for
+	 * missing keys. If no default value is passed, missing keys are
+	 * treated as errors. */
+	public static function pick($array, $keys, $default = null) {
+		$result = array();
+		if(func_num_args() > 2) {
+			foreach($keys as $key) {
+				$result[] = self::get($array, $key, $default);
+			}
+		} else {
+			foreach($keys as $key) {
+				$result[] = $array[$key];
+			}
+		}
+		return $result;
+	}
+
 	/* Invert an associative array so that its values become the keys and
 	 * vice-versa. */
 	public static function invert($array) {

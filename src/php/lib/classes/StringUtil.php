@@ -633,32 +633,32 @@ class StringUtil {
 
 	/* Generate and URL-encode a query string given an array or object of
 	 * data. Optionally provide a separator instead of `&`, e.g. `;`. */
-	public static function encode_query_string($data, $sep = '&') {
+	public static function encode_standard_query_string($data, $sep = '&') {
 		return http_build_query($data, '', $sep, PHP_QUERY_RFC3986);
 	}
 
-	/* Like `encode_query_string`, but encode spaces with `+`. */
-	public static function encode_php_query_string($data, $sep = '&') {
+	/* Like `encode_standard_query_string`, but encode spaces with `+`. */
+	public static function encode_query_string($data, $sep = '&') {
 		return http_build_query($data, '', $sep);
 	}
 
 	/* URL-encode a string. */
-	public static function encode_url($s) {
+	public static function encode_standard_url($s) {
 		return rawurlencode($s);
 	}
 
 	/* Decode a URL-encoded string. */
-	public static function decode_url($s) {
+	public static function decode_standard_url($s) {
 		return rawurldecode($s);
 	}
 
 	/* URL-encode a string, and use `+` to encode spaces. */
-	public static function encode_php_url($s) {
+	public static function encode_url($s) {
 		return urlencode($s);
 	}
 
 	/* Decode a URL-encoded string, treating `+` as space. */
-	public static function decode_php_url($s) {
+	public static function decode_url($s) {
 		return urldecode($s);
 	}
 

@@ -14,7 +14,14 @@ var uglify = require('gulp-uglify');
 
 var paths = {
   scripts: 'src/js/**/*.js',
-  stylesheets: 'src/css/**/*.scss'
+  vendorScripts: [
+    'bower_components/jquery/dist/jquery.js',
+    'bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js',
+    'bower_components/underscore/underscore.js',
+    'bower_components/backbone/backbone.js'
+  ],
+  stylesheets: 'src/css/**/*.scss',
+  mainStylesheet: 'src/css/main.scss'
 };
 
 gulp.task('clean', function(cb) {
@@ -27,7 +34,7 @@ gulp.task('clean', function(cb) {
 });
 
 gulp.task('css', function() {
-  gulp.src('src/css/main.scss')
+  gulp.src(paths.mainStylesheet)
     .pipe(sourcemaps.init())
       .pipe(sass())
       .pipe(autoprefixer())
@@ -46,7 +53,7 @@ gulp.task('lint', function() {
 });
 
 gulp.task('js', function() {
-  return gulp.src(['bower_components/jquery/dist/jquery.js', paths.scripts])
+  return gulp.src(paths.vendorScripts.concat([paths.scripts]))
     .pipe(sourcemaps.init())
       .pipe(concat('main.js'))
     .pipe(sourcemaps.write())

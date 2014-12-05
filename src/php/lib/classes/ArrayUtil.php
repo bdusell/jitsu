@@ -46,9 +46,32 @@ class ArrayUtil {
 		return array_keys($array);
 	}
 
-	/* Return all of the values of an array in a sequential array. */
-	public static function values($array) {
-		return array_values($array);
+	/* Return all of the values of an array in a sequential array.
+	 *
+	 * Optionally pass a list of keys to get a list of only the values
+	 * under those keys. In this case the values are returned in the same
+	 * order as their corresponding keys were listed.
+	 *
+	 * Optionally provide a default value to use for missing keys. If no
+	 * default value is passed, missing keys are omitted. */
+	public static function values($array, $keys = null, $default = null) {
+		if($keys === null) {
+			return array_values($array);
+		} else {
+			$result = array();
+			if(func_num_args() > 2) {
+				foreach($keys as $key) {
+					$result[] = self::get($array, $key, $default);
+				}
+			} else {
+				foreach($keys as $key) {
+					if(self::has($array, $key)) {
+						$result[] = $array[$key];
+					}
+				}
+			}
+			return $result;
+		}
 	}
 
 	/* Append a value to the end of a sequential array. Note that this is
@@ -221,19 +244,22 @@ class ArrayUtil {
 		return array_column($arrays, $key);
 	}
 
-	/* Get all of the values under the keys listed from an array as a
-	 * sequential array. Optionally provide a default value to use for
-	 * missing keys. If no default value is passed, missing keys are
-	 * treated as errors. */
+	/* Get all of the key-value pairs in an array with the listed keys. The
+	 * result is returned as an associative array whose ordering reflects
+	 * the ordering of the keys listed. Optionally provide a default value
+	 * to use as the value for missing keys. If no default is passed,
+	 * missing keys are omitted. */
 	public static function pick($array, $keys, $default = null) {
 		$result = array();
 		if(func_num_args() > 2) {
 			foreach($keys as $key) {
-				$result[] = self::get($array, $key, $default);
+				$result[$key] = self::get($array, $key, $default);
 			}
 		} else {
 			foreach($keys as $key) {
-				$result[] = $array[$key];
+				if(self::has($array, $key)) {
+					$result[$key] = $array[$key];
+				}
 			}
 		}
 		return $result;
@@ -598,7 +624,8 @@ class ArrayUtil {
 	public static function normalize_key($k) {
 		if(is_int($k)) return $k;
 		$k = (string) $k;
-		if(ctype_digit($k) && (strlen($k) === 1 || $k[0] !== '0')) {
+		$len = strlen($k);
+		if($len > 0 && ctype_digit($k) && ($len === 1 || $k[0] !== '0')) {
 			return (int) $k;
 		}
 		return $k;

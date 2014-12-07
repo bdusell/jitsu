@@ -3,7 +3,7 @@
 class VideosController {
 
 	public static function index() {
-		$videos = Database::query('select "id" from "videos"');
+		$videos = Database::query('select * from "videos" order by "id" asc');
 		Pages::page('videos/index', array(
 			'title' => 'Videos',
 			'videos' => $videos
@@ -11,7 +11,7 @@ class VideosController {
 	}
 
 	public static function show($id) {
-		$video = Database::row('select "id" from "videos" where "id" = ?', $id);
+		$video = Database::row('select * from "videos" where "id" = ?', $id);
 		if($video) {
 			$tags = Database::query('select "value" from "tags" where "video_id" = ?', $id);
 			Pages::page('videos/show', array(
@@ -31,9 +31,10 @@ class VideosController {
 	}
 
 	public static function create() {
-		$id = Request::form('id');
-		Database::execute('insert into "videos"("id") values (?)', $id);
-		Pages::redirect('videos/' . StringUtil::encode_url($id));
+		$name = Request::form('name');
+		$href = Request::form('url');
+		Database::execute('insert into "videos"("name", "url") values (?, ?)', $name, $href);
+		Pages::redirect('videos/' . StringUtil::encode_url(Database::last_insert_id()));
 	}
 
 	public static function search() {

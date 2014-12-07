@@ -1,8 +1,12 @@
 <h1>New Video</h1>
-<form method="POST" action="videos/">
-  <fieldset>
-    <label for="id-input">Video ID</label>
-    <input id="id-input" type="text" name="id" />
-  </fieldset>
-  <input type="submit" value="Create" />
+<form role="form" method="POST" action="videos/">
+  <div class="form-group">
+    <label for="title-input">Title</label>
+    <input class="form-control" id="title-input" type="text" name="name" placeholder="Enter video title" />
+  </div>
+  <div class="form-group">
+    <label for="id-input">URL</label>
+    <input class="form-control" id="id-input" type="text" name="url" placeholder="Enter video URL" />
+  </div>
+  <button type="submit" class="btn btn-default">Add</button>
 </form>

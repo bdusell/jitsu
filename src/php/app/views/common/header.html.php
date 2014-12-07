@@ -11,8 +11,27 @@
     </div>
     <div class="collapse navbar-collapse" id="videos-navbar-collapse">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="">Home<span class="sr-only"> (current)</span></a></li>
-        <li><a href="videos/">All Videos</a></li>
+<?php
+  $links = array(
+    array('Home', 'Home', ''),
+    array('Videos', 'All Videos', 'videos/')
+  );
+?>
+<?php
+  foreach($links as $link):
+    list($link_title, $link_text, $link_href) = $link;
+    $selected = $link_title === $title;
+?>
+        <li<?php if($selected) { ?> class="active"<?php } ?>>
+          <a href="<?= $link_href ?>"><?=
+            $link_text
+          ?><?php
+            if($selected) { ?><span class="sr-only"> (current)</span><?php }
+          ?></a>
+        </li>
+<?php
+  endforeach;
+?>
       </ul>
       <form class="navbar-form navbar-right" role="search" method="GET" action="videos/search">
         <div class="form-group">

@@ -1,10 +1,28 @@
 <h1>Videos</h1>
-<ul>
-<?php foreach($videos as $video): ?>
-  <li><a href="videos/<?= htmlattr($video->id) ?>"><?= html($video->id) ?></a></li>
-<?php endforeach; ?>
-  <li><a href="videos/new">New Video</a></li>
-</ul>
-<ul>
-  <li><a href="">Home</a></li>
-</ul>
+<div class="row">
+<?php
+  foreach($videos as $video):
+?>
+  <div class="col-xs-6 col-md-2">
+    <div class="video-cell-container">
+      <div class="video-cell">
+        <a href="videos/<?= html($video->id) ?>">
+          <h2><?= html($video->name) ?></h2>
+          <p><?= html($video->id) ?></p>
+        </a>
+      </div>
+    </div>
+  </div>
+<?php
+  endforeach;
+?>
+  <div class="col-xs-6 col-md-2">
+    <div class="video-cell-container">
+      <div class="video-cell">
+        <a href="videos/new">
+          <h2>Add New Video</h2>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

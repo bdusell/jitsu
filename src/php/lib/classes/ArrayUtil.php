@@ -35,7 +35,8 @@ class ArrayUtil {
 		return array_key_exists($key, $array);
 	}
 
-	/* Remove a key from an array. */
+	/* Remove a key from an array. It is not an error to remove a
+	 * non-existent key. */
 	public static function remove(&$array, $key) {
 		// what is this absurd syntax
 		unset($array[$key]);
@@ -65,7 +66,7 @@ class ArrayUtil {
 				}
 			} else {
 				foreach($keys as $key) {
-					if(self::has($array, $key)) {
+					if(self::has_key($array, $key)) {
 						$result[] = $array[$key];
 					}
 				}
@@ -87,7 +88,8 @@ class ArrayUtil {
 		}
 	}
 
-	/* Concatenate two sequential arrays. */
+	/* Concatenate two sequential arrays. This does *not* work as expected
+	 * with associative arrays. */
 	public static function concat($array1, $array2) {
 		return array_merge($array1, $array2);
 	}
@@ -104,12 +106,13 @@ class ArrayUtil {
 	}
 
 	/* Shift an element off the beginning of an array. Return null if the
-	 * array was empty. */
+	 * array was empty. Re-indexes sequential arrays. */
 	public static function shift(&$array) {
 		return array_shift($array);
 	}
 
-	/* Prepend a value to the beginning of an array. */
+	/* Prepend a value to the beginning of an array. Re-indexes sequential
+	 * arrays. */
 	public static function unshift(&$array, $value) {
 		return array_unshift($array, $value);
 	}
@@ -132,21 +135,24 @@ class ArrayUtil {
 		return in_array($value, $array, true);
 	}
 
-	/* Return the `$i`th value in an array according to ordering (not by
-	 * key value or index). */
+	/* Return the value at offset `$i` in an array according to ordering
+	 * (not by key or index). Returns null if `$i` is out of range. */
 	public static function value_at($array, $i) {
-		return array_slice($array, $i, 1)[0];
+		foreach(array_slice($array, $i, 1) as $v) {
+			return $v;
+		}
 	}
 
-	/* Return the `$i`th key-value pair in an array as the pair
-	 * `array($key, $value)`. */
+	/* Return the key-value pair at offset `$i` in an array as the pair
+	 * `array($key, $value)`. Returns null if `$i` is out of range. */
 	public static function pair_at($array, $i) {
 		foreach(array_slice($array, $i, 1, true) as $k => $v) {
 			return array($k, $v);
 		}
 	}
 
-	/* Return the `$i`th key in an array. */
+	/* Return the key at offset `$i` in an array. Returns null if `$i` is
+	 * out of range. */
 	public static function key_at($array, $i) {
 		foreach(array_slice($array, $i, 1, true) as $k => $v) {
 			return $k;
@@ -155,9 +161,10 @@ class ArrayUtil {
 
 	/* Return a slice of a sequential array, where `$i` is the starting
 	 * index and `$j` is one past the last index, or null if all the rest
-	 * of the list should be used. If `$j` is negative, this denotes the
-	 * number of elements from the end of the array where the slice stops.
-	 * The result is re-indexed. */
+	 * of the list should be used. If either index is negative, this
+	 * denotes the number of elements from the end of the array where the
+	 * slice stops. The result is re-indexed for sequential arrays;
+	 * otherwise the result is the same as that of `pair_slice`. */
 	public static function slice($array, $i, $j = null) {
 		return self::_slice($array, $i, $j, false);
 	}
@@ -177,7 +184,7 @@ class ArrayUtil {
 		return array_splice($array, $offset, $len, $sub);
 	}
 
-	/* Remove a slice from an array. */
+	/* Remove a slice from an array. Returns the removed slice. */
 	public static function remove_slice(&$array, $i, $j = null) {
 		return self::assign_slice($array, $i, $j, array());
 	}
@@ -192,16 +199,39 @@ class ArrayUtil {
 		return array_reverse($array, true);
 	}
 
-	/* Generate a sequential array consisting of a range of numbers, with
-	 * an optional step size which defaults to integer 1. If the step size
-	 * is an integer, then the range is non-inclusive (it stops 1 before
-	 * `$j`). Otherwise, the range is inclusive. */
-	public static function range($i, $j, $step) {
-		return range($i, $j - is_int($step), $step);
+	/* Generate a sequential array consisting of numbers in the range `$i`
+	 * through `$j`, with an optional step size. If all of the arguments
+	 * are integers, then the range is non-inclusive (it stops 1 before
+	 * `$j`). Otherwise, the range is inclusive.
+	 *
+	 * If only the first argument is given, then it acts as the ending
+	 * index, and an offset of 0 and step size of 1 are assumed.
+	 *
+	 * Any of the arguments may be negative. An empty list will be returned
+	 * if the beginning of the interval occurs after its end. It is an
+	 * error to use a step size of 0. A step size larger than the size of
+	 * the interval may be used.
+	 */
+	public static function range($i, $j = null, $step = 1) {
+		if($j === null) {
+			$j = $i;
+			$i = 0;
+		}
+		$ints = is_int($i) && is_int($j) && is_int($step);
+		// Adjust $j to be inclusive
+		$j += ($step < 0 ? $ints : -$ints);
+		// If the step size and interval run in different directions,
+		// return an empty array
+		if($i > $j !== $step < 0) return array();
+		// PHP range has this weird limitation with step sizes larger
+		// than the interval... in this case just return an array which
+		// includes the start offset
+		if(abs($step) > abs($j - $i)) return array($i);
+		return range($i, $j, $step);
 	}
 
-	/* Construct an associative array from an array of pairs, where the
-	 * first element of each is the key and the second is the value. */
+	/* Construct an associative array from an array of pairs of the form
+	 * `array($key, $value)`. */
 	public static function from_pairs($pairs) {
 		return array_column($pairs, 1, 0);
 	}
@@ -257,7 +287,7 @@ class ArrayUtil {
 			}
 		} else {
 			foreach($keys as $key) {
-				if(self::has($array, $key)) {
+				if(self::has_key($array, $key)) {
 					$result[$key] = $array[$key];
 				}
 			}
@@ -266,7 +296,8 @@ class ArrayUtil {
 	}
 
 	/* Invert an associative array so that its values become the keys and
-	 * vice-versa. */
+	 * vice-versa. It is an error to try to flip an array with non-integer
+	 * or string values. */
 	public static function invert($array) {
 		return array_flip($array);
 	}
@@ -281,8 +312,10 @@ class ArrayUtil {
 		return array_replace_recursive($array1, $array2);
 	}
 
-	/* Split an array into chunks according to its ordering. Returns a
-	 * sequential array containing the chunks. */
+	/* Split an array into chunks of size `$n` according to its ordering.
+	 * Returns a sequential array containing the chunks of values as
+	 * sequential arrays. The last chunk may have fewer than `$n`
+	 * elements. */
 	public static function chunks($a, $n) {
 		return array_chunk($a, $n);
 	}
@@ -294,7 +327,8 @@ class ArrayUtil {
 	}
 
 	/* Filter the values in an associative array by a predicate of the form
-	 * `function($value)`. If none is given, filter all truthy values. */
+	 * `function($value)`. If no predicate is given, filters all truthy
+	 * values. */
 	public static function filter($array, $callback = null) {
 		return array_filter($array, $callback);
 	}
@@ -316,20 +350,20 @@ class ArrayUtil {
 	}
 
 	/* Reduce an array of values using a binary function. Optionally
-	 * provide an initial value; if this is null, then it is ignored and
-	 * arrays can be reduced using the result from the first callback. */
+	 * provide an initial value, which is null by default. */
 	public static function reduce($array, $callback, $initial = null) {
 		return array_reduce($array, $callback, $initial);
 	}
 
 	/* Apply a callback to every element of an array. The callback should
-	 * be in the form `function($value, $key)`. */
+	 * be in the form `function($value [, $key])`. */
 	public static function apply(&$array, $callback) {
 		array_walk($array, $callback);
 	}
 
 	/* Traverse a nested array structure's leaves in order. The callback
-	 * should be in the form `function($value, $key)`. */
+	 * should be in the form `function($value, $key)`. The callback may
+	 * modify the array's contents in place. */
 	public static function traverse_leaves(&$array, $callback) {
 		array_walk_recursive($array, $callback);
 	}
@@ -343,8 +377,8 @@ class ArrayUtil {
 	 * `null`, its component is ignored in the comparison. If a comparator
 	 * is `true`, then the default string comparison method is used for
 	 * that component. Otherwise, a callback implementing an arbitrary
-	 * comparison function may be used. The default is to compare values
-	 * by string comparison. */
+	 * comparison function may be used. The default is to ignore keys and
+	 * compare values by string comparison. */
 	public static function difference($array1, $array2, $key_cmp = null, $value_cmp = true) {
 		if($key_cmp === null) {
 			if($value_cmp === null) {
@@ -450,7 +484,7 @@ class ArrayUtil {
 	}
 
 	/* Remove all key-value pairs from an array whose values are duplicates
-	 * of other values earlier in the array. */
+	 * of other values earlier in the array. Comparison is *non-strict*. */
 	public static function unique_values($array) {
 		return array_unique($array, SORT_REGULAR);
 	}
@@ -460,6 +494,7 @@ class ArrayUtil {
 	 * the unexpected keys found. */
 	public static function has_only_keys($array, $keys, &$unexpected = null) {
 		$gather = func_num_args() > 2;
+		if($gather) $unexpected = array();
 		$key_set = self::to_set($keys);
 		foreach($array as $key => $value) {
 			if(!self::has_key($key_set, $key)) {
@@ -478,6 +513,7 @@ class ArrayUtil {
 	 * keys not found. */
 	public static function has_keys($array, $keys, &$missing = null) {
 		$gather = func_num_args() > 2;
+		if($gather) $missing = array();
 		foreach($keys as $key) {
 			if(!self::has_key($array, $key)) {
 				if($gather) {
@@ -495,6 +531,7 @@ class ArrayUtil {
 	 * unexpected and missing keys seen. */
 	public static function has_exact_keys($array, $keys, &$unexpected = null, &$missing = null) {
 		$gather = func_num_args() > 2;
+		if($gather) $unexpected = $missing = array();
 		$key_set = self::to_set($keys);
 		foreach($array as $key => $value) {
 			if(self::has_key($key_set, $key)) {
@@ -529,6 +566,7 @@ class ArrayUtil {
 
 	/* Pick `$n` random keys from an array as a sequential array. */
 	public static function random_keys($array, $n) {
+		if($n === 0) return array();
 		$r = array_rand($array, $n);
 		if($n === 1) $r = array($r);
 		return $r;
@@ -635,9 +673,9 @@ class ArrayUtil {
 	 * that the complexity of this function is linear in the size of the
 	 * array, so avoid its use. */
 	public static function is_sequential($array) {
-		if(!is_array($x)) return false;
+		if(!is_array($array)) return false;
 		$i = 0;
-		foreach($x as $k => $v) {
+		foreach($array as $k => $v) {
 			if($k !== $i++) return false;
 		}
 		return true;
@@ -648,12 +686,6 @@ class ArrayUtil {
 	 * course, this limits the list items to strings and integers. */
 	public static function count_values($list) {
 		return array_count_values($list);
-	}
-
-	/* Traverse a nested array structure and return the number of its
-	 * leaves. */
-	public static function count_leaves($array) {
-		return count($array, COUNT_RECURSIVE);
 	}
 
 	private static function _slice($array, $i, $j, $preserve_keys) {

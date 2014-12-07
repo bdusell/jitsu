@@ -163,10 +163,13 @@ class XArray {
 	}
 
 	private static function _unbox(&$args) {
-		foreach($args as $arg) {
+		$tmp = $args;
+		$args = array();
+		foreach($tmp as $arg) {
 			if($arg instanceof self) {
 				$arg = $arg->value;
 			}
+			$args[] = $arg;
 		}
 	}
 

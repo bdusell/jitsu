@@ -27,7 +27,8 @@ class StringUtil {
 		return str_split($s);
 	}
 
-	/* Split a string into chunks of `$n` characters each. */
+	/* Split a string into chunks of `$n` characters each as a sequential
+	 * array. The last chunk may have fewer than `$n` characters. */
 	public static function chunks($s, $n) {
 		return str_split($s, $n);
 	}
@@ -46,9 +47,9 @@ class StringUtil {
 			return self::tokenize($s, " \n\t\r\v\f");
 		} else {
 			if($limit === null) {
-				return explode($s, $delim);
+				return explode($delim, $s);
 			} else {
-				return explode($s, $delim, $limit + ($limit >= 0));
+				return explode($delim, $s, $limit + ($limit >= 0));
 			}
 		}
 	}
@@ -157,7 +158,7 @@ class StringUtil {
 	}
 
 	/* Replace a portion of a string with another. */
-	public static function assign_substring($s, $new, $offset, $length = null) {
+	public static function replace_substring($s, $new, $offset, $length = null) {
 		return substr_replace($s, $new, $offset, $length);
 	}
 
@@ -172,7 +173,7 @@ class StringUtil {
 
 	/* Replace a slice of a string with another. If `$j` is null, the slice
 	 * is until the end of the string. */
-	public static function assign_slice($s, $i, $j, $new) {
+	public static function replace_slice($s, $i, $j, $new) {
 		list($offset, $len) = Util::convert_slice_indexes($i, $j, strlen($s));
 		return substr_replace($s, $new, $offset, $len);
 	}
@@ -336,6 +337,17 @@ class StringUtil {
 	/* Like `contains` but case-insensitive. */
 	public static function icontains($s, $substr, $offset = 0) {
 		return stripos($s, $substr, $offset) !== false;
+	}
+
+	/* Tell whether a string includes one of the characters listed in
+	 * `$chars`. */
+	public static function contains_chars($s, $chars) {
+		return strpbrk($s, $chars) !== false;
+	}
+
+	/* Alias for `contains_chars`. */
+	public static function contains_char($s, $char) {
+		return strpbrk($s, $char) !== false;
 	}
 
 	/* Tell whether a string begins with a certain prefix. */

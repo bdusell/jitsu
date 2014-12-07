@@ -4,6 +4,7 @@ class config {
 
 	private static $vars = array(
 		'dir'           => null,
+		'document_root' => null,
 		'scheme'        => 'http',
 		'host'          => 'localhost',
 		'path'          => '',

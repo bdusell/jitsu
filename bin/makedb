@@ -9,7 +9,7 @@ echo -n 'working...'
 .read ../src/sql/schema.sql
 SQL
 } && {
-  if [[ -f data.sql ]]; then
+  if [[ -f ../src/sql/data.sql ]]; then
     sqlite3 database.db <<SQL
 .read ../src/sql/data.sql
 SQL

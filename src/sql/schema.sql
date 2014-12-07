@@ -1,5 +1,7 @@
 create table "videos" (
-	"id" integer not null primary key autoincrement
+	"id" integer not null primary key autoincrement,
+	"name" text not null,
+	"url" text not null
 );
 
 create table "tags" (

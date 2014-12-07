@@ -114,7 +114,7 @@ class ArrayUtil {
 	/* Prepend a value to the beginning of an array. Re-indexes sequential
 	 * arrays. */
 	public static function unshift(&$array, $value) {
-		return array_unshift($array, $value);
+		array_unshift($array, $value);
 	}
 
 	/* Return the key under which a value is stored in an array. Comparison

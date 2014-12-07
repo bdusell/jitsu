@@ -10,7 +10,7 @@ class RegexUtil {
 	 * ending delimiter defaults to the start delimiter if null. */
 	public static function create($pat, $flags = '', $start = null, $end = null) {
 		if($start === null) {
-			return '/' . str_replace($pat, '/', '\\/') . '/' . $flags;
+			return '/' . str_replace('/', '\\/', $pat) . '/' . $flags;
 		} else {
 			if($end === null) $end = $start;
 			return $start . $pat . $end . $flags;

@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+
+include dirname(__DIR__) . '/src/php/cli.php';
+
 $name = basename(array_shift($argv));
 $usage = function() use($name) {
 	echo <<<TXT
@@ -15,6 +18,7 @@ options:
 TXT
 	;
 };
+
 $files = array();
 $config = null;
 while(($arg = array_shift($argv)) !== null) {
@@ -31,22 +35,11 @@ if(!$files) {
 	call_user_func($usage);
 	exit(1);
 }
-call_user_func(function() {
-	include dirname(__DIR__) . '/src/php/lib/includes/config.php';
-	include dirname(__DIR__) . '/src/php/app/config.php';
-});
+
 if($config !== null) {
-	$__FILE__ = $config;
-	call_user_func(function() use ($__FILE__) {
-		include $__FILE__;
-	});
+	array_unshift($files, $config);
 }
-config::show_errors(true);
-call_user_func(function() {
-	include dirname(__DIR__) . '/src/php/lib/includes/errors.php';
-	include dirname(__DIR__) . '/src/php/lib/includes/path.php';
-	include dirname(__DIR__) . '/src/php/lib/includes/globals.php';
-});
+array_unshift($files, dirname(__DIR__) . '/src/php/app/config.php');
 foreach($files as $__FILE__) {
 	call_user_func(function() use($__FILE__) {
 		include $__FILE__;

@@ -2,7 +2,7 @@
 
 /* An object-oriented wrapper around the built-in PHP array type which offers
  * a richer API. */
-class XArray {
+class XArray implements Countable, IteratorAggregate, ArrayAccess {
 
 	public $value;
 
@@ -55,6 +55,31 @@ class XArray {
 		throw new BadMethodCallException(
 			get_class() . '::' . $name . ' does not exist'
 		);
+	}
+
+	public function count() {
+		return count($this->value);
+	}
+
+	public function getIterator() {
+		return new ArrayIterator($this->value);
+	}
+
+	public function offsetExists($offset) {
+		return isset($this->value[$offset]);
+	}
+
+	public function offsetGet($offset) {
+		return $this->value[$offset];
+	}
+
+	public function offsetSet($offset, $value) {
+		if($offset === null) $this->value[] = $value;
+		else $this->value[$offset] = $value;
+	}
+
+	public function offsetUnset($offset) {
+		unset($this->value[$offset]);
 	}
 
 	public function has_only_keys($keys, &$unexpected = null) {

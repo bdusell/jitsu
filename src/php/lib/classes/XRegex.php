@@ -8,16 +8,24 @@ class XRegex {
 	public $count;
 	public $offsets;
 
-	public function __construct() {
-		$this->pattern = call_user_func_array(
-			array('RegexUtil', 'create'),
-			func_get_args()
+	public function __construct($arg) {
+		$this->pattern = (
+			$arg instanceof self ?
+				$arg->pattern :
+				call_user_func_array(
+					array('RegexUtil', 'create'),
+					func_get_args()
+				)
 		);
+	}
+
+	public function __toString() {
+		return $this->pattern;
 	}
 
 	public function __call($name, $args) {
 		if(array_key_exists($name, self::$normal)) {
-			array_unshift($args, $this->source);
+			array_unshift($args, $this->pattern);
 			return call_user_func_array(
 				array('RegexUtil', $name),
 				$args
@@ -31,6 +39,36 @@ class XRegex {
 				get_class() . '->' . $name . ' does not exist'
 			);
 		}
+	}
+
+	public static function __callStatic($name, $args) {
+		if(array_key_exists($name, self::$normal_static)) {
+			return call_user_func_array(
+				array('RegexUtil', $name),
+				$args
+			);
+		} else {
+			throw new BadMethodCallException(
+				get_class() . '::' . $name . ' does not exist'
+			);
+		}
+	}
+
+	private function _replace($name, $args) {
+		return $this->_addref($name, $args, $this->count);
+	}
+
+	private function _split($name, $args) {
+		return $this->_addref($name, $args, $this->offsets);
+	}
+
+	private function _addref($name, $args, &$ref) {
+		array_unshift($args, $this->pattern);
+		$args[] = &$ref;
+		return call_user_func_array(
+			array('RegexUtil', $name),
+			$args
+		);
 	}
 
 	private static $normal = array(
@@ -54,22 +92,9 @@ class XRegex {
 		'inclusive_split' => true,
 	);
 
-	private function _replace($name, $args) {
-		return $this->_addref($name, $args, $this->count);
-	}
-
-	private function _split($name, $args) {
-		return $this->_addref($name, $args, $this->offsets);
-	}
-
-	private function _addref($name, $args, &$ref) {
-		array_unshift($args, $this->pattern);
-		$args[] = &$ref;
-		return call_user_func_array(
-			array('RegexUtil', $name),
-			$args
-		);
-	}
+	private static $normal_static = array(
+		'escape' => true,
+	);
 }
 
 ?>

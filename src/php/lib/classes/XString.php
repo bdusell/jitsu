@@ -7,7 +7,17 @@ class XString {
 	public $value;
 
 	public function __construct($value) {
-		$this->value = $value;
+		$this->value = (
+			$value === null ?
+				'' :
+				$value instanceof self ?
+					$value->value :
+					$value
+		);
+	}
+
+	public function __toString() {
+		return $this->value;
 	}
 
 	public function __call($name, $args) {
@@ -59,6 +69,24 @@ class XString {
 
 	public function ireplace($old, $new, &$count = null) {
 		return $this->_replace('ireplace', $old, $new, $count);
+	}
+
+	private static function _unbox(&$args) {
+		$tmp = $args;
+		$args = array();
+		foreach($tmp as $arg) {
+			if($arg instanceof self || $arg instanceof XArray) {
+				$arg = $arg->value;
+			}
+			$args[] = $arg;
+		}
+	}
+
+	private function _replace($name, $old, $new, &$count) {
+		return new XString(call_user_func_array(
+			array('StringUtil', $name),
+			array($this->value, $old, $new, &$count)
+		));
 	}
 
 	private static $normal = array(
@@ -195,24 +223,6 @@ class XString {
 		'encode_html_dict' => true,
 		'encode_html_entities_dict' => true,
 	);
-
-	private static function _unbox(&$args) {
-		$tmp = $args;
-		$args = array();
-		foreach($tmp as $arg) {
-			if($arg instanceof self || $arg instanceof XArray) {
-				$arg = $arg->value;
-			}
-			$args[] = $arg;
-		}
-	}
-
-	private function _replace($name, $old, $new, &$count) {
-		return new XString(call_user_func_array(
-			array('StringUtil', $name),
-			array($this->value, $old, $new, &$count)
-		));
-	}
 }
 
 ?>

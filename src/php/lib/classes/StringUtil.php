@@ -68,7 +68,7 @@ class StringUtil {
 
 	/* Join array elements into a single string with a separator (default
 	 * is empty string). */
-	public static function join(/* $sep = '', $strs */) {
+	public static function join(/* $sep, $strs | $strs */) {
 		return call_user_func_array(
 			'implode',
 			func_get_args()

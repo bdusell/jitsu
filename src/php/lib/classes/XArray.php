@@ -7,7 +7,106 @@ class XArray {
 	public $value;
 
 	public function __construct($value = null) {
-		$this->value = $value === null ? array() : $value;
+		$this->value = (
+			$value === null ?
+				array() :
+				$value instanceof self ?
+					$value->value :
+					$value
+		);
+	}
+
+	public function __toString() {
+		return $this->join(', ');
+	}
+
+	public function __call($name, $args) {
+		$func = array('ArrayUtil', $name);
+		self::_unbox($args);
+		if(array_key_exists($name, self::$inplace)) {
+			array_unshift($args, null);
+			$args[0] = &$this->value;
+			return call_user_func_array($func, $args);
+		} else {
+			array_unshift($args, $this->value);
+			if(array_key_exists($name, self::$dowrap)) {
+				return new XArray(
+					call_user_func_array($func, $args)
+				);
+			} elseif(array_key_exists($name, self::$nowrap)) {
+				return call_user_func_array($func, $args);
+			}
+		}
+		throw new BadMethodCallException(
+			get_class() . '->' . $name . ' does not exist'
+		);
+	}
+
+	public static function __callStatic($name, $args) {
+		self::_unbox($args);
+		if(array_key_exists($name, self::$ctors)) {
+			return new XArray(
+				call_user_func_array(
+					array('ArrayUtil', $name),
+					$args
+				)
+			);
+		}
+		throw new BadMethodCallException(
+			get_class() . '::' . $name . ' does not exist'
+		);
+	}
+
+	public function has_only_keys($keys, &$unexpected = null) {
+		list($keys) = self::_unbox_copy($keys);
+		switch(func_num_args()) {
+		case 1:
+			return ArrayUtil::has_only_keys($this->value, $keys);
+		default:
+			return ArrayUtil::has_only_keys($this->value, $keys, $unexpected);
+		}
+	}
+
+	public function has_keys($keys, &$missing = null) {
+		list($keys) = self::_unbox_copy($keys);
+		switch(func_num_args()) {
+		case 1:
+			return ArrayUtil::has_keys($this->value, $keys);
+		default:
+			return ArrayUtil::has_keys($this->value, $keys, $missing);
+		}
+	}
+
+	public function has_exact_keys($keys, &$unexpected = null, &$missing = null) {
+		list($keys) = self::_unbox_copy($keys);
+		switch(func_num_args()) {
+		case 1:
+			return ArrayUtil::has_exact_keys($this->value);
+		default:
+			return ArrayUtil::has_exact_keys($this->value, $unexpected, $missing);
+		}
+	}
+
+	public function join($str) {
+		list($str) = self::_unbox_copy($str);
+		return StringUtil::join($this->value, $str);
+	}
+
+	private static function _unbox(&$args) {
+		$tmp = $args;
+		$args = array();
+		foreach($tmp as $arg) {
+			if($arg instanceof self) {
+				$arg = $arg->value;
+			}
+			$args[] = $arg;
+		}
+	}
+
+	private static function _unbox_copy() {
+		$args = func_get_args();
+		self::_unbox($args);
+		return $args;
 	}
 
 	private static $ctors = array(
@@ -94,90 +193,6 @@ class XArray {
 		'human_sort_values' => true,
 		'ihuman_sort_values' => true,
 	);
-
-	public function __call($name, $args) {
-		$func = array('ArrayUtil', $name);
-		self::_unbox($args);
-		if(array_key_exists($name, self::$inplace)) {
-			array_unshift($args, null);
-			$args[0] = &$this->value;
-			return call_user_func_array($func, $args);
-		} else {
-			array_unshift($args, $this->value);
-			if(array_key_exists($name, self::$dowrap)) {
-				return new XArray(
-					call_user_func_array($func, $args)
-				);
-			} elseif(array_key_exists($name, self::$nowrap)) {
-				return call_user_func_array($func, $args);
-			}
-		}
-		throw new BadMethodCallException(
-			get_class() . '->' . $name . ' does not exist'
-		);
-	}
-
-	public static function __callStatic($name, $args) {
-		self::_unbox($args);
-		if(array_key_exists($name, self::$ctors)) {
-			return new XArray(
-				call_user_func_array(
-					array('ArrayUtil', $name),
-					$args
-				)
-			);
-		}
-		throw new BadMethodCallException(
-			get_class() . '::' . $name . ' does not exist'
-		);
-	}
-
-	public function has_only_keys($keys, &$unexpected = null) {
-		list($keys) = self::_unbox_copy($keys);
-		switch(func_num_args()) {
-		case 1:
-			return ArrayUtil::has_only_keys($this->value, $keys);
-		default:
-			return ArrayUtil::has_only_keys($this->value, $keys, $unexpected);
-		}
-	}
-
-	public function has_keys($keys, &$missing = null) {
-		list($keys) = self::_unbox_copy($keys);
-		switch(func_num_args()) {
-		case 1:
-			return ArrayUtil::has_keys($this->value, $keys);
-		default:
-			return ArrayUtil::has_keys($this->value, $keys, $missing);
-		}
-	}
-
-	public function has_exact_keys($keys, &$unexpected = null, &$missing = null) {
-		list($keys) = self::_unbox_copy($keys);
-		switch(func_num_args()) {
-		case 1:
-			return ArrayUtil::has_exact_keys($this->value);
-		default:
-			return ArrayUtil::has_exact_keys($this->value, $unexpected, $missing);
-		}
-	}
-
-	private static function _unbox(&$args) {
-		$tmp = $args;
-		$args = array();
-		foreach($tmp as $arg) {
-			if($arg instanceof self) {
-				$arg = $arg->value;
-			}
-			$args[] = $arg;
-		}
-	}
-
-	private static function _unbox_copy() {
-		$args = func_get_args();
-		self::_unbox($args);
-		return $args;
-	}
 }
 
 ?>

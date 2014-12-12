@@ -78,47 +78,11 @@ class Request {
 				break;
 			default:
 				// PUT, PATCH
-				parse_str(self::slurp_input(), $form);
+				parse_str(self::body(), $form);
 				break;
 			}
 		}
 		return $name === null ? $form : Util::get($form, $name, $default);
-	}
-
-	/* Get cookies sent with the current request.
-	 *
-	 * Like `form`, if called with no arguments, returns an array mapping
-	 * cookie names to their values. If called with the name of a cookie,
-	 * returns the value of that single cookie, or `$default` if it does
-	 * not exist. */
-	public static function cookie($name = null, $default = null) {
-		return $name === null ? $_COOKIE : Util::get($_COOKIE, $name, $default);
-	}
-
-	/* Alias for `cookie()`. */
-	public static function cookies() {
-		return $_COOKIE;
-	}
-
-	/* Get the raw input sent in the request body as a single string. The
-	 * result is cached, so calling this function more than once is fine.
-	 */
-	public static function slurp_input() {
-		static $result = null;
-		if($result === null) {
-			$result = file_get_contents('php://input');
-		}
-		return $result;
-	}
-
-	/* Get the HTTP referrer URI or null if it was not sent. */
-	public static function referer() {
-		return Util::get($_SERVER, 'HTTP_REFERER');
-	}
-
-	/* Correctly spelled alias of `referer`. */
-	public static function referrer() {
-		return self::referer();
 	}
 
 	/* Get headers sent in the current request.
@@ -127,7 +91,7 @@ class Request {
 	 * lower case of all headers sent in the request to their values.
 	 *
 	 * If called with the name of a header (case-insensitive), returns its
-	 * value, or null if it was not sent.
+	 * value, or `$default` if it was not sent.
 	 */
 	public static function header($name = null, $default = null) {
 		static $headers = array();
@@ -184,6 +148,112 @@ class Request {
 	/* Alias for `header()`. */
 	public static function headers() {
 		return self::header();
+	}
+
+	/* Get the HTTP referrer URI or null if it was not sent. */
+	public static function referer() {
+		return self::header('Referer');
+	}
+
+	/* Correctly spelled alias of `referer`. */
+	public static function referrer() {
+		return self::referer();
+	}
+
+	/* Get cookies sent with the current request, parsed and decoded.
+	 *
+	 * Like `form`, if called with no arguments, returns an array mapping
+	 * cookie names to their values. If called with the name of a cookie,
+	 * returns the value of that single cookie, or `$default` if it does
+	 * not exist. */
+	public static function cookie($name = null, $default = null) {
+		return $name === null ? $_COOKIE : Util::get($_COOKIE, $name, $default);
+	}
+
+	/* Alias for `cookie()`. */
+	public static function cookies() {
+		return $_COOKIE;
+	}
+
+	/* Slurp the raw input sent in the request body into a single string.
+	 * The result is cached, so calling this function more than once is
+	 * fine. */
+	public static function body() {
+		static $result = null;
+		if($result === null) {
+			$result = file_get_contents('php://input');
+		}
+		return $result;
+	}
+
+	/* Get the names of files uploaded in a multipart-formdata request body
+	 * and stored in temporary file space via PHP's POST upload mechanism.
+	 *
+	 * If called with no arguments, returns an array mapping the form
+	 * parameter names of all uploaded files to arrays containing
+	 * information about each upload.
+	 *
+	 * If called with the name of a form parameter, returns the info array
+	 * for the file uploaded under that name, or `$default` if no file was
+	 * uploaded under that name.
+	 *
+	 * The members of the info array are as follows:
+	 *   `name`
+	 *     The original name of the file on the client machine.
+	 *   `type`
+	 *     The MIME type of the file as indicated in the request body (not
+	 *     to be trusted for security reasons).
+	 *   `size`
+	 *     The size in bytes of the uploaded file.
+	 *   `tmp_name`
+	 *     The temporary filepath of the uploaded file.
+	 *   `error`
+	 *     Error code for the file upload. See PHP's `UPLOAD_ERR_`
+	 *     constants.
+	 */
+	public static function file($name = null, $default = null) {
+		return $name === null ? $_FILES : Util::get($_FILES, $name, $default);
+	}
+
+	/* Save a file uploaded under the form parameter `$name` to the path
+	 * `$dest_path` on the filesystem. Throws `RuntimeException` if the
+	 * file is missing, if there is an error code associated with this file
+	 * upload, or if it could not be saved. */
+	public static function save_file($name, $dest_path) {
+		if(array_key_exists($name, $_FILES)) {
+			$info = $_FILES[$name];
+			if(($error = $info['error']) === UPLOAD_ERR_OK) {
+				if(!move_uploaded_file($info['tmp_name'], $dest_path)) {
+					throw new RuntimeException('unable to save uploaded file');
+				}
+			} else {
+				throw new RuntimeException(self::file_error_message($error), $error);
+			}
+		} else {
+			throw new RuntimeException('no file uploaded under parameter "' . $name . '"');
+		}
+		$info = $_FILES[$name];
+	}
+
+	private static function file_error_message($code) {
+		switch($code) {
+		case UPLOAD_ERR_OK:
+			return 'no error';
+		case UPLOAD_ERR_INI_SIZE:
+		case UPLOAD_ERR_FORM_SIZE:
+			return 'uploaded file is prohibitively large';
+		case UPLOAD_ERR_PARTIAL:
+			return 'incomplete file upload';
+		case UPLOAD_ERR_NO_FILE:
+			return 'missing file contents';
+		/*
+		case UPLOAD_ERR_NO_TMP_DIR:
+		case UPLOAD_ERR_CANT_WRITE:
+		case UPLOAD_ERR_EXTENSION:
+		*/
+		default:
+			return 'internal error';
+		}
 	}
 
 	private static $_parsed_url = false;

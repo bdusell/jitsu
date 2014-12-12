@@ -69,7 +69,8 @@ class RegexUtil {
 
 	/* Same behavior as `match`, except that if the string matches the
 	 * regular expression, the return value includes the starting indices
-	 * of the matches as well. */
+	 * of the matches as well. A starting index of -1 indicates that the
+	 * group was not matched. */
 	public static function match_with_offsets($regex, $str, $offset = 0) {
 		$r = self::_match($regex, $str, PREG_OFFSET_CAPTURE, $offset);
 		if($r !== null) {
@@ -147,13 +148,13 @@ class RegexUtil {
 	 *
 	 * When `$str` is an array, an array of the replaced strings is
 	 * returned.
-	 * */
+	 */
 	public static function replace(
 		$regex, $replacement, $str,
 		$limit = null, &$count = null)
 	{
 		if(!is_string($replacement) && !is_array($replacement)) {
-			return self::replace_with_callback(
+			return self::replace_with(
 				$regex, $replacement, $str,
 				$limit, $count
 			);

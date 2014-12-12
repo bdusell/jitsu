@@ -123,19 +123,18 @@ class Request {
 
 	/* Get headers sent in the current request.
 	 *
-	 * If called with no arguments, returns an array mapping the names of
-	 * all headers sent in the request to their values.
+	 * If called with no arguments, returns an array mapping the names in
+	 * lower case of all headers sent in the request to their values.
 	 *
-	 * If called with the name of a header, returns its value, or null if
-	 * it was not sent.
+	 * If called with the name of a header (case-insensitive), returns its
+	 * value, or null if it was not sent.
 	 */
 	public static function header($name = null, $default = null) {
 		static $headers = array();
 		static $headers_fetched = false;
 		static $apache_good = null;
-		// TODO normalize case of keys
-		// THIS IS A BUG
 		if($name !== null) {
+			$name = strtolower($name);
 			if(array_key_exists($name, $headers)) {
 				return $headers[$name];
 			} else {
@@ -146,7 +145,9 @@ class Request {
 					$apache_headers = apache_request_headers();
 					$apache_good = $apache_headers !== false;
 					if($apache_good) {
-						$headers = $apache_headers;
+						$headers = array_change_key_case(
+							$apache_headers
+						);
 						$headers_fetched = true;
 						return Util::get($headers, $name, $default);
 					}
@@ -159,7 +160,9 @@ class Request {
 					$apache_headers = apache_request_headers();
 					$apache_good = $apache_headers !== false;
 					if($apache_good) {
-						$headers = $apache_headers;
+						$headers = array_change_key_case(
+							$apache_headers
+						);
 					}
 				}
 				if(!$apache_good) {
@@ -201,15 +204,7 @@ class Request {
 	}
 
 	private static function _env_to_header($name) {
-		return str_replace(
-			' ', '-',
-			ucwords(
-				str_replace(
-					'_', ' ',
-					strtolower($name)
-				)
-			)
-		);
+		return strtolower(str_replace('_', '-', $name));
 	}
 }
 

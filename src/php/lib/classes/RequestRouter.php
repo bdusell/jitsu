@@ -21,6 +21,7 @@ class RequestRouter {
 			));
 		};
 		$this->bad_method_func = function($method, $path, $methods) {
+			Response::header('Allow', implode(', ', $methods));
 			call_user_func(array(config::helper(), 'error'), 405, array(
 				'method' => $method,
 				'path' => $path,

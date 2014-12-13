@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 
-all: .make/build build/dev/.htaccess build/prod/.htaccess
+all: build/dev/.htaccess build/prod/.htaccess build/dev/php.ini build/prod/php.ini
 build: .make/build
 .PHONY: all build
 
@@ -21,3 +21,10 @@ build/dev/.htaccess: build/dev/config.php src/php/config.htaccess.php
 
 build/prod/.htaccess: build/prod/config.php src/php/config.htaccess.php
 	./bin/process.php -c $^ > $@
+
+build/dev/php.ini: build/dev/config.php src/php/php.ini.php
+	./bin/process.php -c $^ > $@
+
+build/prod/php.ini: build/prod/config.php src/php/php.ini.php
+	./bin/process.php -c $^ > $@
+

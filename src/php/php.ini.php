@@ -1,3 +1,4 @@
+<?php $e = config::show_errors() ? '1' : '0'; ?>
 short_open_tag = 1
 asp_tags = 0
 zend.script_encoding = "UTF-8"
@@ -9,7 +10,10 @@ auto_globals_jit = 1
 enable_post_data_reading = 1
 default_mimetype = "text/html"
 default_charset = "UTF-8"
-expose_php = 0
-display_startup_errors = 0
-report_memleaks = 0
-track_errors = 0
+expose_php = <?= $e ?>
+
+display_startup_errors = <?= $e ?>
+
+report_memleaks = <?= $e ?>
+
+track_errors = <?= $e ?>

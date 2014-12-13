@@ -129,8 +129,9 @@ class RegexUtil {
 	 * `$count` variable.
 	 *
 	 * If `$replacement` is not a string or array, it will be interpreted
-	 * as a callback with the signature `function($match)` whose return
-	 * value will be used to generate the replacement strings.
+	 * as a callback with the signature `function($matches)` whose return
+	 * value will be used to generate the replacement strings. The
+	 * `$matches` parameter is an array containing the matched groups.
 	 *
 	 * Any one of the arguments `$regex`, `$replacement`, or `$str` may
 	 * be an array of multiple values. Whenever each is a scalar, it
@@ -215,11 +216,11 @@ class RegexUtil {
 		return $r;
 	}
 
-	private static function _split($regex, $str, $limit, &$offsets, $flags) {
-		if($offsets !== null) $flags |= PREG_SPLIT_OFFSET_CAPTURE;
+	private static function _split($regex, $str, $limit, &$offsets, $flags, $use_offsets) {
+		if($use_offsets) $flags |= PREG_SPLIT_OFFSET_CAPTURE;
 		$r = preg_split($regex, $str, $limit, $flags);
 		self::_check_error();
-		if($offsets !== null) {
+		if($use_offsets) {
 			$offsets = array_column($r, 1);
 			$r = array_column($r, 0);
 		}
@@ -230,18 +231,21 @@ class RegexUtil {
 	 * to the number of splits. Store the offsets of the resulting strings
 	 * in the optional `$offsets` variable. */
 	public static function split($regex, $str, $limit = null, &$offsets = null) {
-		return self::_split($regex, $str, $limit, $offsets, 0);
+		return self::_split($regex, $str, $limit, $offsets,
+			0, func_num_args() > 3);
 	}
 
 	/* Like `split`, but filter out empty strings from the result. */
 	public static function filter_split($regex, $str, $limit = null, &$offsets = null) {
-		return self::_split($regex, $str, $limit, $offsets, PREG_SPLIT_NO_EMPTY);
+		return self::_split($regex, $str, $limit, $offsets,
+			PREG_SPLIT_NO_EMPTY, func_num_args() > 3);
 	}
 
 	/* Like `split`, except include group 1 of the splitting pattern in the
 	 * results as well. */
 	public static function inclusive_split($regex, $str, $limit = null, &$offsets = null) {
-		return self::_split($regex, $str, $limit, $offsets, PREG_SPLIT_DELIM_CAPTURE);
+		return self::_split($regex, $str, $limit, $offsets,
+			PREG_SPLIT_DELIM_CAPTURE, func_num_args() > 3);
 	}
 }
 

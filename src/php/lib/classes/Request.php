@@ -150,6 +150,19 @@ class Request {
 		return self::header();
 	}
 
+	/* Get the content type of the request. */
+	public static function content_type() {
+		return self::header('Content-Type');
+	}
+
+	/* Get a list of the acceptable content types of the response as an
+	 * associative array mapping MIME type strings to their respective
+	 * quality ratings, ordered in descending order of quality. */
+	public static function accept() {
+		// TODO
+		throw new Exception('not implemented');
+	}
+
 	/* Get the HTTP referrer URI or null if it was not sent. */
 	public static function referer() {
 		return self::header('Referer');

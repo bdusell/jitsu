@@ -99,7 +99,7 @@ class RequestRouter {
 				} elseif($matches[5] !== '') {
 					return ')?';
 				} else {
-					return preg_quote($matches[6], '|');
+					return preg_quote($matches[6], '!');
 				}
 			},
 			$pat

@@ -73,7 +73,8 @@ class SQLStatement implements Iterator {
 	}
 
 	/* Assign a value to an input parameter of a prepared statement. If no
-	 * `$type` is specified, */
+	 * `$type` is null, the appropriate type is used based on the PHP type
+	 * of the value. */
 	public function assign_input($param, $value, $type = null, $inout = false) {
 		if($type === null) {
 			$result = $this->stmt->bindValue($param, $value, self::intuit_type($value));

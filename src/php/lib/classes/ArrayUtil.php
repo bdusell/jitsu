@@ -99,7 +99,7 @@ class ArrayUtil {
 		$array[] = $value;
 	}
 
-	/* Pop a value of the end of an array. Return null if the array
+	/* Pop a value off the end of an array. Return null if the array
 	 * was empty. */
 	public static function pop(&$array) {
 		return array_pop($array);
@@ -124,7 +124,7 @@ class ArrayUtil {
 		return $r === false ? null : $r;
 	}
 
-	/* Alias of `key_of`. */
+	/* Alias for `key_of`. */
 	public static function index_of($array, $value) {
 		return self::key_of($array, $value);
 	}

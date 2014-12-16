@@ -23,17 +23,22 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 	public function __call($name, $args) {
 		$func = array('ArrayUtil', $name);
 		self::_unbox($args);
-		if(array_key_exists($name, self::$inplace)) {
+		if(
+			($inplace = array_key_exists($name, self::$inplace_methods)) ||
+			array_key_exists($name, self::$modifying_methods)
+		) {
+			// PHP you so silly
 			array_unshift($args, null);
 			$args[0] = &$this->value;
-			return call_user_func_array($func, $args);
+			$r = call_user_func_array($func, $args);
+			return $inplace ? $this : $r;
 		} else {
 			array_unshift($args, $this->value);
-			if(array_key_exists($name, self::$dowrap)) {
+			if(array_key_exists($name, self::$wrapped_array_methods)) {
 				return new XArray(
 					call_user_func_array($func, $args)
 				);
-			} elseif(array_key_exists($name, self::$nowrap)) {
+			} elseif(array_key_exists($name, self::$unwrapped_methods)) {
 				return call_user_func_array($func, $args);
 			}
 		}
@@ -44,7 +49,7 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 
 	public static function __callStatic($name, $args) {
 		self::_unbox($args);
-		if(array_key_exists($name, self::$ctors)) {
+		if(array_key_exists($name, self::$constructor_methods)) {
 			return new XArray(
 				call_user_func_array(
 					array('ArrayUtil', $name),
@@ -134,14 +139,14 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 		return $args;
 	}
 
-	private static $ctors = array(
+	private static $constructor_methods = array(
 		'range' => true,
 		'from_pairs' => true,
 		'from_lists' => true,
 		'fill' => true,
 	);
 
-	private static $dowrap = array(
+	private static $wrapped_array_methods = array(
 		'keys' => true,
 		'concat' => true,
 		'slice' => true,
@@ -174,7 +179,7 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 		'count_values' => true,
 	);
 
-	private static $nowrap = array(
+	private static $unwrapped_methods = array(
 		'size' => true,
 		'length' => true,
 		'get' => true,
@@ -194,7 +199,7 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 		'is_sequential' => true,
 	);
 
-	private static $inplace = array(
+	private static $modifying_methods = array(
 		'getref' => true,
 		'remove' => true,
 		'append' => true,
@@ -205,6 +210,9 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 		'unshift' => true,
 		'assign_slice' => true,
 		'remove_slice' => true,
+	);
+
+	private static $inplace_methods = array(
 		'apply' => true,
 		'traverse_leaves' => true,
 		'shuffle' => true,

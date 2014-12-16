@@ -200,7 +200,7 @@ class StringUtil {
 	}
 
 	/* "Wrap" a string to a certain number of columns by inserting a string
-	 * every `$n` characters. Inserts newlines by default. */
+	 * every `$cols` characters. Inserts newlines by default. */
 	public static function wrap($s, $cols, $sep = "\n") {
 		return wordwrap($s, $cols, $sep, true);
 	}
@@ -586,11 +586,14 @@ class StringUtil {
 		);
 	}
 
-	/* Inverse of `encode_html`. Note that this will not decode every
-	 * possible entity. This does not decode named entities except for
-	 * those encoded by `encode_html`, which include `&apos;`. It will
-	 * decode numeric entities except for those corresponding to non-
-	 * printable characters, which it will leave encoded. */
+	/* Inverse of `encode_html`. The term "unencode" is used here as
+	 * opposed to "decode" to emphasize the fact that this function is not
+	 * suitable for decoding arbitrary HTML code, but rather HTML encoded
+	 * by `encode_html` using only a small set of named character entity
+	 * codes. This function does not recognize named entities except for
+	 * those encoded by `encode_html` as well as `&apos;`. It will decode
+	 * numeric entities except for those corresponding to non-printable
+	 * characters, which it will leave encoded. */
 	public static function unencode_html($s) {
 		return html_entity_decode($s, ENT_QUOTES | ENT_HTML5);
 	}
@@ -607,7 +610,9 @@ class StringUtil {
 	}
 
 	/* Replace all of the characters in a string with their equivalent
-	 * HTML5 named character entities, wherever such entities exist. */
+	 * HTML5 named character entities, wherever such entities exist. This
+	 * particular ability is rarely useful, and `encode_html` should be
+	 * preferred instead for efficiency. */
 	public static function encode_html_entities($s) {
 		return htmlentities(
 			$s,
@@ -649,7 +654,8 @@ class StringUtil {
 		return http_build_query($data, '', $sep, PHP_QUERY_RFC3986);
 	}
 
-	/* Like `encode_standard_query_string`, but encode spaces with `+`. */
+	/* Like `encode_standard_query_string`, but encode spaces with `+`.
+	 * This should be preferred for compatibility reasons. */
 	public static function encode_query_string($data, $sep = '&') {
 		return http_build_query($data, '', $sep);
 	}
@@ -664,12 +670,14 @@ class StringUtil {
 		return rawurldecode($s);
 	}
 
-	/* URL-encode a string, and use `+` to encode spaces. */
+	/* URL-encode a string, and use `+` to encode spaces. This should be
+	 * preferred for compatibility reasons. */
 	public static function encode_url($s) {
 		return urlencode($s);
 	}
 
-	/* Decode a URL-encoded string, treating `+` as space. */
+	/* Decode a URL-encoded string, treating `+` as space. This should be
+	 * preferred for compatibility reasons. */
 	public static function decode_url($s) {
 		return urldecode($s);
 	}

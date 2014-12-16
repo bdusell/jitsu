@@ -24,13 +24,13 @@ class XString {
 		self::_unbox($args);
 		$func = array('StringUtil', $name);
 		array_unshift($args, $this->value);
-		if(array_key_exists($name, self::$normal)) {
+		if(array_key_exists($name, self::$unwrapped_methods)) {
 			return call_user_func_array($func, $args);
-		} elseif(array_key_exists($name, self::$array)) {
+		} elseif(array_key_exists($name, self::$wrapped_array_methods)) {
 			return new XArray(
 				call_user_func_array($func, $args)
 			);
-		} elseif(array_key_exists($name, self::$string)) {
+		} elseif(array_key_exists($name, self::$wrapped_string_methods)) {
 			return new XString(
 				call_user_func_array($func, $args)
 			);
@@ -43,14 +43,14 @@ class XString {
 	public static function __callStatic($name, $args) {
 		self::_unbox($args);
 		$func = array('StringUtil', $name);
-		if(array_key_exists($name, self::$ctors)) {
+		if(array_key_exists($name, self::$constructor_methods)) {
 			return new XString(
 				call_user_func_array(
 					$func,
 					$args
 				)
 			);
-		} elseif(array_key_exists($name, self::$static_array)) {
+		} elseif(array_key_exists($name, self::$static_wrapped_array_methods)) {
 			return new XArray(
 				call_user_func_array(
 					$func,
@@ -89,7 +89,7 @@ class XString {
 		));
 	}
 
-	private static $normal = array(
+	private static $unwrapped_methods = array(
 		'length' => true,
 		'size' => true,
 		'equal' => true,
@@ -135,7 +135,7 @@ class XString {
 		'levenshtein' => true,
 	);
 
-	private static $string = array(
+	private static $wrapped_string_methods = array(
 		'join' => true,
 		'trim' => true,
 		'rtrim' => true,
@@ -197,7 +197,7 @@ class XString {
 		'naive_pluralize' => true,
 	);
 
-	private static $array = array(
+	private static $wrapped_array_methods = array(
 		'chars' => true,
 		'chunks' => true,
 		'split' => true,
@@ -210,7 +210,7 @@ class XString {
 		'split_camel_case' => true,
 	);
 
-	private static $ctors = array(
+	private static $constructor_methods = array(
 		'from_ascii' => true,
 		'chr' => true,
 		'encode_standard_query_string' => true,
@@ -219,7 +219,7 @@ class XString {
 		'format_number' => true,
 	);
 
-	private static $static_array = array(
+	private static $static_wrapped_array_methods = array(
 		'encode_html_dict' => true,
 		'encode_html_entities_dict' => true,
 	);

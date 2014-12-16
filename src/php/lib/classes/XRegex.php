@@ -24,15 +24,15 @@ class XRegex {
 	}
 
 	public function __call($name, $args) {
-		if(array_key_exists($name, self::$normal)) {
+		if(array_key_exists($name, self::$unwrapped_methods)) {
 			array_unshift($args, $this->pattern);
 			return call_user_func_array(
 				array('RegexUtil', $name),
 				$args
 			);
-		} elseif(array_key_exists($name, self::$replacefunc)) {
+		} elseif(array_key_exists($name, self::$replace_methods)) {
 			return $this->_replace($name, $args);
-		} elseif(array_key_exists($name, self::$splitfunc)) {
+		} elseif(array_key_exists($name, self::$split_methods)) {
 			return $this->_split($name, $args);
 		} else {
 			throw new BadMethodCallException(
@@ -42,7 +42,7 @@ class XRegex {
 	}
 
 	public static function __callStatic($name, $args) {
-		if(array_key_exists($name, self::$normal_static)) {
+		if(array_key_exists($name, self::$static_methods)) {
 			return call_user_func_array(
 				array('RegexUtil', $name),
 				$args
@@ -71,7 +71,7 @@ class XRegex {
 		);
 	}
 
-	private static $normal = array(
+	private static $unwrapped_methods = array(
 		'match' => true,
 		'match_with_offsets' => true,
 		'match_all' => true,
@@ -80,19 +80,19 @@ class XRegex {
 		'inverted_grep' => true,
 	);
 
-	private static $replacefunc = array(
+	private static $replace_methods = array(
 		'replace' => true,
 		'replace_with' => true,
 		'replace_filter' => true,
 	);
 
-	private static $splitfunc = array(
+	private static $split_methods = array(
 		'split' => true,
 		'filter_split' => true,
 		'inclusive_split' => true,
 	);
 
-	private static $normal_static = array(
+	private static $static_methods = array(
 		'escape' => true,
 	);
 }

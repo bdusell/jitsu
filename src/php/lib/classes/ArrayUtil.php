@@ -527,8 +527,8 @@ class ArrayUtil {
 	}
 
 	/* Return whether an array contains exactly the keys in a certain list
-	 * of keys. Optionally pass array references to collection the
-	 * unexpected and missing keys seen. */
+	 * of keys. Optionally pass array references to collect the unexpected
+	 * and missing keys seen. */
 	public static function has_exact_keys($array, $keys, &$unexpected = null, &$missing = null) {
 		$gather = func_num_args() > 2;
 		if($gather) $unexpected = $missing = array();

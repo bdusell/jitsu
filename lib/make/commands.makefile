@@ -2,10 +2,10 @@
 #   Delete files and directories.
 RM=rm -rf --
 
-# $(DOWNLOAD) url # output is target
+# $(call DOWNLOAD,url) # output is target
 # $(call DOWNLOAD,url,output)
 #   Download the file located at a URL.
-DOWNLOAD=wget -O $(if $2,$2,$@)$(if $1, $1,)
+DOWNLOAD={ wget -O $(if $2,$2,$@) $1 || { $(RM) $(if $2,$2,$@); false; }; }
 
 # $(MKDIRS) # use target
 # $(call MKDIRS,path)

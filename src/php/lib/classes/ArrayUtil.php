@@ -660,13 +660,7 @@ class ArrayUtil {
 	 * necessary to normalize a string to ensure that an arbitrary string
 	 * may be used. */
 	public static function normalize_key($k) {
-		if(is_int($k)) return $k;
-		$k = (string) $k;
-		$len = strlen($k);
-		if($len > 0 && ctype_digit($k) && ($len === 1 || $k[0] !== '0')) {
-			return (int) $k;
-		}
-		return $k;
+		foreach(array($k => null) as $result => $v) return $result;
 	}
 
 	/* Return whether a value is a properly indexed sequential array. Note

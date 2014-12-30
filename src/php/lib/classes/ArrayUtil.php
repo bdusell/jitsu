@@ -660,6 +660,7 @@ class ArrayUtil {
 	 * necessary to normalize a string to ensure that an arbitrary string
 	 * may be used. */
 	public static function normalize_key($k) {
+		if(is_int($k)) return $k;
 		foreach(array($k => null) as $result => $v) return $result;
 	}
 

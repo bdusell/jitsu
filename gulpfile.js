@@ -4,6 +4,7 @@ var del = require('del');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
+var plumber = require('gulp-plumber');
 
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
@@ -35,6 +36,7 @@ gulp.task('clean', function(cb) {
 
 gulp.task('css', function() {
   gulp.src(paths.mainStylesheet)
+    .pipe(plumber())
     .pipe(sourcemaps.init())
       .pipe(sass())
       .pipe(autoprefixer())
@@ -48,12 +50,14 @@ gulp.task('css', function() {
 
 gulp.task('lint', function() {
   return gulp.src(paths.scripts)
+    .pipe(plumber())
     .pipe(jshint())
     .pipe(jshint.reporter('default'));
 });
 
 gulp.task('js', function() {
   return gulp.src(paths.vendorScripts.concat([paths.scripts]))
+    .pipe(plumber())
     .pipe(sourcemaps.init())
       .pipe(concat('main.js'))
     .pipe(sourcemaps.write())

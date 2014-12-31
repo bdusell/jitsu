@@ -1,7 +1,7 @@
 <?php
 
-/* Escape a string for interpolation in HTML. Note that this does NOT encode
- * double quotes (`"`). */
+/* Escape a string for interpolation in HTML text. Note that this does NOT
+ * encode double quotes (`"`). */
 function html($str) {
 	return htmlspecialchars($str, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
 }
@@ -14,6 +14,21 @@ function htmlattr($str) {
 /* Return a PHP-code representation of a value as a string. */
 function repr($x) {
 	return var_export($x, true);
+}
+
+/* Wrap a string in an `XString` object. */
+function xstring($s) {
+	return new XString($s);
+}
+
+/* Wrap an array in an `XArray` object. */
+function xarray($a) {
+	return new XArray($a);
+}
+
+/* Create an `XRegex` object. */
+function xregex(/* $pat [, $flags [, $start [, $end ]]] */) {
+	return MetaUtil::apply_constructor('XRegex', func_get_args());
 }
 
 ?>

@@ -5,5 +5,5 @@ config::base_url($_SERVER['REQUEST_URI']);
 endif;
 config::path('videos-dev');
 config::dir(__DIR__);
-config::document_root('/var/www/videos-dev');
+config::document_root('/var/www/phrame-dev');
 ?>

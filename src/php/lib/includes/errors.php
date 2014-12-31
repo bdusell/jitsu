@@ -40,30 +40,42 @@ set_error_handler(function($code, $msg, $file, $line) {
 	}
 });
 
+function format_stack_trace($e) {
+	$result = (
+		get_class($e) . ': ' . $e->getMessage() .
+		' [' . $e->getCode() . "]\n"
+	);
+	foreach($e->getTrace() as $level) {
+		$level += array(
+			'class' => '',
+			'type' => '',
+			'function' => '???',
+			'file' => '',
+			'line' => ''
+		);
+		extract($level);
+		if($file !== '') {
+			$result .= (
+				'  ' . str_pad($class . $type . $function, 15) .
+				' at ' . $file . ':' . $line
+			);
+		} else {
+			$result .= (
+				'  ' . $class . $type . $function
+			);
+		}
+		$result .= "\n";
+	}
+	return $result;
+}
+
 /* Override the default exception handler. */
 if(config::is_production()) {
 	/* Silence everything. */
 	set_exception_handler(function($e) {});
 } else {
 	set_exception_handler(function($e) {
-		echo get_class($e), ': ', $e->getMessage(), ' [', $e->getCode(), "]\n";
-		foreach($e->getTrace() as $level) {
-			$level += array(
-				'class' => '',
-				'type' => '',
-				'function' => '???',
-				'file' => '',
-				'line' => ''
-			);
-			extract($level);
-			if($file !== '') {
-				echo '  ', str_pad($class . $type . $function, 15), ' at ', $file, ':', $line;
-			} else {
-				echo '  ', $class, $type, $function;
-			}
-			echo "\n";
-		}
-		return true;
+		echo format_stack_trace($e);
 	});
 }
 

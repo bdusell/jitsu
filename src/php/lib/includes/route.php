@@ -24,9 +24,18 @@ call_user_func(function() {
 		call_user_func(function() {
 			include dirname(dirname(__DIR__)) . '/app/routes.php';
 		});
-		$router->route();
+		try {
+			$router->route();
+		} catch(Exception $e) {
+			call_user_func(array(config::helper(), 'error'), 500, array(
+				'path' => $path,
+				'message' => format_stack_trace($e)
+			));
+		}
 	} else {
-		call_user_func(array(config::helper(), 'error'), 500, array('path' => $url));
+		call_user_func(array(config::helper(), 'error'), 500, array(
+			'path' => $path
+		));
 	}
 });
 

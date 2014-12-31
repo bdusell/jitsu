@@ -34,12 +34,7 @@ class config {
 
 	public static function base_url($url = null) {
 		if($url === null) {
-			$path = self::path();
-			return (
-				self::scheme() . '://' .
-				self::host() . '/' .
-				($path === '' ? '' : trim($path, '/') . '/')
-			);
+			return self::make_url('');
 		} else {
 			$parts = parse_url($url);
 			foreach(array('scheme', 'host', 'path') as $name) {
@@ -48,6 +43,23 @@ class config {
 				}
 			}
 		}
+	}
+
+	public static function make_path($rel_path) {
+		$base_path = self::path();
+		return '/' . (
+			$base_path === '' ?
+			'' :
+			trim($base_path, '/') . '/'
+		) . $rel_path;
+	}
+
+	public static function make_url($rel_path) {
+		return (
+			self::scheme() . '://' .
+			self::host() .
+			self::make_path($rel_path)
+		);
 	}
 
 	public static function locale(/* $arg1, ... */) {

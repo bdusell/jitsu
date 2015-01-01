@@ -34,7 +34,12 @@ call_user_func(function() {
 		}
 	} else {
 		call_user_func(array(config::helper(), 'error'), 500, array(
-			'path' => $path
+			'path' => $path,
+			'message' => (
+				'Base path is misconfigured (got ' .
+				Util::repr($path) . ', expected ' .
+				Util::repr($base_path) . ')'
+			)
 		));
 	}
 });

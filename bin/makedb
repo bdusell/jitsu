@@ -1,7 +1,8 @@
 #!/bin/bash
 echo -n 'working...'
 {
-  cd "$(dirname "$BASH_SOURCE")"/../db
+  DBDIR=$(dirname "$BASH_SOURCE")/../db
+  mkdir -p "$DBDIR" && cd "$DBDIR"
 } && {
   rm -f database.db
 } && {

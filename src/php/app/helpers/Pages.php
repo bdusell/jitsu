@@ -11,9 +11,8 @@ class Pages {
 
 	public static function error($code, $vars = null) {
 		Response::code($code);
-		self::page("errors/$code", array(
-			'title' => $code . ': ' . self::$titles[$code]
-		));
+		$vars['title'] = $code . ': ' . self::$titles[$code];
+		self::page("errors/$code", $vars);
 	}
 
 	public static function redirect($url, $code = 303) {

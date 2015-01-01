@@ -3,7 +3,7 @@ config::is_production(false);
 if(isset($_SERVER['REQUEST_URI'])):
 config::base_url($_SERVER['REQUEST_URI']);
 endif;
-config::path('videos-dev');
+config::path('phrame-dev');
 config::dir(__DIR__);
 config::document_root('/var/www/phrame-dev');
 ?>

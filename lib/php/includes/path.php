@@ -1,12 +1,12 @@
 <?php
 
 call_user_func(function() {
-	$base = dirname(dirname(__DIR__));
+	$app_base = dirname(dirname(dirname(__DIR__))) . '/src/app';
 	$dirs = array();
 	foreach(array('helpers', 'models', 'views', 'controllers') as $dir) {
-		$dirs[] = "$base/app/$dir";
+		$dirs[] = "$app_base/$dir";
 	}
-	$dirs[] = "$base/lib/classes";
+	$dirs[] = dirname(__DIR__) . '/classes';
 	$dirs[] = get_include_path();
 	set_include_path(join(PATH_SEPARATOR, $dirs));
 });

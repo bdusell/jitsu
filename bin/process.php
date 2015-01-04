@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-include dirname(__DIR__) . '/src/php/cli.php';
+include dirname(__DIR__) . '/lib/php/cli.php';
 
 $name = basename(array_shift($argv));
 $usage = function() use($name) {
@@ -39,7 +39,7 @@ if(!$files) {
 if($config !== null) {
 	array_unshift($files, $config);
 }
-array_unshift($files, dirname(__DIR__) . '/src/php/app/config.php');
+array_unshift($files, dirname(__DIR__) . '/src/app/config.php');
 foreach($files as $__FILE__) {
 	call_user_func(function() use($__FILE__) {
 		include $__FILE__;

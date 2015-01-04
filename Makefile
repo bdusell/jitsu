@@ -14,23 +14,23 @@ include lib/make/gulp.makefile
 include lib/make/bower.makefile
 
 SRC_EXTENSIONS=js coffee css scss sass less php
-SRC:=$(shell find src $(call TAIL,2,$(foreach i,$(SRC_EXTENSIONS),-o -name '*.$(i)')))
+SRC=$(shell find src $(call TAIL,2,$(foreach i,$(SRC_EXTENSIONS),-o -name '*.$(i)')))
 PROCESS_PHP=./bin/process.php -c $^ > $@
 
 .make/build: .make/packages/gulp .make/node-modules .make/bower-packages $(SRC)
 	gulp build && $(MKFILE)
 
-build/dev/.htaccess: build/dev/config.php src/php/app/templates/config.htaccess.php
+build/dev/.htaccess: build/dev/config.php src/app/templates/config.htaccess.php
 	$(PROCESS_PHP)
-build/prod/.htaccess: build/prod/config.php src/php/app/templates/config.htaccess.php
-	$(PROCESS_PHP)
-
-build/dev/php.ini: build/dev/config.php src/php/app/templates/php.ini.php
-	$(PROCESS_PHP)
-build/prod/php.ini: build/prod/config.php src/php/app/templates/php.ini.php
+build/prod/.htaccess: build/prod/config.php src/app/templates/config.htaccess.php
 	$(PROCESS_PHP)
 
-build/dev/robots.txt: build/dev/config.php src/php/app/templates/robots.txt.php
+build/dev/php.ini: build/dev/config.php src/app/templates/php.ini.php
 	$(PROCESS_PHP)
-build/prod/robots.txt: build/prod/config.php src/php/app/templates/robots.txt.php
+build/prod/php.ini: build/prod/config.php src/app/templates/php.ini.php
+	$(PROCESS_PHP)
+
+build/dev/robots.txt: build/dev/config.php src/app/templates/robots.txt.php
+	$(PROCESS_PHP)
+build/prod/robots.txt: build/prod/config.php src/app/templates/robots.txt.php
 	$(PROCESS_PHP)

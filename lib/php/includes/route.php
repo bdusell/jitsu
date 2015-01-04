@@ -22,7 +22,7 @@ call_user_func(function() {
 		$router = new RequestRouter($route);
 		router::set($router);
 		call_user_func(function() {
-			include dirname(dirname(__DIR__)) . '/app/routes.php';
+			include dirname(dirname(dirname(__DIR__))) . '/src/app/routes.php';
 		});
 		try {
 			$router->route();

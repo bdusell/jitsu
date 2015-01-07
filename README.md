@@ -1,7 +1,229 @@
 Phrame
 ======
 
-Phrame is a small PHP framework for building web applications.
+Phrame is a PHP framework for building modern, RESTful web applications. It
+features a library of PHP classes and functions which help overcome the many
+shortcomings and idiosyncracies of the language and its standard library.
 
-I'm really sorry, my dog ate all my documentation =(. Will add soon.
+Projects are designed to be trivial to install and configure on any system
+which has Apache set up to process `.php` and `.htaccess` files &ndash; a
+ubiquitous setup.
+
+## Features ##
+
+PHP comes with some rudimentary web development utilities out of the box such
+as superglobals `$_GET` and `$_POST`, but not only do these horribly break
+encapsulation, they are insufficient to support a full suite of REST API
+functions. What's worse is that many of these built-in features have awkward
+interfaces or use function names which are just plain difficult to remember.
+Take the function to escape a string in HTML for example, `htmlspecialchars`,
+which accepts a bitmask for quoting options and a third argument for character
+encoding. This of course is not to be confused with the less useful
+`htmlentities`, which aggressively substitutes character entities wherever
+possible.
+
+Phrame offers a normalized, more mnemonic API which irons out these quirks.
+Much of this API comes in the form of static functions so that it can be
+accessed through auto-loading. A few global functions are defined as well.
+
+* `Util` includes some must-have helper functions such as `Util::get` (array
+  access with a default value), `Util::p` (debug printing), and
+  `Util::template` (encapsulated PHP file inclusion)
+* Wrapper classes `XArray`, `XString`, and `XRegex` provide a rich, object-
+  oriented interface to their native PHP counterparts
+* `SQLDatabase` and `SQLStatement` are useful wrappers around PHP's PDO
+  library, offering iterator syntax for SQL query results and greatly
+  simplified parameter binding
+* `Request` and `Response` unify PHP's various methods for accessing data from
+  the current HTTP request and building the HTTP response, respectively
+* The `html` function escapes a string for interpolation inside HTML text;
+  `htmlattr` does the same for a string inside a double-quoted HTML attribute
+
+Refer to the inline documentation for details. The library code is found under
+`lib/php/`.
+
+The Phrame bootstrapping code does some additional configuring for a saner
+development experience.
+
+* Activates intelligible error reporting in development mode and silences
+  errors in production mode
+* Uses a robust routing mechanism which uses local `.htaccess` files and
+  pattern matching logic implemented in PHP, while still serving static assets
+  directly through Apache
+* As a consequence of the above, is able to hide PHP from the outside world
+  entirely; adding `.php` to a page URL results in a 404
+* Sets up class auto-loading
+* Uses a flexible, general-purpose configuration system which allows an
+  application to be served from an arbitrary mounting point and document root
+* Includes a gulpfile which pre-compiles JavaScript and CSS assets
+* Includes a Makefile which automatically generates local `.htaccess`,
+  `robots.txt`, and `php.ini` files from configuration settings
+* Creates separate development and production builds under the `build/`
+  directory
+
+## Usage ##
+
+Phrame is designed so that any system which has Apache configured to run PHP
+(a reasonably recent version of it, anyway) and read `.htaccess` files can
+serve a Phrame app simply by exposing one of the directories under `build/`.
+On a Linux system, this could be as simple as generating one of the builds
+and creating a symlink under `/var/www/` to its directory.
+
+The build process requires the use of `gulp`, `bower`, and `make`. Follow these
+steps to install these build tools:
+
+* Install NodeJS and `npm`
+* Run `npm install`, which installs the necessary NodeJS packages for Gulp
+* Install the `gulp` CLI tool
+* Install `bower`
+* Run `bower install`, which fetches third-party frontend JavaScript and CSS
+  libraries
+* Run `gulp build`, which compiles whatever sources for the site's JavaScript
+  and CSS are found under `src/` and places the results under `build/dev/` and
+  `build/prod/`
+* Run `make`, which generates local `.htaccess`, `robots.txt` file, and
+  `php.ini` files for each environment
+* If the app requires a SQLite database, run `./bin/makedb`, which
+  creates/clobbers the SQLite database file
+
+## Project Structure ##
+
+<dl>
+  <dt>`bin/`</dt>
+  <dd>Contains helper scripts used in the build process.</dd>
+
+  <dt>`build/`</dt>
+  <dd>Contains the `dev/` and `prod/` builds of the site, each of which
+  contains bootstrapping PHP code which points to the Phrame library, as
+  well as pre-compiled assets and configuration files specific to the build.
+  </dd>
+
+  <dt>`db/`</dt>
+  <dd>For apps using SQLite, contains the SQLite database file.</dd>
+
+  <dt>`lib/`</dt>
+  <dd>Contains the Phrame PHP library code as well as some `Makefile`
+  utilities.</dd>
+
+  <dt>`src/`</dt>
+  <dd>Your application code. PHP, JavaScript, CSS, and the rest all live here.
+  </dd>
+</dl>
+
+## Configuring ##
+
+Phrame's configuration system is fairly straightforward. A configuration file
+shared by both environments exists at `src/app/config.php`. Configuration files
+specific to each environment exist at `build/dev/config.php` and
+`build/prod/config.php`. 
+
+Configuration variables are set using `config::set($name, $value)` or, for pre-
+defined variables, <code>config::<var>name</var>($value)</code>. They can be
+accessed from anywhere using <code>config::<var>name</var>()</code>.
+
+The pre-defined variables are:
+<dl>
+  <dt>`dir`</dt>
+  <dd>Absolute path to the current build's directory. Use `__DIR__` in the
+  local `config.php` file to set this. Default is null.</dd>
+
+  <dt>`document_root`</dt>
+  <dd>The build's root directory from the point of view of the server. If the
+  directory is symlinked, this will need to be different from `dir`.</dd>
+
+  <dt>`scheme`</dt>
+  <dd>The HTTP protocol to use. Default is `'http'`.</dd>
+
+  <dt>`host`</dt>
+  <dd>Hostname of the server. Default is `'localhost'`.</dd>
+
+  <dt>`path`</dt>
+  <dd>External mounting point of the application. Default is empty, so the site
+  is served from directly under the domain.</dd>
+
+  <dt>`base_url`</dt>
+  <dd>Sets or gets the full base URL of the application. If used to set the
+  base URL, automatically parses the value and sets `scheme`, `host`, and
+  `path` accordingly.</dd>
+
+  <dt>`is_production`</dt>
+  <dd>Whether the current build is the production build. Default is false.</dd>
+
+  <dt>`show_errors`</dt>
+  <dd>Whether to display errors in responses. Default is true when
+  `is_production` is false, false otherwise.</dd>
+
+  <dt>`helper`</dt>
+  <dd>Name of the application's helper class. Default is `Pages`.</dd>
+</dl>
+
+## Routing ##
+
+Routing is configured in the file `src/app/routes.php`. Map URL patterns to
+actions using `router::map($pattern, $callback)`. The first argument is a
+Rails-style URL pattern. The second argument is a PHP callable object.
+
+Patterns are tested in order, so they are listed in decreasing order of
+precedence.
+
+Patterns may include variables, globs, and optional parts. Variables are
+written like `:name` and do not match slashes. Globs are written like `*glob`
+and can match slashes. Parts enclosed in parentheses like `foo(bar)` are
+optional. The values of variables and globs are passed as positional parameters
+to callbacks.
+
+If a pattern ends with a slash, a request to an equivalent URL without the slash
+will issue a permanent redirect to the version with the slash.
+
+## Wrapper Classes ##
+
+These are `XArray` for native PHP `array`s, `XString` for PHP `string`s, and
+`XRegex` for PHP's `preg` functions. These are object-oriented interfaces built
+on top of `ArrayUtil`, `StringUtil`, and `RegexUtil`, respectively. Refer to
+the inline documentation for more details.
+
+## Request Access ##
+
+Refer to the inline documentation in `Request`. This module gives you easy
+access to the HTTP method, URL, header fields, content body, and more.
+
+## Response Building ##
+
+Refer to the inline documentation in `Response`. This module gives you easy
+access to the response code, response headers, content type, and more.
+
+## Application Code ##
+
+All of the code under `src/` is yours to modify. Note that the templates used
+to build the `.htaccess`, `robots.txt`, and `php.ini` files are here under
+`templates/`, so feel free to customize these to fit your needs. These files
+are generated simply by passing their sources through the PHP interpreter with
+the Phrame library and all of your configuration settings loaded.
+
+## SQL Databases ##
+
+A very convenient practice is to use a singleton `Database` class to access
+your SQL database through the magic of auto-loading. The example `Database`
+class simply makes all of the methods of the `SQLDatabase` class available as
+static methods. Supports SQLite or MySQL. Refer to the inline documentation in
+`SQLDatabase` and `SQLStatement`.
+
+An ORM may be implemented in the future.
+
+## HTML Templates ##
+
+Something PHP is actually good for! Write HTML templates separately from your
+application logic in files ending in `.html.php`. Reference dynamic values
+using local variables &ndash; these can be sent to the template using
+`Util::template`. Use `html` and `htmlattr` to escape values properly. 
+
+## Stylesheets ##
+
+The example gulpfile is set up to compile SCSS files under `src/css/` into
+minified CSS.
+
+## JavaScript ##
+
+The example gulpfile is set up to concatenate and minify all JavaScript files
+under `src/js/`.
 

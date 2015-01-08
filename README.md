@@ -118,8 +118,10 @@ specific to each environment exist at `build/dev/config.php` and
 `build/prod/config.php`. 
 
 Configuration variables are set using `config::set($name, $value)` or, for pre-
-defined variables, <code>config::<var>name</var>($value)</code>. They can be
-accessed from anywhere using <code>config::<var>name</var>()</code>.
+defined or previously set variables,
+<code>config::<var>name</var>($value)</code>. They can be accessed from
+anywhere using <code>config::<var>name</var>()</code> or the more explicit
+`config::get($name)`.
 
 The pre-defined variables are:
 <dl>
@@ -129,7 +131,8 @@ The pre-defined variables are:
 
   <dt>`document_root`</dt>
   <dd>The build's root directory from the point of view of the server. If the
-  directory is symlinked, this will need to be different from `dir`.</dd>
+  directory is symlinked, this will need to be different from `dir`. Default is
+  null.</dd>
 
   <dt>`scheme`</dt>
   <dd>The HTTP protocol to use. Default is `'http'`.</dd>
@@ -194,19 +197,77 @@ access to the response code, response headers, content type, and more.
 
 ## Application Code ##
 
-All of the code under `src/` is yours to modify. Note that the templates used
-to build the `.htaccess`, `robots.txt`, and `php.ini` files are here under
-`templates/`, so feel free to customize these to fit your needs. These files
-are generated simply by passing their sources through the PHP interpreter with
-the Phrame library and all of your configuration settings loaded.
+All of the code under `src/` is yours to modify. The `src/js/` and `src/css/`
+directories house source code for the JavaScript and stylesheets, respectively.
+
+
+The `src/app/` directory contains backend PHP code. It contains the following
+directories.
+
+<dl>
+  <dt>`controllers/`</dt>
+  <dd>Controllers for the application which tie models and views together to
+  respond to requests. Typically the `routes.php` file will map REST functions
+  to static methods in the controller classes.</dd>
+
+  <dt>`helpers/`</dt>
+  <dd>A couple of special classes live here. One, `Database`, is a singleton
+  class which provides access to the app's database. The other, `Pages`,
+  defines a few site-wide functions, like how error pages (404, 403, 500, etc.)
+  are served, how redirects are performed, etc.</dd>
+
+  <dt>`models/`</dt>
+  <dd>Model classes go here. Phrame does include a rudimentary active record
+  class called `Model`, but since it is rather under-developed at this point,
+  it would be recommended to define model classes from scratch.</dd>
+
+  <dt>`templates/`</dt>
+  <dd>Miscellaneous configuration files, namely the source for `.htaccess`,
+  `robots.txt`, and `php.ini`. These are actually PHP files which are passed
+  through the script `bin/process.php`, which processes files with the Phrame
+  library and your configuration settings loaded. This allows parts of these
+  important configuration files to be generated dynamically based on your
+  settings in `config.php`.</dd>
+
+  <dt>`views/`</dt>
+  <dd>HTML views. Since PHP is at heart a templating language, the files
+  contained here are simply HTML code interspersed with PHP tags. Dynamic
+  values should be referenced as local variables; they can be extracted into
+  the current symbol table with a call to `Util::template`.</dd>
+</dl>
 
 ## SQL Databases ##
 
 A very convenient practice is to use a singleton `Database` class to access
 your SQL database through the magic of auto-loading. The example `Database`
 class simply makes all of the methods of the `SQLDatabase` class available as
-static methods. Supports SQLite or MySQL. Refer to the inline documentation in
-`SQLDatabase` and `SQLStatement`.
+static methods. The database connection is established the first time the
+`Database` class is referenced. Supports SQLite or MySQL.
+
+Here are some examples to illustrate the convenience of this module:
+```
+$query = Database::query(
+  'select "name", "email" from "users" where "age" between ? and ?',
+  $min_age, $max_age
+);
+foreach($query as $row) {
+  do_something($row->name, $row->email);
+}
+
+$row = Database::row('select "name", from "users" where "id" = ?', $id);
+do_something($row->name);
+
+$highest_age = Database::evaluate('select max("age") from "users");
+
+Database::execute(
+  'insert into "users"("name", "email") values (?, ?)',
+  'Joe', 'joe@example.com'
+);
+do_something(Database::last_insert_id());
+```
+
+Refer to the inline documentation in `SQLDatabase` and `SQLStatement` for more
+details.
 
 An ORM may be implemented in the future.
 
@@ -216,6 +277,26 @@ Something PHP is actually good for! Write HTML templates separately from your
 application logic in files ending in `.html.php`. Reference dynamic values
 using local variables &ndash; these can be sent to the template using
 `Util::template`. Use `html` and `htmlattr` to escape values properly. 
+
+Example:
+
+In `src/app/views/users/index.html.php`:
+```
+<section>
+  <ul>
+  <?php foreach($users as $user): ?>
+    <li><?= html($user->name) ?></li>
+  <?php endforeach; ?>
+  </ul>
+</section>
+```
+
+Elsewhere:
+```
+Util::template('users/index.html.php', array(
+  'users' => Database::query('select "name" from "users")
+));
+```
 
 ## Stylesheets ##
 

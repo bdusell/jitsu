@@ -89,23 +89,23 @@ steps to install these build tools:
 ## Project Structure ##
 
 <dl>
-  <dt>`bin/`</dt>
+  <dt><code>bin/</code></dt>
   <dd>Contains helper scripts used in the build process.</dd>
 
-  <dt>`build/`</dt>
-  <dd>Contains the `dev/` and `prod/` builds of the site, each of which
-  contains bootstrapping PHP code which points to the Phrame library, as
-  well as pre-compiled assets and configuration files specific to the build.
-  </dd>
+  <dt><code>build/</code></dt>
+  <dd>Contains the <code>dev</code> and <code>prod/</code> builds of the site,
+  each of which contains bootstrapping PHP code which points to the Phrame
+  library, as well as pre-compiled assets and configuration files specific to
+  the build.</dd>
 
-  <dt>`db/`</dt>
+  <dt><code>db/</code></dt>
   <dd>For apps using SQLite, contains the SQLite database file.</dd>
 
-  <dt>`lib/`</dt>
-  <dd>Contains the Phrame PHP library code as well as some `Makefile`
-  utilities.</dd>
+  <dt><code>lib/</code></dt>
+  <dd>Contains the Phrame PHP library code as well as some
+  <code>Makefile</code> utilities.</dd>
 
-  <dt>`src/`</dt>
+  <dt><code>src/</code></dt>
   <dd>Your application code. PHP, JavaScript, CSS, and the rest all live here.
   </dd>
 </dl>
@@ -125,39 +125,40 @@ anywhere using <code>config::<var>name</var>()</code> or the more explicit
 
 The pre-defined variables are:
 <dl>
-  <dt>`dir`</dt>
-  <dd>Absolute path to the current build's directory. Use `__DIR__` in the
-  local `config.php` file to set this. Default is null.</dd>
+  <dt><code>dir</code></dt>
+  <dd>Absolute path to the current build's directory. Use <code>\_\_DIR\_\_</code>
+  in the local <code>config.php</code> file to set this. Default is null.</dd>
 
-  <dt>`document_root`</dt>
+  <dt><code>document\_root</code></dt>
   <dd>The build's root directory from the point of view of the server. If the
-  directory is symlinked, this will need to be different from `dir`. Default is
-  null.</dd>
+  directory is symlinked, this will need to be different from <code>dir</code>.
+  Default is null.</dd>
 
-  <dt>`scheme`</dt>
-  <dd>The HTTP protocol to use. Default is `'http'`.</dd>
+  <dt><code>scheme</code></dt>
+  <dd>The HTTP protocol to use. Default is <code>'http'</code>.</dd>
 
-  <dt>`host`</dt>
-  <dd>Hostname of the server. Default is `'localhost'`.</dd>
+  <dt><code>host</code></dt>
+  <dd>Hostname of the server. Default is <code>'localhost'</code>.</dd>
 
-  <dt>`path`</dt>
+  <dt><code>path</code></dt>
   <dd>External mounting point of the application. Default is empty, so the site
   is served from directly under the domain.</dd>
 
-  <dt>`base_url`</dt>
+  <dt><code>base\_url</code></dt>
   <dd>Sets or gets the full base URL of the application. If used to set the
-  base URL, automatically parses the value and sets `scheme`, `host`, and
-  `path` accordingly.</dd>
+  base URL, automatically parses the value and sets <code>scheme</code>,
+  <code>host</code>, and <code>path</code> accordingly.</dd>
 
-  <dt>`is_production`</dt>
+  <dt><code>is\_production</code></dt>
   <dd>Whether the current build is the production build. Default is false.</dd>
 
-  <dt>`show_errors`</dt>
+  <dt><code>show\_errors</code></dt>
   <dd>Whether to display errors in responses. Default is true when
-  `is_production` is false, false otherwise.</dd>
+  <code>is\_production</code> is false, false otherwise.</dd>
 
-  <dt>`helper`</dt>
-  <dd>Name of the application's helper class. Default is `Pages`.</dd>
+  <dt><code>helper</code></dt>
+  <dd>Name of the application's helper class. Default is <code>Pages</code>.
+  </dd>
 </dl>
 
 ## Routing ##
@@ -205,35 +206,37 @@ The `src/app/` directory contains backend PHP code. It contains the following
 directories.
 
 <dl>
-  <dt>`controllers/`</dt>
+  <dt><code>controllers/</code></dt>
   <dd>Controllers for the application which tie models and views together to
-  respond to requests. Typically the `routes.php` file will map REST functions
-  to static methods in the controller classes.</dd>
+  respond to requests. Typically the <code>routes.php</code> file will map REST
+  functions to static methods in the controller classes.</dd>
 
-  <dt>`helpers/`</dt>
-  <dd>A couple of special classes live here. One, `Database`, is a singleton
-  class which provides access to the app's database. The other, `Pages`,
-  defines a few site-wide functions, like how error pages (404, 403, 500, etc.)
-  are served, how redirects are performed, etc.</dd>
+  <dt><code>helpers/</code></dt>
+  <dd>A couple of special classes live here. One, <code>Database</code>, is a
+  singleton class which provides access to the app's database. The other,
+  <code>Pages</code>, defines a few site-wide functions, like how error pages
+  (404, 403, 500, etc.) are served, how redirects are performed, etc.</dd>
 
-  <dt>`models/`</dt>
+  <dt><code>models/</code></dt>
   <dd>Model classes go here. Phrame does include a rudimentary active record
-  class called `Model`, but since it is rather under-developed at this point,
-  it would be recommended to define model classes from scratch.</dd>
+  class called <code>Model</code>, but since it is rather under-developed at
+  this point, it would be recommended to define model classes from scratch.
+  </dd>
 
-  <dt>`templates/`</dt>
-  <dd>Miscellaneous configuration files, namely the source for `.htaccess`,
-  `robots.txt`, and `php.ini`. These are actually PHP files which are passed
-  through the script `bin/process.php`, which processes files with the Phrame
-  library and your configuration settings loaded. This allows parts of these
-  important configuration files to be generated dynamically based on your
-  settings in `config.php`.</dd>
+  <dt><code>templates/</code></dt>
+  <dd>Miscellaneous configuration files, namely the source for
+  <code>.htaccess</code>, <code>robots.txt</code>, and <code>php.ini</code>.
+  These are actually PHP files which are passed through the script
+  <code>bin/process.php</code>, which processes files with the Phrame library
+  and your configuration settings loaded. This allows parts of these important
+  configuration files to be generated dynamically based on your settings in
+  <code>config.php</code>.</dd>
 
-  <dt>`views/`</dt>
+  <dt><code>views/</code></dt>
   <dd>HTML views. Since PHP is at heart a templating language, the files
   contained here are simply HTML code interspersed with PHP tags. Dynamic
   values should be referenced as local variables; they can be extracted into
-  the current symbol table with a call to `Util::template`.</dd>
+  the current symbol table with a call to <code>Util::template</code>.</dd>
 </dl>
 
 ## SQL Databases ##

@@ -159,8 +159,7 @@ class Request {
 	 * associative array mapping MIME type strings to their respective
 	 * quality ratings, ordered in descending order of quality. */
 	public static function accept() {
-		// TODO
-		throw new Exception('not implemented');
+		return self::_parse_negotiation(self::header('Accept'));
 	}
 
 	/* Get the HTTP referrer URI or null if it was not sent. */
@@ -288,6 +287,26 @@ class Request {
 
 	private static function _env_to_header($name) {
 		return strtolower(str_replace('_', '-', $name));
+	}
+
+	private static function _parse_negotiation($str) {
+		$result = array();
+		$parts = preg_split('/\s*,\s*/', $str);
+		foreach($parts as $part) {
+			$matches = null;
+			if(preg_match('/^(.*?)\s*(;\s*q=(.*))?$/', $part, $matches)) {
+				Util::p($matches);
+				$type = $matches[1];
+				if(array_key_exists(2, $matches) && is_numeric($matches[3])) {
+					$quality = (float) $matches[3];
+				} else {
+					$quality = 1.0;
+				}
+				$result[$type] = $quality;
+			}
+		}
+		arsort($result);
+		return $result;
 	}
 }
 

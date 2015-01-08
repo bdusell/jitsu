@@ -126,10 +126,10 @@ anywhere using <code>config::<var>name</var>()</code> or the more explicit
 The pre-defined variables are:
 <dl>
   <dt><code>dir</code></dt>
-  <dd>Absolute path to the current build's directory. Use <code>\_\_DIR\_\_</code>
+  <dd>Absolute path to the current build's directory. Use <code>__DIR__</code>
   in the local <code>config.php</code> file to set this. Default is null.</dd>
 
-  <dt><code>document\_root</code></dt>
+  <dt><code>document_root</code></dt>
   <dd>The build's root directory from the point of view of the server. If the
   directory is symlinked, this will need to be different from <code>dir</code>.
   Default is null.</dd>
@@ -144,17 +144,17 @@ The pre-defined variables are:
   <dd>External mounting point of the application. Default is empty, so the site
   is served from directly under the domain.</dd>
 
-  <dt><code>base\_url</code></dt>
+  <dt><code>base_url</code></dt>
   <dd>Sets or gets the full base URL of the application. If used to set the
   base URL, automatically parses the value and sets <code>scheme</code>,
   <code>host</code>, and <code>path</code> accordingly.</dd>
 
-  <dt><code>is\_production</code></dt>
+  <dt><code>is_production</code></dt>
   <dd>Whether the current build is the production build. Default is false.</dd>
 
-  <dt><code>show\_errors</code></dt>
+  <dt><code>show_errors</code></dt>
   <dd>Whether to display errors in responses. Default is true when
-  <code>is\_production</code> is false, false otherwise.</dd>
+  <code>is_production</code> is false, false otherwise.</dd>
 
   <dt><code>helper</code></dt>
   <dd>Name of the application's helper class. Default is <code>Pages</code>.

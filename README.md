@@ -16,11 +16,13 @@ as superglobals `$_GET` and `$_POST`, but not only do these horribly break
 encapsulation, they are insufficient to support a full suite of REST API
 functions. What's worse is that many of these built-in features have awkward
 interfaces or use function names which are just plain difficult to remember.
-Take the function to escape a string in HTML for example, `htmlspecialchars`,
-which accepts a bitmask for quoting options and a third argument for character
-encoding. This of course is not to be confused with the less useful
-`htmlentities`, which aggressively substitutes character entities wherever
-possible.
+For example, consider the function for HTML-escaping a string: its name is
+`htmlspecialchars`, and it accepts a bitmask for quoting options and a third
+argument for character encoding. This of course is not to be confused with the
+less useful `htmlentities`, which aggressively substitutes character entities
+wherever possible. Or consider the function to split a string by a delimiter:
+its name is `explode`, whereas the function named `str_split` actually
+partitions a string into chunks of a certain length.
 
 Phrame offers a normalized, more mnemonic API which irons out these quirks.
 Much of this API comes in the form of static functions so that it can be
@@ -38,6 +40,7 @@ accessed through auto-loading. A few global functions are defined as well.
   the current HTTP request and building the HTTP response, respectively
 * The `html` function escapes a string for interpolation inside HTML text;
   `htmlattr` does the same for a string inside a double-quoted HTML attribute
+* The `repr` function returns a string of the PHP representation of a value
 
 Refer to the inline documentation for details. The library code is found under
 `lib/php/`.
@@ -56,7 +59,7 @@ development experience.
 * Uses a flexible, general-purpose configuration system which allows an
   application to be served from an arbitrary mounting point and document root
 * Includes a gulpfile which pre-compiles JavaScript and CSS assets
-* Includes a Makefile which automatically generates local `.htaccess`,
+* Includes a Makefile which dynamically generates local `.htaccess`,
   `robots.txt`, and `php.ini` files from configuration settings
 * Creates separate development and production builds under the `build/`
   directory
@@ -81,8 +84,8 @@ steps to install these build tools:
 * Run `gulp build`, which compiles whatever sources for the site's JavaScript
   and CSS are found under `src/` and places the results under `build/dev/` and
   `build/prod/`
-* Run `make`, which generates local `.htaccess`, `robots.txt` file, and
-  `php.ini` files for each environment
+* Run `make`, which generates local `.htaccess`, `robots.txt`, and `php.ini`
+  files for each environment
 * If the app requires a SQLite database, run `./bin/makedb`, which
   creates/clobbers the SQLite database file
 
@@ -167,9 +170,6 @@ Routing is configured in the file `src/app/routes.php`. Map URL patterns to
 actions using `router::map($pattern, $callback)`. The first argument is a
 Rails-style URL pattern. The second argument is a PHP callable object.
 
-Patterns are tested in order, so they are listed in decreasing order of
-precedence.
-
 Patterns may include variables, globs, and optional parts. Variables are
 written like `:name` and do not match slashes. Globs are written like `*glob`
 and can match slashes. Parts enclosed in parentheses like `foo(bar)` are
@@ -179,12 +179,17 @@ to callbacks.
 If a pattern ends with a slash, a request to an equivalent URL without the slash
 will issue a permanent redirect to the version with the slash.
 
+Patterns are tested in order, so they should be listed in decreasing order of
+specificity.
+
 ## Wrapper Classes ##
 
 These are `XArray` for native PHP `array`s, `XString` for PHP `string`s, and
 `XRegex` for PHP's `preg` functions. These are object-oriented interfaces built
-on top of `ArrayUtil`, `StringUtil`, and `RegexUtil`, respectively. Refer to
-the inline documentation for more details.
+on top of `ArrayUtil`, `StringUtil`, and `RegexUtil`, respectively. As an
+alternative to invoking `new ArrayUtil($array)`, etc. you can use the global
+functions `xarray`, `xstring`, and `xregex` to wrap values in these classes.
+Refer to the inline documentation in `ArrayUtil`, etc. for method details.
 
 ## Request Access ##
 
@@ -245,7 +250,8 @@ A very convenient practice is to use a singleton `Database` class to access
 your SQL database through the magic of auto-loading. The example `Database`
 class simply makes all of the methods of the `SQLDatabase` class available as
 static methods. The database connection is established the first time the
-`Database` class is referenced. Supports SQLite or MySQL.
+`Database` class is referenced in a context that requires a connection.
+Supports SQLite or MySQL.
 
 Here are some examples to illustrate the convenience of this module:
 ```
@@ -286,6 +292,7 @@ Example:
 In `src/app/views/users/index.html.php`:
 ```
 <section>
+  <h1>Users</h1>
   <ul>
   <?php foreach($users as $user): ?>
     <li><?= html($user->name) ?></li>

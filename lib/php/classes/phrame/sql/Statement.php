@@ -1,8 +1,10 @@
 <?php
 
+namespace phrame\sql;
+
 /* A convenient wrapper around the PDO statement class which implements an
  * iterator interface. */
-class SQLStatement implements Iterator {
+class Statement implements \Iterator {
 
 	private $stmt;
 	private $current;
@@ -240,15 +242,15 @@ class SQLStatement implements Iterator {
 
 	private static function intuit_type($value) {
 		if(is_string($value)) {
-			return PDO::PARAM_STR;
+			return \PDO::PARAM_STR;
 		} elseif(is_int($value)) {
-			return PDO::PARAM_INT;
+			return \PDO::PARAM_INT;
 		} elseif(is_bool($value)) {
-			return PDO::PARAM_BOOL;
+			return \PDO::PARAM_BOOL;
 		} elseif(is_null($value)) {
-			return PDO::PARAM_NULL;
+			return \PDO::PARAM_NULL;
 		} else {
-			return PDO::PARAM_STR;
+			return \PDO::PARAM_STR;
 		}
 	}
 
@@ -258,7 +260,7 @@ class SQLStatement implements Iterator {
 
 	private function raise_error($msg) {
 		list($state, $code, $errstr) = $this->stmt->errorInfo();
-		throw new SQLError($msg, $errstr, $code, $state);
+		throw new \phrame\sql\Error($msg, $errstr, $code, $state);
 	}
 }
 

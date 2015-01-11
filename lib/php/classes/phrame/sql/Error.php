@@ -1,7 +1,9 @@
 <?php
 
+namespace phrame\sql;
+
 /* An exception class for database-related errors. */
-class SQLError extends Exception {
+class Error extends \Exception {
 
 	private $sql_error_code;
 	private $errstr;

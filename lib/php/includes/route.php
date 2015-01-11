@@ -19,7 +19,7 @@ call_user_func(function() {
 	$base_path_len = strlen($base_path);
 	if(substr_compare($path, $base_path, 0, $base_path_len) == 0) {
 		$route = substr($path, $base_path_len);
-		$router = new RequestRouter($route);
+		$router = new phrame\Router($route);
 		router::set($router);
 		call_user_func(function() {
 			include dirname(dirname(dirname(__DIR__))) . '/src/app/routes.php';

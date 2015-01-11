@@ -1,6 +1,8 @@
 <?php
 
-class RequestRouter {
+namespace phrame;
+
+class Router {
 
 	private $method;
 	private $path;
@@ -13,7 +15,7 @@ class RequestRouter {
 
 	public function __construct($path) {
 		$this->path = $path;
-		$this->method = Request::method();
+		$this->method = \Request::method();
 		$this->not_found_func = function($method, $path) {
 			call_user_func(array(config::helper(), 'error'), 404, array(
 				'method' => $method,
@@ -21,7 +23,7 @@ class RequestRouter {
 			));
 		};
 		$this->bad_method_func = function($method, $path, $methods) {
-			Response::header('Allow', implode(', ', $methods));
+			\Response::header('Allow', implode(', ', $methods));
 			call_user_func(array(config::helper(), 'error'), 405, array(
 				'method' => $method,
 				'path' => $path,
@@ -43,7 +45,7 @@ class RequestRouter {
 	}
 
 	public function redirect($callback) {
-		$this->redirect_func;
+		$this->redirect_func = $callback;
 	}
 
 	public final function route() {

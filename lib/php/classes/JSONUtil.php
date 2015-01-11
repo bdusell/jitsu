@@ -8,8 +8,9 @@ class JSONUtil {
 	 * in PHP are both valid sequential and associative arrays, it is
 	 * ambiguous as to whether they should be encoded as JSON objects or
 	 * arrays. To encode an empty JSON array, use an empty PHP array. To
-	 * encode an empty JSON object, use an empty instance of `stdClass`.
-	 * Optionally provide whether to pretty-print the result or not. */
+	 * encode an empty JSON object, use an empty instance of `stdClass`
+	 * (which can be created with `(object) array()`). Optionally provide
+	 * whether to pretty-print the result or not (default is false). */
 	public static function encode($obj, $pretty = false) {
 		return self::_encode($obj, $pretty);
 	}

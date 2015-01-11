@@ -12,7 +12,7 @@ call_user_func(function() {
 });
 
 function __autoload($name) {
-	include "$name.php";
+	include str_replace(array('\\', '_'), '/', $name) . '.php';
 }
 
 ?>

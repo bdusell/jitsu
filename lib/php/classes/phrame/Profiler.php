@@ -13,6 +13,8 @@
  * Profiler::run();
  * */
 
+namespace phrame;
+
 abstract class Profiler {
 
 	private $start_time;
@@ -46,8 +48,8 @@ abstract class Profiler {
 		$class = get_called_class();
 		$instance = new $class();
 		$instance->before_all($iterations);
-		$object = new ReflectionObject($instance);
-		foreach($object->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+		$object = new \ReflectionObject($instance);
+		foreach($object->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
 			if($this->filter_method($method)) {
 				$instance->start($method);
 				for($i = 0; $i < $iterations; ++$i) {

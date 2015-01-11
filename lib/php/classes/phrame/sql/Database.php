@@ -1,8 +1,10 @@
 <?php
 
+namespace phrame\sql;
+
 /* A useful wrapper around the PDO library. Currently only tested against the
  * `mysql` and `sqlite` drivers. */
-abstract class SQLDatabase {
+abstract class Database {
 
 	private $conn = null;
 
@@ -39,7 +41,7 @@ abstract class SQLDatabase {
 	 * the `PDO::FETCH_*` constants directly. The default,
 	 * `PDO::FETCH_OBJ`, causes rows to be returned as objects with
 	 * property names corresponding to column names. */
-	protected $mode = PDO::FETCH_OBJ;
+	protected $mode = \PDO::FETCH_OBJ;
 
 	/* Connect to the database upon construction. */
 	public function __construct() {
@@ -63,10 +65,10 @@ abstract class SQLDatabase {
 			}
 
 			/* Instantiate the PDO connection. */
-			$this->conn = new PDO($driver_str, $this->user, $this->password);
+			$this->conn = new \PDO($driver_str, $this->user, $this->password);
 
 			/* Raise exceptions on errors. */
-			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 			/* Execute certain commands upon startup depending on the driver. */
 			if($driver === self::mysql && $charset !== null) {
@@ -74,7 +76,7 @@ abstract class SQLDatabase {
 			} elseif($is_sqlite) {
 				$this->conn->exec('pragma foreign_keys = on');
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			self::exception_error('database connection failed', $e);
 		}
 	}
@@ -162,7 +164,7 @@ abstract class SQLDatabase {
 			if(($result = $this->conn->prepare($statement)) === false) {
 				$this->result_error('unable to prepare statement', $statement);
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			self::exception_error('unable to prepare statement', $e, $statement);
 		}
 		return $this->wrap_statement($result);
@@ -219,7 +221,7 @@ abstract class SQLDatabase {
 			if(!$this->conn->rollBack()) {
 				$this->result_error('unable to roll back transaction because no transaction is active');
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			self::exception_error('unable to roll back transaction', $e);
 		}
 	}
@@ -281,7 +283,7 @@ abstract class SQLDatabase {
 
 	/* Get a list of the available database drivers. */
 	public static function drivers() {
-		return PDO::getAvailableDrivers();
+		return \PDO::getAvailableDrivers();
 	}
 
 	/* Private implementation details. */
@@ -309,7 +311,7 @@ abstract class SQLDatabase {
 
 	// Raise an error.
 	private static function raise_error($msg, $errstr, $code = null, $state = null, $sql = null) {
-		throw new SQLError("$msg: $errstr", $errstr, $code, $state, $sql);
+		throw new \phrame\sql\Error("$msg: $errstr", $errstr, $code, $state, $sql);
 	}
 
 	// Convert an attribute name to its integer constant.
@@ -319,7 +321,7 @@ abstract class SQLDatabase {
 
 	// Wrap a statement.
 	private function wrap_statement($stmt) {
-		return new SQLStatement($stmt, $this->mode);
+		return new \phrame\sql\Statement($stmt, $this->mode);
 	}
 }
 

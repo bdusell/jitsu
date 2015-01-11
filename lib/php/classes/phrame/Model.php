@@ -1,5 +1,7 @@
 <?php
 
+namespace phrame;
+
 class Model {
 
 	const id = 'id';
@@ -33,7 +35,7 @@ class Model {
 	public static function fetch($id) {
 		$table = self::_table_name();
 		$col = self::_id_col();
-		$row = Database::row_with(
+		$row = \Database::row_with(
 <<<SQL
 select * from "$table" where "$col" = ? limit 1
 SQL
@@ -59,12 +61,12 @@ SQL
 			}
 			$cols = join(', ', $col_parts);
 			$qmarks = join(', ', $qmark_parts);
-			Database::execute_with(
+			\Database::execute_with(
 <<<SQL
 insert into "$table"($cols) values ($qmarks)
 SQL
 			, $values);
-			$this->set($idcol, Database::last_insert_id());
+			$this->set($idcol, \Database::last_insert_id());
 		} else {
 			$set_parts = array();
 			$values = array();
@@ -74,7 +76,7 @@ SQL
 			}
 			$values[] = $this->id();
 			$sets = join(', ', $set_parts);
-			Database::execute_with(
+			\Database::execute_with(
 <<<SQL
 update "$table" $sets where "$idcol" = ? limit 1
 SQL

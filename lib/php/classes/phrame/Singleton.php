@@ -14,6 +14,8 @@
  *     // $a and $b point to the same object
  */
 
+namespace phrame;
+
 trait Singleton {
 
 	private static $instance = null;

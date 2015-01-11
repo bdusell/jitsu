@@ -1,8 +1,8 @@
 <?php
 
-class _DatabaseHelper extends SQLDatabase {
+class _DatabaseHelper extends phrame\sql\Database {
 
-	use Singleton;
+	use phrame\Singleton;
 
 	public function __construct() {
 		$this->driver = config::sql_driver();

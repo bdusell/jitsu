@@ -785,6 +785,14 @@ class StringUtil {
 		// - => -s
 		return $s . 's';
 	}
+
+	/* Use PHP output buffering to capture all output printed in a callback
+	 * function and return the result as a string. */
+	public static function capture($callback) {
+		ob_start();
+		call_user_func($callback);
+		return ob_get_clean();
+	}
 }
 
 ?>

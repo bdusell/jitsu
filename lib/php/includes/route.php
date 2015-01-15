@@ -14,6 +14,8 @@ class router {
 }
 
 call_user_func(function() {
+	/* TODO FIXME Allow slashes to be encoded in path components. Start by
+	 * passing the un-escaped path here. */
 	$path = Request::path();
 	$base_path = '/' . trim(config::path(), '/') . '/';
 	$base_path_len = strlen($base_path);
@@ -24,12 +26,23 @@ call_user_func(function() {
 		call_user_func(function() {
 			include dirname(dirname(dirname(__DIR__))) . '/src/app/routes.php';
 		});
+		if(config::buffer_output()) {
+			ob_start();
+		}
 		try {
 			$router->route();
+			if(config::buffer_output()) {
+				ob_end_flush();
+			}
 		} catch(Exception $e) {
+			if(config::buffer_output()) {
+				ob_end_clean();
+			}
 			call_user_func(array(config::helper(), 'error'), 500, array(
 				'path' => $path,
-				'message' => format_stack_trace($e)
+				'message' => StringUtil::capture(function() use($e) {
+					print_stack_trace($e);
+				})
 			));
 		}
 	} else {

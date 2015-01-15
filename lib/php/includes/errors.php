@@ -40,8 +40,8 @@ set_error_handler(function($code, $msg, $file, $line) {
 	}
 });
 
-function format_stack_trace($e) {
-	$result = (
+function print_stack_trace($e) {
+	echo (
 		get_class($e) . ': ' . $e->getMessage() .
 		' [' . $e->getCode() . "]\n"
 	);
@@ -55,18 +55,17 @@ function format_stack_trace($e) {
 		);
 		extract($level);
 		if($file !== '') {
-			$result .= (
+			echo (
 				'  ' . str_pad($class . $type . $function, 15) .
 				' at ' . $file . ':' . $line
 			);
 		} else {
-			$result .= (
+			echo (
 				'  ' . $class . $type . $function
 			);
 		}
-		$result .= "\n";
+		echo "\n";
 	}
-	return $result;
 }
 
 /* Override the default exception handler. */
@@ -74,9 +73,7 @@ if(config::is_production()) {
 	/* Silence everything. */
 	set_exception_handler(function($e) {});
 } else {
-	set_exception_handler(function($e) {
-		echo format_stack_trace($e);
-	});
+	set_exception_handler('print_stack_trace');
 }
 
 ?>

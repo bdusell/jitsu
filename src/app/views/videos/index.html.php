@@ -18,6 +18,7 @@
     <a class="thumbnail" href="videos/new">
       <div class="caption">
         <h2>Add New Video</h2>
+        <p>+</p>
       </div>
     </a>
   </div>

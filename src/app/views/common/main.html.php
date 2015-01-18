@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><?= html(config::site_name()) ?> &ndash; <?= html($title) ?></title>
+    <title><?= html($title) ?> | <?= html(config::site_name()) ?></title>
 <?php if(isset($base)): ?>
     <base href="<?= html($base) ?>" />
 <?php endif; ?>

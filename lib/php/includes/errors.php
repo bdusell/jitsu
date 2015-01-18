@@ -6,11 +6,11 @@ error_reporting(E_ALL);
 
 /* Display errors if not in production (redundant, since default error handler
  * is overridden). */
-ini_set('display_errors', config::is_production() ? 0 : 1);
+ini_set('display_errors', config::show_errors() ? 1 : 0);
 
 /* Display startup errors which cannot be handled by the normal error
  * handler. */
-ini_set('display_startup_errors', config::is_production() ? 0 : 1);
+ini_set('display_startup_errors', config::show_errors() ? 0 : 1);
 
 /* Log errors to the server's logs in production. */
 ini_set('log_errors', config::is_production() ? 1 : 0);
@@ -69,11 +69,11 @@ function print_stack_trace($e) {
 }
 
 /* Override the default exception handler. */
-if(config::is_production()) {
+if(config::show_errors()) {
+	set_exception_handler('print_stack_trace');
+} else {
 	/* Silence everything. */
 	set_exception_handler(function($e) {});
-} else {
-	set_exception_handler('print_stack_trace');
 }
 
 ?>

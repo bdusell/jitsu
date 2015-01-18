@@ -71,7 +71,7 @@ abstract class Database {
 			$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 			/* Execute certain commands upon startup depending on the driver. */
-			if($driver === self::mysql && $charset !== null) {
+			if($driver === self::mysql && $this->charset !== null) {
 				$this->conn->exec('set names ' . $this->charset);
 			} elseif($is_sqlite) {
 				$this->conn->exec('pragma foreign_keys = on');
@@ -173,7 +173,7 @@ abstract class Database {
 	/* Escape and quote a string value for interpolation in a SQL query.
 	 * Note that the result includes quotes added around the string. */
 	public function quote($s) {
-		if(($result = $this->conn->quote()) === false) {
+		if(($result = $this->conn->quote($s)) === false) {
 			$this->result_error("unable to quote string value '$s'");
 		}
 		return $result;

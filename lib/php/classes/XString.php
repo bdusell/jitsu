@@ -219,6 +219,7 @@ class XString {
 		'encode_query_string' => true,
 		'format_money' => true,
 		'format_number' => true,
+		'capture' => true,
 	);
 
 	private static $static_wrapped_array_methods = array(

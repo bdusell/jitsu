@@ -10,6 +10,7 @@ class config {
 		'path'          => '',
 		'is_production' => false,
 		'show_errors'   => true,
+		'buffer_output' => true,
 		'helper'        => 'Pages'
 	);
 

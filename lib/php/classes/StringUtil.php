@@ -374,23 +374,42 @@ class StringUtil {
 	 * it does not appear within the string. Optionally provide a starting
 	 * offset. */
 	public static function find($s, $substr, $offset = 0) {
-		$r = strpos($s, $substr, $offset);
-		return $r === false ? null : $r;
+		return self::_find('strpos', $s, $substr, $offset);
 	}
 
 	/* Like `find` but case-insensitive. */
 	public static function ifind($s, $substr, $offset = 0) {
-		$r = stripos($s, $substr, $offset);
+		return self::_find('stripos', $s, $substr, $offset);
+	}
+
+	private static function _find($name, $s, $substr, $offset) {
+		if($offset > strlen($s)) return null;
+		if(strlen($substr) === 0) return $offset;
+		$r = call_user_func($name, $s, $substr, $offset);
 		return $r === false ? null : $r;
 	}
 
-	/* Like `find` but starts from the end of the string. The offset may
-	 * also be negative, indicating where to start from the end of the
-	 * string. */
-	public static function rfind($s, $substr, $offset = null) {
-		if($offset === 0) return strlen($substr) == 0 ? 0 : null;
-		$r = strrpos($s, $substr, $offset);
+	/* Like `find` but starts from the end of the string. The optional
+	 * offset is the number of characters from the _end_ of the string. */
+	public static function rfind($s, $substr, $offset = 0) {
+		if($offset > strlen($s)) return null;
+		if(strlen($substr) === 0) return strlen($s) - $offset;
+		$r = strrpos($s, $substr, -$offset);
 		return $r === false ? null : $r;
+	}
+
+	/* Get the first part of a string delimited by a substring, or the
+	 * whole string if it does not contain that substring. */
+	public static function first_part($s, $substr) {
+		$pos = strpos($s, $substr);
+		return $pos === false ? $s : substr($s, 0, $pos);
+	}
+
+	/* Get the last part of a string delimited by a substring, or the whole
+	 * string if it does not contain that substring. */
+	public static function last_part($s, $substr) {
+		$pos = self::rfind($s, $substr);
+		return $pos === null ? $s : substr($s, $pos + strlen($substr));
 	}
 
 	/* Return whether all characters in a string are lower case. */

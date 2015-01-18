@@ -169,6 +169,8 @@ class XString {
 		'before' => true,
 		'ibefore' => true,
 		'word_wrap' => true,
+		'first_part' => true,
+		'last_part' => true,
 		'escape_c_string' => true,
 		'unescape_c_string' => true,
 		'escape_php_string' => true,

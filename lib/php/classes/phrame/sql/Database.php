@@ -2,23 +2,10 @@
 
 namespace phrame\sql;
 
-/* A useful wrapper around the PDO library. Currently only tested against the
- * `mysql` and `sqlite` drivers. */
+/* A useful wrapper around the PDO library. */
 abstract class Database {
 
 	private $conn = null;
-
-	/* Driver constants. */
-	const mysql = 'mysql';
-	const sqlite = 'sqlite';
-	const sqlite2 = 'sqlite2';
-
-	/* Protected members for configuring the database. Set these in the
-	 * constructor of a class which inherits from `SQLDatabase`,
-	 * before calling `parent::__construct()`. */
-
-	/* Database driver. Use one of the driver constants. */
-	protected $driver = null;
 
 	/* MySQL host. Default is `localhost`. */
 	protected $host = 'localhost';
@@ -43,42 +30,15 @@ abstract class Database {
 	 * property names corresponding to column names. */
 	protected $mode = \PDO::FETCH_OBJ;
 
-	/* Connect to the database upon construction. */
-	public function __construct() {
+	/* Connect to the database upon construction. Accepts a PDO driver
+	 * string and an optional username and password. */
+	public function __construct($driver_str, $username = null, $password = null) {
 		try {
-			/* Create the appropriate driver string. */
-			$driver = $this->driver;
-			$driver_str = null;
-			$is_sqlite = false;
-			if($driver === self::mysql) {
-				$settings = array(
-					'host=' . $this->host,
-					'dbname=' . $this->database
-				);
-				if($this->charset !== null) {
-					$settings[] = 'charset=' . $this->charset;
-				}
-				$driver_str = 'mysql:' . join(';', $settings);
-			} elseif($driver === self::sqlite || $driver === self::sqlite2) {
-				$is_sqlite = true;
-				$driver_str = $driver . ':' . $this->database;
-			}
-
-			/* Instantiate the PDO connection. */
-			$this->conn = new \PDO($driver_str, $this->user, $this->password);
-
-			/* Raise exceptions on errors. */
-			$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-			/* Execute certain commands upon startup depending on the driver. */
-			if($driver === self::mysql && $this->charset !== null) {
-				$this->conn->exec('set names ' . $this->charset);
-			} elseif($is_sqlite) {
-				$this->conn->exec('pragma foreign_keys = on');
-			}
+			$this->conn = new \PDO($driver_str, $username, $password);
 		} catch(\PDOException $e) {
 			self::exception_error('database connection failed', $e);
 		}
+		$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 	}
 
 	/* Querying. */
@@ -284,6 +244,13 @@ abstract class Database {
 	/* Get a list of the available database drivers. */
 	public static function drivers() {
 		return \PDO::getAvailableDrivers();
+	}
+
+	/* Miscellaneous. */
+
+	/* Get the underlying PDO connection object. */
+	public function connection() {
+		return $this->conn;
 	}
 
 	/* Private implementation details. */

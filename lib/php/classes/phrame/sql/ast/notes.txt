@@ -1,0 +1,108 @@
+<select-stmt> ->
+	<select-stmt-core>
+	["order" "by" <order-expr>+{","}]
+	["limit" <expr> [("offset" | ",") <expr>] ]
+
+<select-stmt-core> ->
+	<compound-select-stmt-core> |
+	<simple-select-stmt-core> |
+	<values-stmt>
+
+<compound-select-stmt-core> ->
+	<select-stmt-core> <union-operator> <select-stmt-core>
+
+<union-operator> ->
+	"union" ["all"]
+
+<simple-select-stmt-core> ->
+	"select" ["distinct" | "all"] <col-expr>+{","}
+	["from" <from-expr>]
+	["where" <expr>]
+	["group" "by" <expr>+{","} ["having" <expr>] ]
+
+<values-stmt> ->
+	"values" ("(" <expr>+{","} ")"){","}
+
+<col-expr> ->
+	<simple-col-expr> |
+	<wildcard-col-expr>
+
+<simple-col-expr> ->
+	<expr> ["as" <identifier>]
+
+<wildcard-col-expr> ->
+	[<identifier> "."] "*"
+
+<from-expr> ->
+	<join-expr> |
+	<table-ref> |
+	<from-select-expr> |
+	"(" <from-expr> ")"
+
+<join-expr> ->
+	<from-expr> <join-operator> <from-expr> [<join-constraint>]
+
+<join-constraint> ->
+	<on-constraint> |
+	<using-constraint>
+
+<on-constraint> ->
+	"on" <expr>
+
+<using-constraint> ->
+	"using" "(" <identifier>+{","} ")"
+
+<join-operator> ->
+	"," |
+	[
+		"inner" | "left" ["outer"] | "right" ["outer"] |
+		"full" ["outer"] | "cross"
+	] "join"
+
+<table-ref> ->
+	[<identifier> "."] <identifier> ["as" <identifier>]
+
+<from-select-expr> ->
+	<select-expr>
+
+<select-expr> ->
+	"(" <select-stmt> ")" [ ["as"] <identifier> ]
+
+<order-expr> ->
+	<expr> [<collate-clause>] ["asc" | "desc"]
+
+<collate-clause> ->
+	"collate" <collation-name>
+
+<collation-name> ->
+	???
+
+<expr> ->
+	<unary-op> |
+	<binary-op> |
+	<col-ref> |
+	<integer-literal> |
+	<real-literal> |
+	<string-literal> |
+	<null-literal>
+
+<unary-op> ->
+	["not" | "-"] <expr>
+
+<binary-op> ->
+	<expr> [
+		"and" | "or"
+		"=" | "!=" |
+		"<" | ">" | "<=" | ">=" |
+		"+" | "-" | "*" | "/" | "%" |
+		"<<" | ">>" | "&" | "|" |
+		"like" |
+		"is"
+	] <expr>
+
+<col-ref> ->
+	[<identifier> "."] <identifier> |
+
+<null-literal> ->
+	"null"
+

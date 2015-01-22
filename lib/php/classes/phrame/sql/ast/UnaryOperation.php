@@ -9,11 +9,6 @@ class UnaryOperation extends Expression {
 
 	public $operator;
 	public $expr;
-
-	public function __construct($operator, $expr) {
-		$this->operator = $operator;
-		$this->expr = $expr;
-	}
 }
 
 ?>

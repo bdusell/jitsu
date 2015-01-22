@@ -1,8 +1,8 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace phrame\sql\visitors;
 
-class MysqlVisitor extends Visitor {
+class MysqlVisitor extends CodeGenerationVisitor {
 
 	public function visitIdentifier($n) {
 		return '`' . str_replace('`', '``', $n->value) . '`';

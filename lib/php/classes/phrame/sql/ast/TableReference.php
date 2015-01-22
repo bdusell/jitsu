@@ -2,16 +2,22 @@
 
 namespace phrame\sql\ast;
 
-class TableReference extends FromExpression {
+class TableReference extends Node {
 
 	public $database;
 	public $table;
-	public $as;
 
-	public function __construct($database, $table, $as) {
-		$this->database = $database;
-		$this->table = $table;
-		$this->as = $as;
+	public function as_self() {
+		return new TableExpression(array(
+			'table' => $this
+		));
+	}
+
+	public function as_name($name) {
+		return new TableExpression(array(
+			'table' => $this,
+			'as' => $name
+		));
 	}
 }
 

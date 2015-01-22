@@ -19,7 +19,7 @@
 <?php endif; ?>
 <?php if(isset($scripts)): ?>
 <?php   foreach($scripts as $js): ?>
-    <script type="text/javascript" src="<?= htmlattr($js) ?>"></script>
+    <script type="text/javascript" src="<?= htmlattr($js) ?>" defer></script>
 <?php   endforeach; ?>
 <?php endif; ?>
   </head>

@@ -1,8 +1,8 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace phrame\sql\visitors;
 
-abstract class Visitor {
+abstract class CodeGenerationVisitor extends Visitor {
 
 	private $database;
 
@@ -94,15 +94,20 @@ abstract class Visitor {
 		return 'USING (' . $this->join($n->identifiers) . ')';
 	}
 
+	public function visitTableExpression($n) {
+		$r = $n->table->accept($this);
+		if($n->as) {
+			$r .= $n->as->accept($this);
+		}
+		return $r;
+	}
+
 	public function visitTableReference($n) {
 		$r = '';
 		if($n->database) {
 			$r .= $n->database->accept($this) . '.';
 		}
 		$r .= $n->table->accept($this);
-		if($n->as) {
-			$r .= $n->as->accept($this);
-		}
 		return $r;
 	}
 
@@ -152,11 +157,11 @@ abstract class Visitor {
 	}
 
 	public function visitIntegerLiteral($n) {
-		return $n->value;
+		return (string) $n->value;
 	}
 
 	public function visitRealLiteral($n) {
-		return $n->value;
+		return (string) $n->value;
 	}
 
 	public function visitStringLiteral($n) {
@@ -165,6 +170,14 @@ abstract class Visitor {
 
 	public function visitNullLiteral($n) {
 		return 'NULL';
+	}
+
+	public function visitAnonymousPlaceholder($n) {
+		return '?';
+	}
+
+	public function visitNamedPlaceholder($n) {
+		return ':' . $n->name;
 	}
 
 	public function visitIdentifier($n) {

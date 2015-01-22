@@ -35,7 +35,7 @@
 
 <from-expr> ->
 	<join-expr> |
-	<table-ref> |
+	<table-expr> |
 	<from-select-expr> |
 	"(" <from-expr> ")"
 
@@ -59,8 +59,11 @@
 		"full" ["outer"] | "cross"
 	] "join"
 
+<table-expr> ->
+	<table-ref> ["as" <identifier>]
+
 <table-ref> ->
-	[<identifier> "."] <identifier> ["as" <identifier>]
+	[<identifier> "."] <identifier>
 
 <from-select-expr> ->
 	<select-expr>
@@ -84,7 +87,8 @@
 	<integer-literal> |
 	<real-literal> |
 	<string-literal> |
-	<null-literal>
+	<null-literal> |
+	<placeholder>
 
 <unary-op> ->
 	["not" | "-"] <expr>
@@ -101,8 +105,18 @@
 	] <expr>
 
 <col-ref> ->
-	[<identifier> "."] <identifier> |
+	[ <table-ref> "."] <identifier>
 
 <null-literal> ->
 	"null"
+
+<placeholder> ->
+	<anonymous-placeholder> |
+	<named-placeholder>
+
+<anonymous-placeholder> ->
+	"?"
+
+<named-placeholder> ->
+	":<name>"
 

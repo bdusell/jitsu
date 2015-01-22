@@ -4,8 +4,10 @@ class Database {
 
 	private static $_instance = null;
 	private static $visitor;
+	private static $validator;
 
 	private static function create_instance() {
+		self::$validator = new \phrame\sql\visitors\ValidationVisitor();
 		switch(config::sql_driver()) {
 		case 'mysql':
 			$db = new \phrame\sql\MysqlDatabase(
@@ -14,13 +16,13 @@ class Database {
 				config::db_user(),
 				config::db_password()
 			);
-			self::$visitor = new \phrame\sql\ast\MysqlVisitor($db);
+			self::$visitor = new \phrame\sql\visitors\MysqlVisitor($db);
 			return $db;
 		case 'sqlite':
 			$db = new \phrame\sql\SqliteDatabase(
 				config::sqlite_file()
 			);
-			self::$visitor = new \phrame\sql\ast\SqliteVisitor($db);
+			self::$visitor = new \phrame\sql\visitors\SqliteVisitor($db);
 			return $db;
 		default:
 			throw new \phrame\ConfigurationError(
@@ -38,6 +40,9 @@ class Database {
 
 	public static function interpret($n) {
 		self::instance();
+		if(!config::is_production()) {
+			$n->accept(self::$validator);
+		}
 		return $n->accept(self::$visitor);
 	}
 

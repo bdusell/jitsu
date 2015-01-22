@@ -41,10 +41,7 @@ set_error_handler(function($code, $msg, $file, $line) {
 });
 
 function print_stack_trace($e) {
-	echo (
-		get_class($e) . ': ' . $e->getMessage() .
-		' [' . $e->getCode() . "]\n"
-	);
+	echo get_class($e), ' [', $e->getCode(), ']: ', $e->getMessage(), "\n";
 	foreach($e->getTrace() as $level) {
 		$level += array(
 			'class' => '',
@@ -54,17 +51,10 @@ function print_stack_trace($e) {
 			'line' => ''
 		);
 		extract($level);
+		echo '  ', $class, $type, $function, "\n";
 		if($file !== '') {
-			echo (
-				'  ' . str_pad($class . $type . $function, 15) .
-				' at ' . $file . ':' . $line
-			);
-		} else {
-			echo (
-				'  ' . $class . $type . $function
-			);
+			echo '    at ', $file, ':', $line, "\n";
 		}
-		echo "\n";
 	}
 }
 

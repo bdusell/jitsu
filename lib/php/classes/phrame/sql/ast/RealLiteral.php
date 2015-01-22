@@ -2,7 +2,7 @@
 
 namespace phrame\sql\ast;
 
-class Identifier extends Node {
+class RealLiteral extends Expression {
 
 	public $value;
 }

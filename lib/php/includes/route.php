@@ -37,13 +37,19 @@ call_user_func(function() {
 		} catch(Exception $e) {
 			if(config::buffer_output()) {
 				ob_end_clean();
+				call_user_func(array(config::helper(), 'error'), 500, array(
+					'path' => $path,
+					'message' => StringUtil::capture(function() use($e) {
+						print_stack_trace($e);
+					})
+				));
+			} else {
+				if(!headers_sent()) {
+					Response::code(500);
+					Response::content_type('text/plain');
+				}
+				print_stack_trace($e);
 			}
-			call_user_func(array(config::helper(), 'error'), 500, array(
-				'path' => $path,
-				'message' => StringUtil::capture(function() use($e) {
-					print_stack_trace($e);
-				})
-			));
 		}
 	} else {
 		call_user_func(array(config::helper(), 'error'), 500, array(

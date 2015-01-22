@@ -1,9 +1,15 @@
 <?php
 
+use phrame\sql\Ast as sql;
+
 class VideosController {
 
 	public static function index() {
-		$videos = Database::query('select * from "videos" order by "id" asc');
+		$videos = Database::query(Database::interpret(
+			sql::select(sql::star())
+			->from(sql::table('videos')->as_self())
+			->order_by(sql::col('id')->asc())
+		));
 		Pages::page('videos/index', array(
 			'title' => 'Videos',
 			'videos' => $videos
@@ -11,9 +17,18 @@ class VideosController {
 	}
 
 	public static function show($id) {
-		$video = Database::row('select * from "videos" where "id" = ?', $id);
+		$video = Database::row(Database::interpret(
+			sql::select(sql::star())
+			->from(sql::table('videos')->as_self())
+			->where(sql::col('id')->eq(sql::value()))
+			->limit(sql::value(1))
+		), $id);
 		if($video) {
-			$tags = Database::query('select "value" from "tags" where "video_id" = ?', $id);
+			$tags = Database::query(Database::interpret(
+				sql::select(sql::col('value')->as_self())
+				->from(sql::table('tags')->as_self())
+				->where(sql::col('video_id')->eq(sql::value()))
+			), $id);
 			Pages::page('videos/show', array(
 				'title' => 'Video ' . $id,
 				'video' => $video,

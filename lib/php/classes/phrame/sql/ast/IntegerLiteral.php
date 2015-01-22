@@ -2,7 +2,7 @@
 
 namespace phrame\sql\ast;
 
-class Identifier extends Node {
+class IntegerLiteral extends Expression {
 
 	public $value;
 }

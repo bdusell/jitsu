@@ -14,13 +14,6 @@ class JoinExpression extends FromExpression {
 	public $operator;
 	public $right;
 	public $constraint;
-
-	public function __construct($left, $operator, $right, $constraint) {
-		$this->left = $left;
-		$this->operator = $operator;
-		$this->right = $right;
-		$this->constraint = $constraint;
-	}
 }
 
 ?>

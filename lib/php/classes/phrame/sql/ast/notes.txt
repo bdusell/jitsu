@@ -72,43 +72,36 @@
 	"(" <select-stmt> ")" [ ["as"] <identifier> ]
 
 <order-expr> ->
-	<expr> [<collate-clause>] ["asc" | "desc"]
+	<expr> ["asc" | "desc"]
 
 <collate-clause> ->
 	"collate" <collation-name>
 
-<collation-name> ->
-	???
-
 <expr> ->
-	<unary-op> |
-	<binary-op> |
-	<col-ref> |
 	<integer-literal> |
 	<real-literal> |
 	<string-literal> |
 	<null-literal> |
-	<placeholder>
-
-<unary-op> ->
-	["not" | "-"] <expr>
-
-<binary-op> ->
-	<expr> [
-		"and" | "or"
-		"=" | "!=" |
-		"<" | ">" | "<=" | ">=" |
-		"+" | "-" | "*" | "/" | "%" |
-		"<<" | ">>" | "&" | "|" |
-		"like" |
-		"is"
-	] <expr>
-
-<col-ref> ->
-	[ <table-ref> "."] <identifier>
+	<current-time> |
+	<placeholder> |
+	<col-ref> |
+	<unary-op> |
+	<binary-op> |
+	<function-call> |
+	<cast-expression> |
+	<collated-expr> |
+	<like-expr> |
+	<null-check-expr> |
+	<between-expr> |
+	<in-expr> |
+	<exists-expr> |
+	<case-expr>
 
 <null-literal> ->
 	"null"
+
+<current-time> ->
+	???
 
 <placeholder> ->
 	<anonymous-placeholder> |
@@ -119,4 +112,86 @@
 
 <named-placeholder> ->
 	":<name>"
+
+<col-ref> ->
+	[<table-ref> "."] <identifier>
+
+<unary-op> ->
+	["not" | "+" | "-" | "~"] <expr>
+
+<binary-op> ->
+	<expr> [
+		"and" | "or"
+		"=" | "!=" |
+		"<" | ">" | "<=" | ">=" |
+		"+" | "-" | "*" | "/" | "%" |
+		"<<" | ">>" | "&" | "|" |
+		"is" ["not"]
+	] <expr>
+
+<function-call> ->
+	<identifier> "(" <arg-list> ")"
+
+<arg-list> ->
+	|
+	["distinct"] <expr>+{","} |
+	"*"
+
+<cast-expression> ->
+	"cast" "(" <expr> "as" <type-name> ")"
+
+<type-name> ->
+	???
+
+<collated-expr> ->
+	<expr> "collate" <collation-name>
+
+<collation-name> ->
+	"binary" | ???
+
+<like-op> ->
+	<expr> ["not"] (
+		"like" | "glob" | "regexp" | "match"
+	) <expr> ["escape" <expr>]
+
+<null-check-expr> ->
+	<expr> ("isnull" | "notnull" | "not" "null")
+
+<between-expr> ->
+	<expr> ["not"] "between" <expr> "and" <expr>
+
+<in-expr> ->
+	<expr> ["not"] "in" <in-list>
+
+<in-list> ->
+	"(" <select-stmt> ")" |
+	<expr>+{","} |
+	<table-ref>
+
+<exists-expr> ->
+	["not"] "exists" "(" <select-stmt> ")"
+
+<case-expr> ->
+	"case" [<expr>] ("when" <expr> "then" <expr>)+ ["else" <expr>] "end"
+
+<insert-statement> ->
+	<insert-type> "into" <table-projection>
+	(<select-statement> | "default" "values")
+
+<insert-type> ->
+	"insert" |
+	"replace" |
+	"insert" "or" "replace" |
+	"insert" "or" "ignore"
+
+<table-projection> ->
+	<table-ref> "(" <col-ref">+{","} ")"
+
+<update-stmt> ->
+	<update-type> <table-ref>
+	"set" (<identifier> "=" <expr>)+{","}
+	["where" <expr>]
+
+<delete-stmt> ->
+	"delete" "from" <table-ref> ["where" <expr>]
 

@@ -137,15 +137,15 @@ abstract class CodeGenerationVisitor extends Visitor {
 	public function visitUnaryOperation($n) {
 		$r = $n->operator;
 		if($r === UnaryOperation::LOGICAL_NOT) $r .= ' ';
-		$r .= $n->expr->accept($this);
+		$r .= '(' . $n->expr->accept($this) . ')';
 		return $r;
 	}
 
 	public function visitBinaryOperation($n) {
 		return (
-			$n->left->accept($this) . ' ' .
-			$n->operator . ' ' .
-			$n->right->accept($this)
+			'(' . $n->left->accept($this) . ') ' .
+			$n->operator .
+			' (' . $n->right->accept($this) ')'
 		);
 	}
 

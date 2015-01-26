@@ -25,19 +25,20 @@ its name is `explode`, whereas the function named `str_split` actually
 partitions a string into chunks of a certain length.
 
 Phrame offers a normalized, more mnemonic API which irons out these quirks.
-Much of this API comes in the form of static functions so that it can be
-accessed through auto-loading. A few global functions are defined as well.
+Much of this API comes in the form of static functions which can be accessed
+through auto-loading. A few global functions are defined during startup as
+well, mostly because they are expected to be used in HTML templates.
 
 * `Util` includes some must-have helper functions such as `Util::get` (array
   access with a default value), `Util::p` (debug printing), and
   `Util::template` (encapsulated PHP file inclusion)
-* Wrapper classes `XArray`, `XString`, and `XRegex` provide a rich, object-
-  oriented interface to their native PHP counterparts
-* `SQLDatabase` and `SQLStatement` are useful wrappers around PHP's PDO
-  library, offering iterator syntax for SQL query results and greatly
-  simplified parameter binding
+* Wrapper classes `XArray`, `XString`, and `XRegex` provide a rich,
+  object-oriented interface to their native PHP counterparts
 * `Request` and `Response` unify PHP's various methods for accessing data from
   the current HTTP request and building the HTTP response, respectively
+* `phrame\sql\Database` and `phrame\sql\Statement` are useful wrappers around
+  PHP's PDO library, offering iterator syntax for SQL query results and greatly
+  simplified parameter binding
 * The `html` function escapes a string for interpolation inside HTML text;
   `htmlattr` does the same for a string inside a double-quoted HTML attribute
 * The `repr` function returns a string of the PHP representation of a value
@@ -48,6 +49,9 @@ Refer to the inline documentation for details. The library code is found under
 The Phrame bootstrapping code does some additional configuring for a saner
 development experience.
 
+* Sets up class auto-loading
+* Uses a flexible, general-purpose configuration system which allows an
+  application to be served from an arbitrary mounting point and document root
 * Activates intelligible error reporting in development mode and silences
   errors in production mode
 * Uses a robust routing mechanism which uses local `.htaccess` files and
@@ -55,14 +59,20 @@ development experience.
   directly through Apache
 * As a consequence of the above, is able to hide PHP from the outside world
   entirely; adding `.php` to a page URL results in a 404
-* Sets up class auto-loading
-* Uses a flexible, general-purpose configuration system which allows an
-  application to be served from an arbitrary mounting point and document root
-* Includes a gulpfile which pre-compiles JavaScript and CSS assets
-* Includes a Makefile which dynamically generates local `.htaccess`,
-  `robots.txt`, and `php.ini` files from configuration settings
-* Creates separate development and production builds under the `build/`
-  directory
+
+In order to generate certain configuration files which are external to PHP
+(`.htaccess`, `ini.php`, `robots.txt`), Phrame leverages an executable script,
+`bin/process.php` to create them dynamically using the project's configuration
+settings. The included `Makefile` defines rules for creating these files from
+their sources, which reside under `src/app/templates/`.
+
+The example project also includes configuation files for the build tools
+`Bower` and `GulpJS`. The example gulpfile is used to concatenate and minify
+CSS and JavaScript assets.
+
+For projects that use a SQL database, the scripts `bin/makedb-sqlite` and
+`bin/makedb-mysql` can be used to clobber the database. The files under
+`src/sql/` define your schema.
 
 ## Usage ##
 
@@ -86,8 +96,8 @@ steps to install these build tools:
   `build/prod/`
 * Run `make`, which generates local `.htaccess`, `robots.txt`, and `php.ini`
   files for each environment
-* If the app requires a SQLite database, run `./bin/makedb`, which
-  creates/clobbers the SQLite database file
+* If the project requires a database to be set up, run the appropriate setup
+  script under `bin/`
 
 ## Project Structure ##
 
@@ -105,12 +115,12 @@ steps to install these build tools:
   <dd>For apps using SQLite, contains the SQLite database file.</dd>
 
   <dt><code>lib/</code></dt>
-  <dd>Contains the Phrame PHP library code as well as some
-  <code>Makefile</code> utilities.</dd>
+  <dd>Contains the Phrame PHP library code as well as some Makefile and Bash
+  utilities.</dd>
 
   <dt><code>src/</code></dt>
-  <dd>Your application code. PHP, JavaScript, CSS, and the rest all live here.
-  </dd>
+  <dd>Your application code. PHP, JavaScript, CSS, SQL, and the rest all live
+  here.</dd>
 </dl>
 
 ## Configuring ##
@@ -118,27 +128,29 @@ steps to install these build tools:
 Phrame's configuration system is fairly straightforward. A configuration file
 shared by both environments exists at `src/app/config.php`. Configuration files
 specific to each environment exist at `build/dev/config.php` and
-`build/prod/config.php`. 
+`build/prod/config.php`.
 
-Configuration variables are set using `config::set($name, $value)` or, for pre-
-defined or previously set variables,
+The configuation files themselves are simply snippets of PHP code which use the
+`config` class. Configuration variables are set using
+`config::set($name, $value)` or, for pre-defined or previously set variables,
 <code>config::<var>name</var>($value)</code>. They can be accessed from
 anywhere using <code>config::<var>name</var>()</code> or the more explicit
 `config::get($name)`.
 
-The pre-defined variables are:
+Some of the essential pre-defined variables are:
 <dl>
   <dt><code>dir</code></dt>
   <dd>Absolute path to the current build's directory. Use <code>__DIR__</code>
-  in the local <code>config.php</code> file to set this. Default is null.</dd>
+  in the local <code>config.php</code> file to set this.</dd>
 
   <dt><code>document_root</code></dt>
   <dd>The build's root directory from the point of view of the server. If the
   directory is symlinked, this will need to be different from <code>dir</code>.
-  Default is null.</dd>
+  </dd>
 
   <dt><code>scheme</code></dt>
-  <dd>The HTTP protocol to use. Default is <code>'http'</code>.</dd>
+  <dd>The HTTP protocol to use, either <code>'http'</code> or
+  <code>'https'</code>. Default is <code>'http'</code>.</dd>
 
   <dt><code>host</code></dt>
   <dd>Hostname of the server. Default is <code>'localhost'</code>.</dd>
@@ -172,7 +184,7 @@ Rails-style URL pattern. The second argument is a PHP callable object.
 
 Patterns may include variables, globs, and optional parts. Variables are
 written like `:name` and do not match slashes. Globs are written like `*glob`
-and can match slashes. Parts enclosed in parentheses like `foo(bar)` are
+and can match slashes. Parts enclosed in parentheses like in `foo(bar)` are
 optional. The values of variables and globs are passed as positional parameters
 to callbacks.
 
@@ -186,10 +198,19 @@ specificity.
 
 These are `XArray` for native PHP `array`s, `XString` for PHP `string`s, and
 `XRegex` for PHP's `preg` functions. These are object-oriented interfaces built
-on top of `ArrayUtil`, `StringUtil`, and `RegexUtil`, respectively. As an
-alternative to invoking `new ArrayUtil($array)`, etc. you can use the global
+on top of `ArrayUtil`, `StringUtil`, and `RegexUtil`, respectively. When you
+want to use the normalized API without creating wrapped objects, use the
+`*Util` classes instead. In general, when a `*Util` function takes the native
+PHP equivalent as its first argument, it is also a method on the corresponding
+`X*` class. The `X*` class methods automatically unbox `X*` class arguments and
+wrap return values in `X*` classes where appropriate; the `*Util` functions do
+not.
+
+As an alternative to invoking `new XArray($array)`, etc. you can use the global
 functions `xarray`, `xstring`, and `xregex` to wrap values in these classes.
-Refer to the inline documentation in `ArrayUtil`, etc. for method details.
+
+Refer to the detailed inline documentation in `ArrayUtil`, `StringUtil`, and
+`RegexUtil` for method details.
 
 ## Request Access ##
 
@@ -199,13 +220,12 @@ access to the HTTP method, URL, header fields, content body, and more.
 ## Response Building ##
 
 Refer to the inline documentation in `Response`. This module gives you easy
-access to the response code, response headers, content type, and more.
+access to the response code, response headers, content type, and so on.
 
 ## Application Code ##
 
 All of the code under `src/` is yours to modify. The `src/js/` and `src/css/`
 directories house source code for the JavaScript and stylesheets, respectively.
-
 
 The `src/app/` directory contains backend PHP code. It contains the following
 directories.
@@ -248,10 +268,10 @@ directories.
 
 A very convenient practice is to use a singleton `Database` class to access
 your SQL database through the magic of auto-loading. The example `Database`
-class simply makes all of the methods of the `SQLDatabase` class available as
-static methods. The database connection is established the first time the
-`Database` class is referenced in a context that requires a connection.
-Supports SQLite or MySQL.
+class simply makes all of the methods of the `phrame\sql\Database` class
+available as static methods. The database connection is established the first
+time the `Database` class is referenced in a context that requires a
+connection. Currently supports SQLite or MySQL.
 
 Here are some examples to illustrate the convenience of this module:
 ```
@@ -275,10 +295,12 @@ Database::execute(
 do_something(Database::last_insert_id());
 ```
 
-Refer to the inline documentation in `SQLDatabase` and `SQLStatement` for more
-details.
+Refer to the inline documentation in `phrame\sql\Database` and
+`phrame\sql\Statement` for more details about the API.
 
-An ORM may be implemented in the future.
+Phrame also includes a SQL syntax abstraction layer so that an app may be
+configured to use a different SQL driver (SQLite, MySQL, etc.) with a seamless
+transition. This is implemented in `phrame\sql\Ast`.
 
 ## HTML Templates ##
 
@@ -295,7 +317,7 @@ In `src/app/views/users/index.html.php`:
   <h1>Users</h1>
   <ul>
   <?php foreach($users as $user): ?>
-    <li><?= html($user->name) ?></li>
+    <li id="user-<?= htmlattr($user->id) ?>"><?= html($user->name) ?></li>
   <?php endforeach; ?>
   </ul>
 </section>

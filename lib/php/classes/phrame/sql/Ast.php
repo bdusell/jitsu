@@ -19,19 +19,15 @@ class Ast {
 	}
 
 	public static function values(/* $value_array, ... */) {
-		return new ast\ValuesStatement(array(
-			'values' => func_get_args()
-		));
+		return new ast\ValuesStatementCore(func_get_args());
 	}
 
 	public static function row(/* $expr, ... */) {
-		return new ast\ValuesStatement(array(
-			'values' => array(func_get_args())
-		));
+		return new ast\ValuesStatementCore(array(func_get_args()));
 	}
 
 	public static function star() {
-		return new ast\WildcardColumnExpression();
+		return new ast\WildcardColumnExpression(array());
 	}
 
 	public static function table($name) {
@@ -52,7 +48,7 @@ class Ast {
 
 	public static function value($value = null) {
 		if(func_num_args() === 0) {
-			return new ast\AnonymousPlaceholder();
+			return new ast\AnonymousPlaceholder(array());
 		} elseif(is_string($value)) {
 			return new ast\StringLiteral(array('value' => $value));
 		} elseif(is_int($value)) {
@@ -60,7 +56,7 @@ class Ast {
 		} elseif(is_real($value)) {
 			return new ast\RealLiteral(array('value' => $value));
 		} elseif($value === null) {
-			return new ast\NullLiteral();
+			return new ast\NullLiteral(array());
 		}
 	}
 }

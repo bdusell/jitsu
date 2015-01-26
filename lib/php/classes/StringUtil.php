@@ -340,7 +340,7 @@ class StringUtil {
 	}
 
 	/* Tell whether a string includes one of the characters listed in
-	 * `$chars`. */
+	 * the string `$chars`. */
 	public static function contains_chars($s, $chars) {
 		return strpbrk($s, $chars) !== false;
 	}
@@ -368,6 +368,31 @@ class StringUtil {
 	/* Like `ends_with` but case-insensitive. */
 	public static function iends_with($str, $suffix) {
 		return substr_compare($str, $suffix, -strlen($suffix), null, true) == 0;
+	}
+
+	/* Remove a prefix from a string, or return null if the subject string
+	 * does not have that prefix. */
+	public static function remove_prefix($str, $prefix) {
+		return self::begins_with($str, $prefix) ?
+			substr($str, strlen($prefix)) : null;
+	}
+
+	/* Like `remove_prefix`, but case-insensitive. */
+	public static function iremove_prefix($str, $prefix) {
+		return self::ibegins_with($str, $prefix) ?
+			substr($str, strlen($prefix)) : null;
+	}
+
+	/* Like `remove_prefix`, but for a suffix instead of a prefix. */
+	public static function remove_suffix($str, $suffix) {
+		return self::ends_with($str, $suffix) ?
+			substr($str, strlen(0, strlen($str) - strlen($suffix))) : null;
+	}
+
+	/* Like `remove_suffix`, but case-insensitive. */
+	public static function iremove_suffix($str, $suffix) {
+		return self::iends_with($str, $suffix) ?
+			substr($str, strlen(0, strlen($str) - strlen($suffix))) : null;
 	}
 
 	/* Get the starting offset of a substring within a string, or null if

@@ -13,7 +13,7 @@ include lib/make/npm.makefile
 include lib/make/gulp.makefile
 include lib/make/bower.makefile
 
-SRC_EXTENSIONS=js coffee css scss sass less php
+SRC_EXTENSIONS=js coffee css scss sass less
 SRC=$(shell find src $(call TAIL,2,$(foreach i,$(SRC_EXTENSIONS),-o -name '*.$(i)')))
 PROCESS_PHP=./bin/process.php -c $^ > $@
 

@@ -2,80 +2,29 @@
 
 namespace phrame\sql;
 
-/* A useful wrapper around the PDO library. Currently only tested against the
- * `mysql` and `sqlite` drivers. */
+/* A useful wrapper around the PDO library. */
 abstract class Database {
 
 	private $conn = null;
 
-	/* Driver constants. */
-	const mysql = 'mysql';
-	const sqlite = 'sqlite';
-	const sqlite2 = 'sqlite2';
+	private $mode = \PDO::FETCH_OBJ;
 
-	/* Protected members for configuring the database. Set these in the
-	 * constructor of a class which inherits from `SQLDatabase`,
-	 * before calling `parent::__construct()`. */
-
-	/* Database driver. Use one of the driver constants. */
-	protected $driver = null;
-
-	/* MySQL host. Default is `localhost`. */
-	protected $host = 'localhost';
-
-	/* Database name. For MySQL this is the name of the database. For
-	 * SQLite this is the path of the database file. */
-	protected $database = null;
-
-	/* MySQL username. */
-	protected $user = null;
-
-	/* MySQL password. */
-	protected $password = null;
-
-	/* MySQL character set. The default, `utf8mb4`, supports all Unicode
-	 * characters. */
-	protected $charset = 'utf8mb4';
-
-	/* Fetch mode. Determines what kind of object rows are fetched as. Use
-	 * the `PDO::FETCH_*` constants directly. The default,
-	 * `PDO::FETCH_OBJ`, causes rows to be returned as objects with
-	 * property names corresponding to column names. */
-	protected $mode = \PDO::FETCH_OBJ;
-
-	/* Connect to the database upon construction. */
-	public function __construct() {
+	/* Connect to the database upon construction. Accepts a PDO driver
+	 * string and an optional username and password. */
+	public function __construct(
+		$driver_str, $username = null, $password = null,
+		$options = null)
+	{
+		if($options === null) $options = array();
 		try {
-			/* Create the appropriate driver string. */
-			$driver = $this->driver;
-			$driver_str = null;
-			$is_sqlite = false;
-			if($driver === self::mysql) {
-				$settings = array(
-					'host=' . $this->host,
-					'dbname=' . $this->database
-				);
-				if($this->charset !== null) {
-					$settings[] = 'charset=' . $this->charset;
-				}
-				$driver_str = 'mysql:' . join(';', $settings);
-			} elseif($driver === self::sqlite || $driver === self::sqlite2) {
-				$is_sqlite = true;
-				$driver_str = $driver . ':' . $this->database;
-			}
-
-			/* Instantiate the PDO connection. */
-			$this->conn = new \PDO($driver_str, $this->user, $this->password);
-
-			/* Raise exceptions on errors. */
-			$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-			/* Execute certain commands upon startup depending on the driver. */
-			if($driver === self::mysql && $charset !== null) {
-				$this->conn->exec('set names ' . $this->charset);
-			} elseif($is_sqlite) {
-				$this->conn->exec('pragma foreign_keys = on');
-			}
+			$this->conn = new \PDO(
+				$driver_str,
+				$username,
+				$password,
+				$options + array(
+					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+				)
+			);
 		} catch(\PDOException $e) {
 			self::exception_error('database connection failed', $e);
 		}
@@ -173,7 +122,7 @@ abstract class Database {
 	/* Escape and quote a string value for interpolation in a SQL query.
 	 * Note that the result includes quotes added around the string. */
 	public function quote($s) {
-		if(($result = $this->conn->quote()) === false) {
+		if(($result = $this->conn->quote($s)) === false) {
 			$this->result_error("unable to quote string value '$s'");
 		}
 		return $result;
@@ -182,7 +131,7 @@ abstract class Database {
 	/* Escape characters in a string that have special meaning in SQL
 	 * "like" patterns. Note that this should be coupled with an `ESCAPE`
 	 * clause in the SQL; for example,
-	 *     "percentage" LIKE "%0\%" ESCAPE '\'
+	 *     "percentage" LIKE '%foo\%bar%' ESCAPE '\'
 	 * A `\` is the default escape character. */
 	public function escape_like($s, $esc = '\\') {
 		return str_replace(
@@ -286,12 +235,30 @@ abstract class Database {
 		return \PDO::getAvailableDrivers();
 	}
 
+	/* Miscellaneous. */
+
+	/* Get the underlying PDO connection object. */
+	public function connection() {
+		return $this->conn;
+	}
+
+	/* Access the fetch mode. Give no argument to get the current mode and
+	 * provide an argument to set it. The fetch mode determines the form in
+	 * which rows are fetched. Use the `PDO::FETCH_*` constants directly.
+	 * The default, `PDO::FETCH_OBJ`, causes rows to be returned as
+	 * `stdClass` objects with property names corresponding to column
+	 * names. */
+	public function fetch_mode($mode = null) {
+		if(func_num_args() === 0) return $mode;
+		else $this->mode = $mode;
+	}
+
 	/* Private implementation details. */
 
 	// Parse the argument list to a method.
 	private static function args($args, &$query, &$sql_args) {
 		$query = array_shift($args);
-		if(count($args) == 1 && is_array($args[0])) {
+		if(count($args) === 1 && is_array($args[0])) {
 			$sql_args = $args[0];
 		} else {
 			$sql_args = $args;

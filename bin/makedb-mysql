@@ -1,0 +1,20 @@
+#!/bin/bash
+DIR=$(dirname "$BASH_SOURCE")
+. "$DIR/../lib/bash/functions"
+echo -n 'working...'
+{
+  echo
+  confirm 'Do you really want to clobber the database?'
+} && {
+  mysql -uroot -p <<SQL
+source $DIR/../src/sql/mysql/schema.sql
+SQL
+} && {
+  if [[ -f "$DIR/../src/sql/mysql/data.sql" ]]; then
+    mysql -uroot -p <<SQL
+source $DIR/../src/sql/mysql/data.sql
+SQL
+  fi
+} && {
+  echo 'done'
+}

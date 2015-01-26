@@ -6,11 +6,11 @@ error_reporting(E_ALL);
 
 /* Display errors if not in production (redundant, since default error handler
  * is overridden). */
-ini_set('display_errors', config::is_production() ? 0 : 1);
+ini_set('display_errors', config::show_errors() ? 1 : 0);
 
 /* Display startup errors which cannot be handled by the normal error
  * handler. */
-ini_set('display_startup_errors', config::is_production() ? 0 : 1);
+ini_set('display_startup_errors', config::show_errors() ? 0 : 1);
 
 /* Log errors to the server's logs in production. */
 ini_set('log_errors', config::is_production() ? 1 : 0);
@@ -41,10 +41,7 @@ set_error_handler(function($code, $msg, $file, $line) {
 });
 
 function print_stack_trace($e) {
-	echo (
-		get_class($e) . ': ' . $e->getMessage() .
-		' [' . $e->getCode() . "]\n"
-	);
+	echo get_class($e), ' [', $e->getCode(), ']: ', $e->getMessage(), "\n";
 	foreach($e->getTrace() as $level) {
 		$level += array(
 			'class' => '',
@@ -54,26 +51,19 @@ function print_stack_trace($e) {
 			'line' => ''
 		);
 		extract($level);
+		echo '  ', $class, $type, $function, "\n";
 		if($file !== '') {
-			echo (
-				'  ' . str_pad($class . $type . $function, 15) .
-				' at ' . $file . ':' . $line
-			);
-		} else {
-			echo (
-				'  ' . $class . $type . $function
-			);
+			echo '    at ', $file, ':', $line, "\n";
 		}
-		echo "\n";
 	}
 }
 
 /* Override the default exception handler. */
-if(config::is_production()) {
+if(config::show_errors()) {
+	set_exception_handler('print_stack_trace');
+} else {
 	/* Silence everything. */
 	set_exception_handler(function($e) {});
-} else {
-	set_exception_handler('print_stack_trace');
 }
 
 ?>

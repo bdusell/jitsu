@@ -6,4 +6,5 @@ endif;
 config::path('phrame-dev');
 config::dir(__DIR__);
 config::document_root('/var/www/phrame-dev');
+config::buffer_output(false);
 ?>

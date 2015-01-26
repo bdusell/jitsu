@@ -1,0 +1,67 @@
+Common
+======
+COLLATE
+-, ~
+|| / CONCAT()
+*, /, %
++, -
+<<, >>
+IS
+
+SQLite
+======
+1  COLLATE
+2  -, +, ~, NOT
+3  ||
+4  *, /, %
+5  +, -
+6  <<, >>, &, |
+7  <, <=, >, >=
+8  =, ==, !=, <>, IS, IS NOT, IN, LIKE, GLOB, MATCH, BETWEEN ... AND ...
+9  AND
+10 OR
+
+MySQL
+=====
+0  INTERVAL
+1  BINARY, COLLATE
+2  !
+3  -, ~
+4  ^
+5  *, /, DIV, %, MOD
+6  -, +
+7  <<, >>
+8  &
+9  |
+10 =, <=>, >=, >, <=, <, <>, !=, IS, LIKE, REGEXP, IN
+11 BETWEEN, CASE, WHEN, THEN, ELSE
+12 NOT
+13 &&, AND
+14 XOR
+15 ||, OR
+16 =, :=
+
+PostgreSQL
+==========
+   .
+   ::
+   []
+   COLLATE
+1  -
+2  ^
+3  *, /, %
+4  +, -
+5  IS
+6  ISNULL
+7  NOTNULL
+8  (other)
+9  IN
+10 BETWEEN
+11 OVERLAPS
+12 LIKE, ILIKE, SIMILAR
+13 <, >
+14 =
+15 NOT
+16 AND
+17 OR
+

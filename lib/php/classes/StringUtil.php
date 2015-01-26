@@ -340,7 +340,7 @@ class StringUtil {
 	}
 
 	/* Tell whether a string includes one of the characters listed in
-	 * `$chars`. */
+	 * the string `$chars`. */
 	public static function contains_chars($s, $chars) {
 		return strpbrk($s, $chars) !== false;
 	}
@@ -370,27 +370,71 @@ class StringUtil {
 		return substr_compare($str, $suffix, -strlen($suffix), null, true) == 0;
 	}
 
+	/* Remove a prefix from a string, or return null if the subject string
+	 * does not have that prefix. */
+	public static function remove_prefix($str, $prefix) {
+		return self::begins_with($str, $prefix) ?
+			substr($str, strlen($prefix)) : null;
+	}
+
+	/* Like `remove_prefix`, but case-insensitive. */
+	public static function iremove_prefix($str, $prefix) {
+		return self::ibegins_with($str, $prefix) ?
+			substr($str, strlen($prefix)) : null;
+	}
+
+	/* Like `remove_prefix`, but for a suffix instead of a prefix. */
+	public static function remove_suffix($str, $suffix) {
+		return self::ends_with($str, $suffix) ?
+			substr($str, strlen(0, strlen($str) - strlen($suffix))) : null;
+	}
+
+	/* Like `remove_suffix`, but case-insensitive. */
+	public static function iremove_suffix($str, $suffix) {
+		return self::iends_with($str, $suffix) ?
+			substr($str, strlen(0, strlen($str) - strlen($suffix))) : null;
+	}
+
 	/* Get the starting offset of a substring within a string, or null if
 	 * it does not appear within the string. Optionally provide a starting
 	 * offset. */
 	public static function find($s, $substr, $offset = 0) {
-		$r = strpos($s, $substr, $offset);
-		return $r === false ? null : $r;
+		return self::_find('strpos', $s, $substr, $offset);
 	}
 
 	/* Like `find` but case-insensitive. */
 	public static function ifind($s, $substr, $offset = 0) {
-		$r = stripos($s, $substr, $offset);
+		return self::_find('stripos', $s, $substr, $offset);
+	}
+
+	private static function _find($name, $s, $substr, $offset) {
+		if($offset > strlen($s)) return null;
+		if(strlen($substr) === 0) return $offset;
+		$r = call_user_func($name, $s, $substr, $offset);
 		return $r === false ? null : $r;
 	}
 
-	/* Like `find` but starts from the end of the string. The offset may
-	 * also be negative, indicating where to start from the end of the
-	 * string. */
-	public static function rfind($s, $substr, $offset = null) {
-		if($offset === 0) return strlen($substr) == 0 ? 0 : null;
-		$r = strrpos($s, $substr, $offset);
+	/* Like `find` but starts from the end of the string. The optional
+	 * offset is the number of characters from the _end_ of the string. */
+	public static function rfind($s, $substr, $offset = 0) {
+		if($offset > strlen($s)) return null;
+		if(strlen($substr) === 0) return strlen($s) - $offset;
+		$r = strrpos($s, $substr, -$offset);
 		return $r === false ? null : $r;
+	}
+
+	/* Get the first part of a string delimited by a substring, or the
+	 * whole string if it does not contain that substring. */
+	public static function first_part($s, $substr) {
+		$pos = strpos($s, $substr);
+		return $pos === false ? $s : substr($s, 0, $pos);
+	}
+
+	/* Get the last part of a string delimited by a substring, or the whole
+	 * string if it does not contain that substring. */
+	public static function last_part($s, $substr) {
+		$pos = self::rfind($s, $substr);
+		return $pos === null ? $s : substr($s, $pos + strlen($substr));
 	}
 
 	/* Return whether all characters in a string are lower case. */

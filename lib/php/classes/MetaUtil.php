@@ -31,6 +31,11 @@ class MetaUtil {
 	public static function apply_constructor($class_name, $args) {
 		(new ReflectionClass($class_name))->newInstanceArgs($args);
 	}
+
+	/* Get the class or type of a value as a string. */
+	public static function type_name($value) {
+		return is_object($value) ? get_class($value) : gettype($value);
+	}
 }
 
 ?>

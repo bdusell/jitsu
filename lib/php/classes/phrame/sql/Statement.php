@@ -14,7 +14,7 @@ class Statement implements \Iterator {
 	 * Use the `PDO::FETCH_*` constants directly. The default is
 	 * `PDO::FETCH_OBJ`, so that rows are returned as objects with property
 	 * names corresponding to column names. */
-	public function __construct($stmt, $mode = PDO::FETCH_OBJ) {
+	public function __construct($stmt, $mode = \PDO::FETCH_OBJ) {
 		$this->stmt = $stmt;
 		$this->current = null;
 		$this->mode = $mode;
@@ -188,10 +188,10 @@ class Statement implements \Iterator {
 	}
 
 	/* Return all of the rows passed through a function and copied into an
-	 * array. The column of each row are passed as positional parameters to
-	 * the function. */
+	 * array. The columns of each row are passed as positional parameters
+	 * to the function. */
 	public function map($callback) {
-		return $this->stmt->fetchAll(PDO::FETCH_FUNC, $callback);
+		return $this->stmt->fetchAll(\PDO::FETCH_FUNC, $callback);
 	}
 
 	/* Advance to the next set of rows returned by the query, which is
@@ -222,7 +222,7 @@ class Statement implements \Iterator {
 		if($this->current === null) {
 			$this->next();
 		} else {
-			$this->current = $this->stmt->fetch($this->mode, PDO::FETCH_ORI_ABS, 0);
+			$this->current = $this->stmt->fetch($this->mode, \PDO::FETCH_ORI_ABS, 0);
 		}
 	}
 
@@ -255,7 +255,7 @@ class Statement implements \Iterator {
 	}
 
 	private static function type_value($name, $inout) {
-		return constant('PDO::PARAM_' . strtoupper($name)) | ($inout ? PDO::PARAM_INPUT_OUTPUT : 0);
+		return constant('PDO::PARAM_' . strtoupper($name)) | ($inout ? \PDO::PARAM_INPUT_OUTPUT : 0);
 	}
 
 	private function raise_error($msg) {

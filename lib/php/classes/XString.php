@@ -34,6 +34,9 @@ class XString {
 			return new XString(
 				call_user_func_array($func, $args)
 			);
+		} elseif(array_key_exists($name, self::$wrapped_string_or_null_methods)) {
+			$result = call_user_func_array($func, $args);
+			return $result === null ? null : new XString($result);
 		}
 		throw new BadMethodCallException(
 			get_class() . '->' . $name . ' does not exist'
@@ -169,6 +172,8 @@ class XString {
 		'before' => true,
 		'ibefore' => true,
 		'word_wrap' => true,
+		'first_part' => true,
+		'last_part' => true,
 		'escape_c_string' => true,
 		'unescape_c_string' => true,
 		'escape_php_string' => true,
@@ -195,6 +200,13 @@ class XString {
 		'rot13' => true,
 		'shuffle' => true,
 		'naive_pluralize' => true,
+	);
+
+	private static $wrapped_string_or_null_methods = array(
+		'remove_prefix' => true,
+		'iremove_prefix' => true,
+		'remove_suffix' => true,
+		'iremove_suffix' => true,
 	);
 
 	private static $wrapped_array_methods = array(

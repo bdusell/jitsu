@@ -30,6 +30,17 @@ class TableReference extends Node {
 			'as' => $name
 		));
 	}
+
+	public function cols(/* $name, ... */) {
+		$ids = array();
+		foreach(func_get_args() as $arg) {
+			$ids[] = new Identifier(array('value' => $arg));
+		}
+		return new TableProjection(array(
+			'table' => $this,
+			'columns' => $ids
+		));
+	}
 }
 
 ?>

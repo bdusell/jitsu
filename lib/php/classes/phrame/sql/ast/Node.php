@@ -113,7 +113,7 @@ abstract class Node {
 		}
 	}
 
-	private function error($msg) {
+	private function error($prop, $msg) {
 		throw new \InvalidArgumentException(
 			get_class($this) . '->' . $prop . ' ' . $msg
 		);

@@ -18,6 +18,13 @@ class Ast {
 		));
 	}
 
+	public static function insert($table) {
+		return new ast\InsertStatement(array(
+			'type' => ast\InsertStatement::INSERT,
+			'table' => $table
+		));
+	}
+
 	public static function values(/* $value_array, ... */) {
 		return new ast\ValuesStatementCore(func_get_args());
 	}

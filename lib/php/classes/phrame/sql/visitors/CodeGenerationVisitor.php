@@ -187,7 +187,7 @@ abstract class CodeGenerationVisitor extends Visitor {
 
 	public function visitInsertStatement($n) {
 		return (
-			$n->type . ' ' .
+			$n->type . ' INTO ' .
 			$n->table->accept($this) . ' ' .
 			$n->select->accept($this)
 		);
@@ -363,7 +363,7 @@ abstract class CodeGenerationVisitor extends Visitor {
 
 	public function visitTableProjection($n) {
 		return (
-			$n->table->accept($this) . ' (' .
+			$n->table->accept($this) . '(' .
 			$this->join($n->columns) . ')'
 		);
 	}

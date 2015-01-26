@@ -26,6 +26,23 @@ class InsertStatement extends Statement {
 		$this->validate_class('TableProjection', 'table');
 		$this->validate_optional_class('SelectStatement', 'select');
 	}
+
+	public function values(/* $int | $expr1, ... */) {
+		if(func_num_args() === 1 && is_int($n = func_get_arg(0))) {
+			$exprs = array();
+			for($i = 0; $i < $n; ++$i) {
+				$exprs[] = new AnonymousPlaceholder(array());
+			}
+		} else {
+			$exprs = func_get_args();
+		}
+		$this->select = new SelectStatement(array(
+			'core' => new ValuesStatementCore(array(
+				'values' => array($exprs)
+			))
+		));
+		return $this;
+	}
 }
 
 ?>

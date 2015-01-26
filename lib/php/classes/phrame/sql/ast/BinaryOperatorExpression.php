@@ -26,8 +26,8 @@ class BinaryOperatorExpression extends Expression {
 	public $left;
 	public $right;
 
-	public function __construct($left, $right) {
-		parent::__construct(array('left' => $left, 'right' => $right));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'left');
 		$this->validate_class('Expression', 'right');
 	}

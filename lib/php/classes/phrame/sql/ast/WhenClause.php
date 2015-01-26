@@ -12,8 +12,8 @@ class WhenClause extends Node {
 	public $when;
 	public $then;
 
-	public function __construct($when, $then) {
-		parent::__construct(array('when' => $when, 'then' => $then));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'when');
 		$this->validate_class('Expression', 'then');
 	}

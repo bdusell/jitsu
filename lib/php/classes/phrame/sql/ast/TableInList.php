@@ -11,8 +11,8 @@ class TableInList extends InList {
 
 	public $table;
 
-	public function __construct($table) {
-		parent::__construct(array('table' => $table));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('TableReference', 'table');
 	}
 }

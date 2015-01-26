@@ -12,8 +12,8 @@ class CastExpression extends AtomicExpression {
 	public $expr;
 	public $type;
 
-	public function __construct($expr, $type) {
-		parent::__construct(array('expr' => $expr, 'type' => $type));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'expr');
 		// TODO validate type
 	}

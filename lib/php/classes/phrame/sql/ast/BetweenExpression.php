@@ -13,12 +13,8 @@ class BetweenExpression extends Expression {
 	public $min;
 	public $max;
 
-	public function __construct($expr, $min, $max) {
-		parent::__construct(array(
-			'expr' => $expr,
-			'min' => $min,
-			'max' => $max
-		));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'expr');
 		$this->validate_class('Expression', 'min');
 		$this->validate_class('Expression', 'max');

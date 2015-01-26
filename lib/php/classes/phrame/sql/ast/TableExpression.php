@@ -12,8 +12,8 @@ class TableExpression extends FromExpression {
 	public $table;
 	public $as;
 
-	public function __construct($table, $as = null) {
-		parent::__construct(array('table' => $table, 'as' => $as));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('TableReference', 'table');
 		$this->validate_optional_class('Identifier', 'as');
 	}

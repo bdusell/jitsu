@@ -11,8 +11,8 @@ class SelectInList extends InList {
 
 	public $select;
 
-	public function __construct($select) {
-		parent::__construct(array('select' => $select));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('SelectStatement', 'select');
 	}
 }

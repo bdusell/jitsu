@@ -12,8 +12,8 @@ class SimpleColumnExpression extends ColumnExpression {
 	public $expr;
 	public $as;
 
-	public function __construct($expr, $as = null) {
-		parent::__construct(array('expr' => $expr, 'as' => $as));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'expr');
 		$this->validate_optional_class('Identifier', 'as');
 	}

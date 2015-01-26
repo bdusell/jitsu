@@ -11,8 +11,8 @@ class StringLiteral extends LiteralExpression {
 
 	public $value;
 
-	public function __construct($value) {
-		parent::__construct(array('value' => $value));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_string('value');
 	}
 }

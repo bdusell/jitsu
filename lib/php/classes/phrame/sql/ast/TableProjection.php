@@ -12,8 +12,8 @@ class TableProjection extends Node {
 	public $table;
 	public $columns;
 
-	public function __construct($table, $columns) {
-		parent::__construct(array('table' => $table, 'columns' => $columns));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('TableReference', 'table');
 		$this->validate_array('Identifier', 'columns');
 	}

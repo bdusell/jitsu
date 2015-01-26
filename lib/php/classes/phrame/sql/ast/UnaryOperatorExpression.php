@@ -13,8 +13,8 @@ class UnaryOperatorExpression extends Expression {
 
 	public $expr;
 
-	public function __construct($expr) {
-		parent::__construct(array('expr' => $expr));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'expr');
 	}
 }

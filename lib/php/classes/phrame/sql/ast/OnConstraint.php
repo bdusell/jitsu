@@ -11,8 +11,8 @@ class OnConstraint extends JoinConstraint {
 
 	public $expr;
 
-	public function __construct($expr) {
-		parent::__construct(array('expr' => $expr));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'expr');
 	}
 }

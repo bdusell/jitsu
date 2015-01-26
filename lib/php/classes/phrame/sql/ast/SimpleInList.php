@@ -11,8 +11,8 @@ class SimpleInList extends InList {
 
 	public $exprs;
 
-	public function __construct($exprs) {
-		parent::__construct(array('exprs' => $exprs));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_array('Expression', 'exprs');
 	}
 }

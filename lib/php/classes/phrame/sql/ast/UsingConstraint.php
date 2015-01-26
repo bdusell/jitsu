@@ -11,8 +11,8 @@ class UsingConstraint extends JoinConstraint {
 
 	public $columns;
 
-	public function __construct($columns) {
-		parent::__construct(array('columns' => $columns));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_array('Identifier', 'columns');
 	}
 }

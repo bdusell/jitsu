@@ -12,8 +12,8 @@ class SelectExpression extends Expression {
 	public $select;
 	public $as;
 
-	public function __construct($select, $as) {
-		parent::__construct(array('select' => $select, 'as' => $as));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('SelectStatement', 'select');
 		$this->validate_class('Identifier', 'as');
 	}

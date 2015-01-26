@@ -6,7 +6,7 @@ namespace phrame\sql\ast;
 abstract class Node {
 
 	/* Use an array of values to set members. */
-	public function __construct($attrs = array()) {
+	public function __construct($attrs) {
 		foreach($attrs as $name => $value) {
 			$this->$name = $value;
 		}

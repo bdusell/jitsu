@@ -15,8 +15,8 @@ class OrderedExpression extends Node {
 	public $expr;
 	public $order;
 
-	public function __construct($expr, $order) {
-		parent::__construct(array('expr' => $expr, 'order' => $order));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'expr');
 		$this->validate_const('order');
 	}

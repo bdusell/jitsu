@@ -11,8 +11,8 @@ class ValuesStatementCore extends SelectStatementCore {
 
 	public $values;
 
-	public function __construct($values) {
-		parent::__construct(array('values' => $values));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_array_array('Expression', 'values');
 	}
 }

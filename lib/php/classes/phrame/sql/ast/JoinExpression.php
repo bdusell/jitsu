@@ -22,6 +22,14 @@ class JoinExpression extends FromExpression {
 	public $operator;
 	public $right;
 	public $constraint;
+
+	public function __construct($attrs) {
+		parent::__construct($attrs);
+		$this->validate_class('FromExpression', 'left');
+		$this->validate_const('operator');
+		$this->validate_class('FromExpression', 'right');
+		$this->validate_class('JoinConstraint', 'constraint');
+	}
 }
 
 ?>

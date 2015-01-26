@@ -12,8 +12,8 @@ class InExpression extends Expression {
 	public $expr;
 	public $in;
 
-	public function __construct($expr, $in) {
-		parent::__construct(array('expr' => $expr, 'in' => $in));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'expr');
 		$this->validate_class('InList', 'in');
 	}

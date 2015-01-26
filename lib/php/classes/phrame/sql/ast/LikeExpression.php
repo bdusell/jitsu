@@ -13,12 +13,8 @@ class LikeExpression extends Expression {
 	public $pattern;
 	public $escape;
 
-	public function __construct($expr, $pattern, $escape = null) {
-		parent::__construct(array(
-			'expr' => $expr,
-			'pattern' => $pattern,
-			'escape' => $escape
-		));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_class('Expression', 'expr');
 		$this->validate_class('Expression', 'pattern');
 		$this->validate_optional_class('Expression', 'escape');

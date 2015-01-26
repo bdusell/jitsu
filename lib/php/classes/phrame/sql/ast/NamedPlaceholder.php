@@ -11,8 +11,8 @@ class NamedPlacholder extends Placeholder {
 
 	public $name;
 
-	public function __construct($name) {
-		parent::__construct(array('name' => $name));
+	public function __construct($attrs) {
+		parent::__construct($attrs);
 		$this->validate_string('name');
 	}
 }

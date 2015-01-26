@@ -7,4 +7,5 @@ config::set('db_host', 'localhost');
 config::set('db_name', 'phrame');
 config::set('db_user', 'phrame_user');
 config::set('db_password', 'phrame_password');
+config::set('persistent_db_connections', true);
 ?>

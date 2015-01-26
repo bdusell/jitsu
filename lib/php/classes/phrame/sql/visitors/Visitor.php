@@ -2,33 +2,27 @@
 
 namespace phrame\sql\visitors;
 
-abstract class Visitor {
+class Visitor {
 
-	public abstract function visitSelectStatement($n);
-	public abstract function visitCompoundSelectStatementCore($n);
-	public abstract function visitSimpleSelectStatementCore($n);
-	public abstract function visitValuesStatement($n);
-	public abstract function visitSimpleColumnExpression($n);
-	public abstract function visitWildcardColumnExpression($n);
-	public abstract function visitJoinExpression($n);
-	public abstract function visitOnConstraint($n);
-	public abstract function visitUsingConstraint($n);
-	public abstract function visitTableExpression($n);
-	public abstract function visitTableReference($n);
-	public abstract function visitFromSelectExpression($n);
-	public abstract function visitSelectExpression($n);
-	public abstract function visitOrderExpression($n);
-	public abstract function visitCollation($n);
-	public abstract function visitUnaryOperation($n);
-	public abstract function visitBinaryOperation($n);
-	public abstract function visitColumnReference($n);
-	public abstract function visitIntegerLiteral($n);
-	public abstract function visitRealLiteral($n);
-	public abstract function visitStringLiteral($n);
-	public abstract function visitNullLiteral($n);
-	public abstract function visitAnonymousPlaceholder($n);
-	public abstract function visitNamedPlaceholder($n);
-	public abstract function visitIdentifier($n);
+	const METHOD_PREFIX = 'visit';
+	const CLASS_PREFIX = 'phrame\\sql\\ast\\';
+
+	/* Whenever `visitSomeClass()` is called but not found, try calling
+	 * `visitParentClassOfSomeClass`. */
+	public function __call($name, $args) {
+		if(($base_name = \StringUtil::remove_prefix($name, self::METHOD_PREFIX)) !== null) {
+			$parent = get_parent_class(self::CLASS_PREFIX . $base_name);
+			if($parent && ($parent_base_name = \StringUtil::remove_prefix($parent, self::CLASS_PREFIX)) !== null) {
+				return call_user_func_array(
+					array($this, self::METHOD_PREFIX . $parent_base_name),
+					$args
+				);
+			}
+		}
+		throw new \BadMethodCallException(
+			get_class($this) . '->' . $name . ' is not a method'
+		);
+	}
 }
 
 ?>

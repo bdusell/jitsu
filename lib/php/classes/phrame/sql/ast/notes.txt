@@ -150,6 +150,7 @@
 	<concat-expr> |
 	<mul-expr> |
 	<div-expr> |
+	<mod-expr> |
 	<add-expr> |
 	<sub-expr> |
 	<lt-expr> |

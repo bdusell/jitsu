@@ -29,14 +29,14 @@ abstract class Expression extends Node {
 		));
 	}
 
-	public function asc($collation = null) {
+	public function asc() {
 		return new OrderedExpression(array(
 			'expr' => $this,
 			'order' => OrderedExpression::ASC
 		));
 	}
 
-	public function desc($collation = null) {
+	public function desc() {
 		return new OrderedExpression(array(
 			'expr' => $this,
 			'order' => OrderedExpression::DESC
@@ -44,9 +44,8 @@ abstract class Expression extends Node {
 	}
 
 	public function eq($expr) {
-		return new BinaryOperation(array(
+		return new EqualityExpression(array(
 			'left' => $this,
-			'operator' => BinaryOperation::EQUAL,
 			'right' => $expr
 		));
 	}

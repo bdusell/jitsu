@@ -42,13 +42,17 @@ abstract class Node {
 	}
 
 	protected function validate_array($class, $prop) {
-		$value = $n->$prop;
+		$this->validate_emptyable_array($class, $prop);
+		if(count($this->$prop) === 0) {
+			$this->error($prop, 'must not be an empty array');
+		}
+	}
+
+	protected function validate_emptyable_array($class, $prop) {
+		$value = $this->$prop;
 		$full_class = $this->full_class_name($class);
 		if(!is_array($value)) {
 			$this->error($prop, 'must be an array of ' . $full_class);
-		}
-		if(count($value) === 0) {
-			$this->error($prop, 'must not be an empty array');
 		}
 		foreach($value as $subvalue) {
 			if(!($subvalue instanceof $full_class)) {
@@ -81,35 +85,35 @@ abstract class Node {
 		}
 	}
 
-	protected function validate_const($this, $prop) {
-		$this->validate_string($this, $prop);
+	protected function validate_const($prop) {
+		$this->validate_string($prop);
 	}
 
-	protected function validate_string($this, $prop) {
+	protected function validate_string($prop) {
 		if(!is_string($this->$prop)) {
 			$this->error($prop, 'must be a string');
 		}
 	}
 
-	protected function validate_bool($this, $prop) {
+	protected function validate_bool($prop) {
 		if(!is_bool($this->$prop)) {
 			$this->error($prop, 'must be a boolean');
 		}
 	}
 
-	protected function validate_int($this, $prop) {
+	protected function validate_int($prop) {
 		if(!is_int($this->$prop)) {
 			$this->error($prop, 'must be an integer');
 		}
 	}
 
-	protected function validate_float($this, $prop) {
+	protected function validate_float($prop) {
 		if(!is_float($this->$prop)) {
 			$this->error($prop, 'must be a float');
 		}
 	}
 
-	private function error($prop, $msg) {
+	private function error($msg) {
 		throw new \InvalidArgumentException(
 			get_class($this) . '->' . $prop . ' ' . $msg
 		);

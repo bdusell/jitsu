@@ -9,6 +9,7 @@ namespace phrame\sql\ast;
  *   <concatenation-expression> |
  *   <multiplication-expression> |
  *   <division-expression> |
+ *   <modulus-expression> |
  *   <addition-expression> |
  *   <subtraction-expression> |
  *   <less-than-expression> |

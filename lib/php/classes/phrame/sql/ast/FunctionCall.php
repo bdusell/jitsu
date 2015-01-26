@@ -17,7 +17,7 @@ class FunctionCall extends AtomicExpression {
 		parent::__construct($attrs);
 		$this->validate_string('name');
 		$this->validate_bool('distinct');
-		$this->validate_array('Expression', 'arguments');
+		$this->validate_emptyable_array('Expression', 'arguments');
 	}
 }
 

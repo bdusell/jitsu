@@ -48,21 +48,29 @@ class VideosController {
 	public static function create() {
 		$name = Request::form('name');
 		$href = Request::form('url');
-		Database::execute('insert into "videos"("name", "url") values (?, ?)', $name, $href);
+		Database::execute(Database::interpret(
+			sql::insert(sql::table('videos')->cols('name', 'url'))->values(2)
+		), $name, $href);
 		Pages::redirect('videos/' . StringUtil::encode_url(Database::last_insert_id()));
 	}
 
 	public static function search() {
-		$query = Request::form('query');
-		$tags = StringUtil::split($query);
+		$query = xstring(Request::form('query'));
+		$tags = $query->split();
 		if($tags) {
-			$placeholders = StringUtil::join(', ', ArrayUtil::fill('?', ArrayUtil::length($tags)));
-			$videos = Database::query(
-				'select "id" from "videos" ' .
-				'join "tags" on "videos"."id" = "tags"."video_id" ' .
-				'where "value" in (' . $placeholders . ')',
-				$tags
-			);
+			$videos = Database::query(Database::interpret(
+				sql::select(sql::col('id')->as_self())
+				->from(
+					sql::table('videos')->as_self()
+					->join(sql::table('tags')->as_self())
+						->on(
+							sql::table('videos')->col('id')
+							->eq(sql::table('tags')->col('video_id'))
+						)
+				)->where(sql::col('value')->in(
+					ArrayUtil::fill(sql::value(), $tags->length())
+				))
+			), $tags);
 		} else {
 			$videos = array();
 		}

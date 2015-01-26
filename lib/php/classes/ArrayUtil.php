@@ -12,6 +12,11 @@ class ArrayUtil {
 		return count($array);
 	}
 
+	/* Return whether an array is empty. */
+	public static function is_empty($array) {
+		return !$array;
+	}
+
 	/* Get the value stored under a key in an array or a default value if
 	 * the key does not exist. */
 	public static function get($array, $key, $default = null) {

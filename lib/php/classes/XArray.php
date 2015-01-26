@@ -182,6 +182,7 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 	private static $unwrapped_methods = array(
 		'size' => true,
 		'length' => true,
+		'is_empty' => true,
 		'get' => true,
 		'has_key' => true,
 		'key_of' => true,

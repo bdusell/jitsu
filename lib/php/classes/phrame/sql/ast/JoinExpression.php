@@ -2,6 +2,14 @@
 
 namespace phrame\sql\ast;
 
+/* Two FROM clause expressions joined by a JOIN operator.
+ *
+ * <join-expression> ->
+ *   <from-expression>
+ *   ["INNER" | "LEFT OUTER" | ...] "JOIN"
+ *   <from-expression>
+ *   [<join-constraint>]
+ */
 class JoinExpression extends FromExpression {
 
 	const INNER = 'INNER JOIN';

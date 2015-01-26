@@ -2,6 +2,14 @@
 
 namespace phrame\sql\ast;
 
+/* The core of a SELECT or VALUES statement, consisting of the part which does
+ * not contain an ORDER or LIMIT clause.
+ *
+ * <select-statement-core> ->
+ *   <compound-select-statment-core> |
+ *   <simple-select-statment-core> |
+ *   <values-statement-core>
+ */
 abstract class SelectStatementCore extends Node {
 
 	public function order_by(/* $expr, ... */) {

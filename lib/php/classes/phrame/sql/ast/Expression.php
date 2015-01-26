@@ -2,6 +2,18 @@
 
 namespace phrame\sql\ast;
 
+/* An arbitrary expression.
+ *
+ * <expression> ->
+ *   <atomic-expression> |
+ *   <collate-expression> |
+ *   <unary-operator-expression> |
+ *   <binary-operator-expression> |
+ *   <in-expression> |
+ *   <like-expression> |
+ *   <between-expression> |
+ *   <case-expression>
+ */
 abstract class Expression extends Node {
 
 	public function as_self() {
@@ -18,16 +30,16 @@ abstract class Expression extends Node {
 	}
 
 	public function asc($collation = null) {
-		return new OrderExpression(array(
+		return new OrderedExpression(array(
 			'expr' => $this,
-			'order' => OrderExpression::ASC
+			'order' => OrderedExpression::ASC
 		));
 	}
 
 	public function desc($collation = null) {
-		return new OrderExpression(array(
+		return new OrderedExpression(array(
 			'expr' => $this,
-			'order' => OrderExpression::DESC
+			'order' => OrderedExpression::DESC
 		));
 	}
 

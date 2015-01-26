@@ -1,12 +1,18 @@
+<stmt> ->
+	<select-stmt> |
+	<insert-stmt> |
+	<update-stmt> |
+	<delete-stmt>
+
 <select-stmt> ->
 	<select-stmt-core>
-	["order" "by" <order-expr>+{","}]
-	["limit" <expr> [("offset" | ",") <expr>] ]
+	["order" "by" <ordered-expr>+{","}]
+	["limit" <expr> ["offset" <expr>]]
 
 <select-stmt-core> ->
 	<compound-select-stmt-core> |
 	<simple-select-stmt-core> |
-	<values-stmt>
+	<values-statement>
 
 <compound-select-stmt-core> ->
 	<select-stmt-core> <union-operator> <select-stmt-core>
@@ -20,8 +26,8 @@
 	["where" <expr>]
 	["group" "by" <expr>+{","} ["having" <expr>] ]
 
-<values-stmt> ->
-	"values" ("(" <expr>+{","} ")"){","}
+<values-statement> ->
+	"values" ("(" <expr>+{","} ")")+{","}
 
 <col-expr> ->
 	<simple-col-expr> |
@@ -36,7 +42,7 @@
 <from-expr> ->
 	<join-expr> |
 	<table-expr> |
-	<from-select-expr> |
+	<select-expr-in-from> |
 	"(" <from-expr> ")"
 
 <join-expr> ->
@@ -65,43 +71,45 @@
 <table-ref> ->
 	[<identifier> "."] <identifier>
 
-<from-select-expr> ->
+<select-expr-in-from> ->
 	<select-expr>
 
 <select-expr> ->
 	"(" <select-stmt> ")" [ ["as"] <identifier> ]
 
-<order-expr> ->
+<ordered-expr> ->
 	<expr> ["asc" | "desc"]
 
-<collate-clause> ->
-	"collate" <collation-name>
-
 <expr> ->
+	<atomic-expr> |
+	<collate-expr> |
+	<unary-expr> |
+	<binary-expr> |
+	<in-expr> |
+	<like-expr> |
+	<between-expr> |
+	<case-expr>
+
+<atomic-expr> ->
+	<literal-expr> |
+	<col-ref> |
+	<placeholder> |
+	<function-call> |
+	<cast-expr> |
+	<exists-expr> |
+	<select-expr>
+
+<literal-expr> ->
 	<integer-literal> |
 	<real-literal> |
 	<string-literal> |
-	<null-literal> |
-	<current-time> |
-	<placeholder> |
-	<col-ref> |
-	<unary-op> |
-	<binary-op> |
-	<function-call> |
-	<cast-expression> |
-	<collated-expr> |
-	<like-expr> |
-	<null-check-expr> |
-	<between-expr> |
-	<in-expr> |
-	<exists-expr> |
-	<case-expr>
+	<null-literal>
 
 <null-literal> ->
 	"null"
 
-<current-time> ->
-	???
+<col-ref> ->
+	[<table-ref> "."] <identifier>
 
 <placeholder> ->
 	<anonymous-placeholder> |
@@ -113,66 +121,120 @@
 <named-placeholder> ->
 	":<name>"
 
-<col-ref> ->
-	[<table-ref> "."] <identifier>
-
-<unary-op> ->
-	["not" | "+" | "-" | "~"] <expr>
-
-<binary-op> ->
-	<expr> [
-		"and" | "or"
-		"=" | "!=" |
-		"<" | ">" | "<=" | ">=" |
-		"+" | "-" | "*" | "/" | "%" |
-		"<<" | ">>" | "&" | "|" |
-		"is" ["not"]
-	] <expr>
-
 <function-call> ->
-	<identifier> "(" <arg-list> ")"
+	<function-name> "(" ["*" | ["distinct"] <expr>+{","}] ")"
 
-<arg-list> ->
-	|
-	["distinct"] <expr>+{","} |
-	"*"
+<function-name> ->
+	???
 
-<cast-expression> ->
+<cast-expr> ->
 	"cast" "(" <expr> "as" <type-name> ")"
 
 <type-name> ->
 	???
 
-<collated-expr> ->
-	<expr> "collate" <collation-name>
+<exists-expr> ->
+	"exists" "(" <select-stmt> ")"
 
-<collation-name> ->
-	"binary" | ???
+<collate-expr> ->
+	<expr> "collate" ("binary" | ???)
 
-<like-op> ->
-	<expr> ["not"] (
-		"like" | "glob" | "regexp" | "match"
-	) <expr> ["escape" <expr>]
+<negation-expr> ->
+	"-" <expr>
 
-<null-check-expr> ->
-	<expr> ("isnull" | "notnull" | "not" "null")
+<unary-expr> ->
+	<negation-expr> |
+	<not-expr>
 
-<between-expr> ->
-	<expr> ["not"] "between" <expr> "and" <expr>
+<binary-expr> ->
+	<concat-expr> |
+	<mul-expr> |
+	<div-expr> |
+	<add-expr> |
+	<sub-expr> |
+	<lt-expr> |
+	<le-expr> |
+	<gt-expr> |
+	<ge-expr> |
+	<eq-expr> |
+	<ne-expr> |
+	<is-expr> |
+	<and-expr> |
+	<or-expr>
+
+<concat-expr> ->
+	<expr> "||" <expr>
+
+<mul-expr> ->
+	<expr> "*" <expr>
+
+<div-expr> ->
+	<expr> "/" <expr>
+
+<add-expr> ->
+	<expr> "+" <expr>
+
+<sub-expr> ->
+	<expr> "-" <expr>
+
+<lt-expr> ->
+	<expr> "<" <expr>
+
+<le-expr> ->
+	<expr> "<=" <expr>
+
+<gt-expr> ->
+	<expr> ">" <expr>
+
+<ge-expr> ->
+	<expr> ">=" <expr>
+
+<eq-expr> ->
+	<expr> "=" <expr>
+
+<ne-expr> ->
+	<expr> "!=" <expr>
+
+<is-expr> ->
+	<expr> "is" <expr>
 
 <in-expr> ->
-	<expr> ["not"] "in" <in-list>
+	<expr> "in" <in-list>
 
 <in-list> ->
-	"(" <select-stmt> ")" |
-	<expr>+{","} |
+	<simple-in-list> |
+	<select-in-list> |
+	<table-in-list>
+
+<simple-in-list> ->
+	"(" <select-stmt> ")"
+
+<select-in-list> ->
+	"(" <expr>+{","} ")"
+
+<table-in-list> ->
 	<table-ref>
 
-<exists-expr> ->
-	["not"] "exists" "(" <select-stmt> ")"
+<like-expr> ->
+	<expr> "like" <expr> ["escape" <expr>]
+
+<not-expr> ->
+	"not" <expr>
+
+<and-expr> ->
+	<expr> "and" <expr>
+
+<or-expr> ->
+	<expr> "or" <expr>
+
+<between-expr> ->
+	<expr> "between" <expr> "and" <expr>
 
 <case-expr> ->
-	"case" [<expr>] ("when" <expr> "then" <expr>)+ ["else" <expr>] "end"
+	"case" [<expr>] <when-clause>+ ["else" <expr>] "end"
+
+<when-clause> ->
+	"when" <expr> "then" <expr>
 
 <insert-statement> ->
 	<insert-type> "into" <table-projection>
@@ -185,12 +247,14 @@
 	"insert" "or" "ignore"
 
 <table-projection> ->
-	<table-ref> "(" <col-ref">+{","} ")"
+	<table-ref> "(" <col-ref>+{","} ")"
 
 <update-stmt> ->
 	<update-type> <table-ref>
 	"set" (<identifier> "=" <expr>)+{","}
 	["where" <expr>]
+	["order" "by" <ordered-expr>+{","}]
+	["limit" <expr> ["offset" <expr>]]
 
 <delete-stmt> ->
 	"delete" "from" <table-ref> ["where" <expr>]

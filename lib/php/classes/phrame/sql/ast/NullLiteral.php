@@ -2,7 +2,12 @@
 
 namespace phrame\sql\ast;
 
-class NullLiteral extends Expression {
+/* A literal NULL value.
+ *
+ * <null-literal> ->
+ *   "NULL"
+ */
+class NullLiteral extends LiteralExpression {
 
 }
 

@@ -2,25 +2,20 @@
 
 namespace phrame\sql\ast;
 
-class SelectStatement extends Node {
+/* A complete, executable SELECT or VALUES statement.
+ *
+ * <select-statement> ->
+ *   <select-statement-core>
+ *   ["ORDER" "BY" <ordered-expression>+{","}]
+ *   ["LIMIT" <expression> ["OFFSET" <expression>]]
+ */
+class SelectStatement extends LimitedStatement {
 
-	public $order_by;
-	public $limit;
-	public $offset;
+	public $core;
 
-	public function order_by(/* $expr, ... */) {
-		$this->order_by = func_get_args();
-		return $this;
-	}
-
-	public function limit($expr) {
-		$this->limit = $expr;
-		return $this;
-	}
-
-	public function offset($expr) {
-		$this->offset = $expr;
-		return $this;
+	public function __construct($attrs) {
+		parent::__construct($attrs);
+		$this->validate_class('SelectStatementCore', 'core');
 	}
 }
 

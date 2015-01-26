@@ -2,10 +2,21 @@
 
 namespace phrame\sql\ast;
 
+/* The name of a table with an optional database name.
+ *
+ * <table-reference> ->
+ *   [<identifier> "."] <identifier>
+ */
 class TableReference extends Node {
 
 	public $database;
 	public $table;
+
+	public function __construct($attrs) {
+		parent::__construct($attrs);
+		$this->validate_optional_class('Identifier', 'database');
+		$this->validate_optional_class('Identifier', 'table');
+	}
 
 	public function as_self() {
 		return new TableExpression(array(

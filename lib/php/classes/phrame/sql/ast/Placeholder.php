@@ -2,7 +2,13 @@
 
 namespace phrame\sql\ast;
 
-abstract class Placeholder extends Expression {
+/* A placeholder for a bind parameter.
+ *
+ * <placeholder> ->
+ *   <anonymous-placeholder> |
+ *   <named-parameter>
+ */
+abstract class Placeholder extends AtomicExpression {
 
 }
 

@@ -7,38 +7,27 @@ abstract class Database {
 
 	private $conn = null;
 
-	/* MySQL host. Default is `localhost`. */
-	protected $host = 'localhost';
-
-	/* Database name. For MySQL this is the name of the database. For
-	 * SQLite this is the path of the database file. */
-	protected $database = null;
-
-	/* MySQL username. */
-	protected $user = null;
-
-	/* MySQL password. */
-	protected $password = null;
-
-	/* MySQL character set. The default, `utf8mb4`, supports all Unicode
-	 * characters. */
-	protected $charset = 'utf8mb4';
-
-	/* Fetch mode. Determines what kind of object rows are fetched as. Use
-	 * the `PDO::FETCH_*` constants directly. The default,
-	 * `PDO::FETCH_OBJ`, causes rows to be returned as objects with
-	 * property names corresponding to column names. */
-	protected $mode = \PDO::FETCH_OBJ;
+	private $mode = \PDO::FETCH_OBJ;
 
 	/* Connect to the database upon construction. Accepts a PDO driver
 	 * string and an optional username and password. */
-	public function __construct($driver_str, $username = null, $password = null) {
+	public function __construct(
+		$driver_str, $username = null, $password = null,
+		$options = null)
+	{
+		if($options === null) $options = array();
 		try {
-			$this->conn = new \PDO($driver_str, $username, $password);
+			$this->conn = new \PDO(
+				$driver_str,
+				$username,
+				$password,
+				$options + array(
+					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+				)
+			);
 		} catch(\PDOException $e) {
 			self::exception_error('database connection failed', $e);
 		}
-		$this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 	}
 
 	/* Querying. */
@@ -142,7 +131,7 @@ abstract class Database {
 	/* Escape characters in a string that have special meaning in SQL
 	 * "like" patterns. Note that this should be coupled with an `ESCAPE`
 	 * clause in the SQL; for example,
-	 *     "percentage" LIKE "%0\%" ESCAPE '\'
+	 *     "percentage" LIKE '%foo\%bar%' ESCAPE '\'
 	 * A `\` is the default escape character. */
 	public function escape_like($s, $esc = '\\') {
 		return str_replace(
@@ -253,12 +242,23 @@ abstract class Database {
 		return $this->conn;
 	}
 
+	/* Access the fetch mode. Give no argument to get the current mode and
+	 * provide an argument to set it. The fetch mode determines the form in
+	 * which rows are fetched. Use the `PDO::FETCH_*` constants directly.
+	 * The default, `PDO::FETCH_OBJ`, causes rows to be returned as
+	 * `stdClass` objects with property names corresponding to column
+	 * names. */
+	public function fetch_mode($mode = null) {
+		if(func_num_args() === 0) return $mode;
+		else $this->mode = $mode;
+	}
+
 	/* Private implementation details. */
 
 	// Parse the argument list to a method.
 	private static function args($args, &$query, &$sql_args) {
 		$query = array_shift($args);
-		if(count($args) == 1 && is_array($args[0])) {
+		if(count($args) === 1 && is_array($args[0])) {
 			$sql_args = $args[0];
 		} else {
 			$sql_args = $args;

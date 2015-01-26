@@ -11,6 +11,13 @@ namespace phrame\sql\ast;
  */
 abstract class FromExpression extends Node {
 
+	public function join($right) {
+		return new JoinExpression(array(
+			'left' => $this,
+			'operator' => JoinExpression::INNER,
+			'right' => $right
+		));
+	}
 }
 
 ?>

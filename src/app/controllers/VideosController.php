@@ -57,20 +57,22 @@ class VideosController {
 	public static function search() {
 		$query = xstring(Request::form('query'));
 		$tags = $query->split();
-		if($tags) {
+		if(!$tags->is_empty()) {
 			$videos = Database::query(Database::interpret(
-				sql::select(sql::col('id')->as_self())
+				sql::select(
+					sql::col('id')->as_self(),
+					sql::col('name')->as_self()
+				)
 				->from(
 					sql::table('videos')->as_self()
-					->join(sql::table('tags')->as_self())
-						->on(
-							sql::table('videos')->col('id')
-							->eq(sql::table('tags')->col('video_id'))
-						)
+					->join(sql::table('tags')->as_self())->on(
+						sql::table('videos')->col('id')
+						->eq(sql::table('tags')->col('video_id'))
+					)
 				)->where(sql::col('value')->in(
 					ArrayUtil::fill(sql::value(), $tags->length())
 				))
-			), $tags);
+			), $tags)->to_array();
 		} else {
 			$videos = array();
 		}

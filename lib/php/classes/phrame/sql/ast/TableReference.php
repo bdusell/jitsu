@@ -41,6 +41,15 @@ class TableReference extends Node {
 			'columns' => $ids
 		));
 	}
+
+	public function col($name) {
+		return new ColumnReference(array(
+			'table' => $this,
+			'column' => new Identifier(array(
+				'value' => $name
+			))
+		));
+	}
 }
 
 ?>

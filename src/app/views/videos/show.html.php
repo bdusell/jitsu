@@ -8,4 +8,3 @@
   <li><a href="videos/">Back</a></li>
   <li><a href="">Home</a></li>
 </ul>
-<pre><?= html(repr(VideoModel::fetch($video->id))) ?></pre>

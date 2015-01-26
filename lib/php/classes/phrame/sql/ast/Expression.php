@@ -49,6 +49,18 @@ abstract class Expression extends Node {
 			'right' => $expr
 		));
 	}
+
+	public function in($expr) {
+		if(is_array($expr)) {
+			$expr = new SimpleInList(array(
+				'exprs' => $expr
+			));
+		}
+		return new InExpression(array(
+			'expr' => $this,
+			'in' => $expr
+		));
+	}
 }
 
 ?>

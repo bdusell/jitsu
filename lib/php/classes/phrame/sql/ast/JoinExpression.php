@@ -12,7 +12,7 @@ namespace phrame\sql\ast;
  */
 class JoinExpression extends FromExpression {
 
-	const INNER = 'INNER JOIN';
+	const INNER = 'JOIN';
 	const LEFT_OUTER = 'LEFT OUTER JOIN';
 	const RIGHT_OUTER = 'RIGHT OUTER JOIN';
 	const FULL_OUTER = 'FULL OUTER JOIN';
@@ -28,7 +28,14 @@ class JoinExpression extends FromExpression {
 		$this->validate_class('FromExpression', 'left');
 		$this->validate_const('operator');
 		$this->validate_class('FromExpression', 'right');
-		$this->validate_class('JoinConstraint', 'constraint');
+		$this->validate_optional_class('JoinConstraint', 'constraint');
+	}
+
+	public function on($expr) {
+		$this->constraint = new OnConstraint(array(
+			'expr' => $expr
+		));
+		return $this;
 	}
 }
 

@@ -5,13 +5,236 @@ namespace phrame\sql\visitors;
 abstract class CodeGenerationVisitor extends Visitor {
 
 	private $database;
+	private $ranker;
 
-	public function __construct($database) {
+	public function __construct($database, $ranker) {
 		$this->database = $database;
+		$this->ranker = $ranker;
 	}
 
-	public function visitSelectStatement($n) {
-		$r = $n->core->accept($this);
+	protected function join($nodes) {
+		$parts = array();
+		foreach($nodes as $n) $parts[] = $n->accept($this);
+		return implode(', ', $parts);
+	}
+
+	protected function prec($n) {
+		return $n->accept($this->ranker);
+	}
+
+	protected function parens($n, $attr) {
+		$subn = $n->$attr;
+		$r = $subn->accept($this);
+		if($this->prec($n) <= $this->prec($subn)) {
+			$r = '(' . $r . ')';
+		}
+		return $r;
+	}
+
+	private function unary($n, $op) {
+		return $op . $this->parens($n, 'expr');
+	}
+
+	private function binary($n, $op) {
+		return (
+			$this->parens($n, 'left') .
+			' ' . $op . ' ' .
+			$this->parens($n, 'right')
+		);
+	}
+
+	public function visitAdditionExpression($n) {
+		return $this->binary($n, '+');
+	}
+
+	public function visitAndExpression($n) {
+		return $this->binary($n, 'AND');
+	}
+
+	public function visitAnonymousPlaceholder($n) {
+		return '?';
+	}
+
+	public function visitAssignment($n) {
+		return (
+			$n->column->accept($this) .
+			' = ' .
+			$n->expr->accept($this)
+		);
+	}
+
+	public function visitBetweenExpression($n) {
+		return (
+			$this->parens($n, 'expr') .
+			' BETWEEN ' .
+			$this->parens($n, 'min') .
+			' AND ' .
+			$this->parens($n, 'max')
+		);
+	}
+
+	public function visitCaseExpression($n) {
+		$r = 'CASE';
+		if($n->expr) {
+			$r .= ' ' . $this->parens($n, 'expr');
+		}
+		foreach($n->cases as $case) {
+			$r .= ' ' . $case->accept($this);
+		}
+		if($n->else) {
+			$r .= ' ELSE ' . $this->parens($n, 'else');
+		}
+		$r .= ' END';
+		return $r;
+	}
+
+	public function visitCastExpression($n) {
+		return (
+			'CAST (' . $n->expr->accept($this) .
+			' AS ' . $n->type->accept($this) . ')'
+		);
+	}
+
+	public function visitCollateExpression($n) {
+		return (
+			$this->parens($n, 'expr') .
+			' COLLATE ' .
+			$n->collation
+		);
+	}
+
+	public function visitColumnReference($n) {
+		$r = '';
+		if($n->table) $r .= $n->table->accept($this) . '.';
+		$r .= $n->column->accept($this);
+		return $r;
+	}
+
+	public function visitCompoundSelectStatementCore($n) {
+		return (
+			$n->left->accept($this) . ' ' .
+			$n->operator . ' ' .
+			$n->right->accept($this)
+		);
+	}
+
+	public function visitConcatenationExpression($n) {
+		return $this->binary($n, '||');
+	}
+
+	public function visitDeleteStatement($n) {
+		$r = 'DELETE FROM' . $n->table->accept($this);
+		if($n->where) {
+			$r .= $n->where->accept($this);
+		}
+		$r .= $this->visitLimitedStatement($n);
+		return $r;
+	}
+
+	public function visitDivisionExpression($n) {
+		return $this->binary($n, '/');
+	}
+
+	public function visitEqualityExpression($n) {
+		return $this->binary($n, '=');
+	}
+
+	public function visitExistsExpression($n) {
+		return (
+			'EXISTS (' .
+			$n->select->accept($this) .
+			')'
+		);
+	}
+
+	public function visitFunctionCall($n) {
+		$r = $n->name . '(';
+		if($n->arguments === null) {
+			$r .= '*';
+		} else {
+			if($r->distinct && count($n->arguments) > 0) {
+				$r .= 'DISTINCT ';
+			}
+			$r .= $this->join($n->arguments);
+		}
+		$r .= ')';
+		return $r;
+	}
+
+	public function visitGreaterThanExpression($n) {
+		return $this->binary($n, '>');
+	}
+
+	public function visitGreaterThanOrEqualExpression($n) {
+		return $this->binary($n, '>=');
+	}
+
+	public function visitIdentifier($n) {
+		return '"' . str_replace('"', '""', $n->value) . '"';
+	}
+
+	public function visitInExpression($n) {
+		return (
+			$this->parens($n, 'expr') .
+			' IN ' .
+			$n->in->accept($this)
+		);
+	}
+
+	public function visitInequalityExpression($n) {
+		return $this->binary($n, '!=');
+	}
+
+	public function visitInsertStatement($n) {
+		return (
+			$n->type . ' ' .
+			$n->table->accept($this) . ' ' .
+			$n->select->accept($this)
+		);
+	}
+
+	public function visitIntegerLiteral($n) {
+		return (string) $n->value;
+	}
+
+	public function visitIsExpression($n) {
+		return $this->binary($n, 'IS');
+	}
+
+	public function visitJoinExpression($n) {
+		$r = (
+			$n->left->accept($this) .
+			' ' . $n->operator . ' ' .
+			$n->right->accept($this)
+		);
+		if($n->constraint) {
+			$r .= ' ' . $n->constraint->accept($this);
+		}
+		return $r;
+	}
+
+	public function visitLessThanExpression($n) {
+		return $this->binary($n, '<');
+	}
+
+	public function visitLessThanOrEqualExpression($n) {
+		return $this->binary($n, '<=');
+	}
+
+	public function visitLikeExpression($n) {
+		$r = (
+			$this->parens($n, 'left') .
+			' LIKE ' .
+			$this->parens($n, 'right')
+		);
+		if($n->escape) {
+			$r .= ' ESCAPE ' . $this->parens($n, 'escape');
+		}
+		return $r;
+	}
+
+	public function visitLimitedStatement($n) {
+		$r = '';
 		if($n->order_by) {
 			$r .= ' ORDER BY ' . $this->join($n->order_by);
 		}
@@ -24,13 +247,78 @@ abstract class CodeGenerationVisitor extends Visitor {
 		return $r;
 	}
 
-	public function visitCompoundSelectStatementCore($n) {
+	public function visitMultiplicationExpression($n) {
+		return $this->binary($n, '*');
+	}
+
+	public function visitNamedPlaceholder($n) {
+		return ':' . $n->name;
+	}
+
+	public function visitNegationExpression($n) {
+		return $this->unary($n, '-');
+	}
+
+	public function visitNotExpression($n) {
+		return $this->unary($n, 'NOT ');
+	}
+
+	public function visitNullLiteral($n) {
+		return 'NULL';
+	}
+
+	public function visitOnConstraint($n) {
+		return 'ON ' . $n->expr->accept($this);
+	}
+
+	public function visitOrExpression($n) {
+		return $this->binary($n, 'OR');
+	}
+
+	public function visitOrderedExpression($n) {
 		return (
-			$n->left->accept($this) . ' ' .
-			$n->operator . ' ' .
-			$n->right->accept($this)
+			$n->expr->accept($this) . ' ' .
+			$n->order
 		);
 	}
+
+	public function visitRealLiteral($n) {
+		return (string) $n->value;
+	}
+
+	public function visitSelectExpression($n) {
+		return (
+			'(' . $n->select->accept($this) .
+			') AS ' .
+			$n->as->accept($this)
+		);
+	}
+
+	public function visitSelectExpressionInFrom($n) {
+		return $n->select->accept($this);
+	}
+
+	public function visitSelectInList($n) {
+		return $n->select->accept($this);
+	}
+
+	public function visitSelectStatement($n) {
+		return (
+			$n->core->accept($this) .
+			$this->visitLimitedStatement($n)
+		);
+	}
+
+	public function visitSimpleColumnExpression($n) {
+		$r = $n->expr->accept($this);
+		if($n->as) $r .= ' AS ' . $n->as->accept($this);
+		return $r;
+	}
+
+	public function visitSimpleInList($n) {
+		return '(' . $this->join($n->exprs) . ')';
+	}
+
 
 	public function visitSimpleSelectStatementCore($n) {
 		$r = 'SELECT';
@@ -53,45 +341,12 @@ abstract class CodeGenerationVisitor extends Visitor {
 		return $r;
 	}
 
-	public function visitValuesStatement($n) {
-		$value_sets = array();
-		foreach($n->values as $value_set) {
-			$value_sets[] = '(' . $this->join($value_set) . ')';
-		}
-		return 'VALUES ' . implode(', ', $value_sets);
+	public function visitStringLiteral($n) {
+		return $this->database->quote($n->value);
 	}
 
-	public function visitSimpleColumnExpression($n) {
-		$r = $n->expr->accept($this);
-		if($n->as) $r .= ' AS ' . $n->as->accept($this);
-		return $r;
-	}
-
-	public function visitWildcardColumnExpression($n) {
-		$r = '';
-		if($n->table) $r .= $n->table->accept($this) . '.';
-		$r .= '*';
-		return $r;
-	}
-
-	public function visitJoinExpression($n) {
-		$r = (
-			$n->left->accept($this) .
-			' ' . $n->operator . ' ' .
-			$n->right->accept($this)
-		);
-		if($n->constraint) {
-			$r .= ' ' . $n->constraint->accept($this);
-		}
-		return $r;
-	}
-
-	public function visitOnConstraint($n) {
-		return 'ON ' . $n->expr->accept($this);
-	}
-
-	public function visitUsingConstraint($n) {
-		return 'USING (' . $this->join($n->identifiers) . ')';
+	public function visitSubtractionExpression($n) {
+		return $this->binary($n, '-');
 	}
 
 	public function visitTableExpression($n) {
@@ -100,6 +355,17 @@ abstract class CodeGenerationVisitor extends Visitor {
 			$r .= $n->as->accept($this);
 		}
 		return $r;
+	}
+
+	public function visitTableInList($n) {
+		return $n->table->accept($this);
+	}
+
+	public function visitTableProjection($n) {
+		return (
+			$n->table->accept($this) . ' (' .
+			$this->join($n->columns) . ')'
+		);
 	}
 
 	public function visitTableReference($n) {
@@ -111,83 +377,43 @@ abstract class CodeGenerationVisitor extends Visitor {
 		return $r;
 	}
 
-	public function visitFromSelectExpression($n) {
-		return $n->select->accept($this);
-	}
-
-	public function visitSelectExpression($n) {
-		$r = '(' . $n->select->accept($this) . ')';
-		if($n->as) $r .= ' AS ' . $n->as->accept($this);
-		return $r;
-	}
-
-	public function visitOrderExpression($n) {
-		$r = $n->expr->accept($this);
-		if($n->collate) {
-			$r .= ' COLLATE ' . $n->collate->accept($this);
+	public function visitUpdateStatement($n) {
+		$r = (
+			$n->type . ' ' .
+			$n->table->accept($this) . ' ' .
+			$this->join($n->assignments)
+		);
+		if($n->where) {
+			$r .= $n->where->accept($this);
 		}
-		$r .= ' ' . $n->order;
+		$r .= $this->visitLimitedStatement($n);
 		return $r;
 	}
 
-	public function visitCollation($n) {
-		return $n->type;
+	public function visitUsingConstraint($n) {
+		return 'USING (' . $this->join($n->columns) . ')';
 	}
 
-	public function visitUnaryOperation($n) {
-		$r = $n->operator;
-		if($r === UnaryOperation::LOGICAL_NOT) $r .= ' ';
-		$r .= '(' . $n->expr->accept($this) . ')';
-		return $r;
+	public function visitValuesStatementCore($n) {
+		$value_sets = array();
+		foreach($n->values as $value_set) {
+			$value_sets[] = '(' . $this->join($value_set) . ')';
+		}
+		return 'VALUES ' . implode(', ', $value_sets);
 	}
 
-	public function visitBinaryOperation($n) {
+	public function visitWhenClause($n) {
 		return (
-			'(' . $n->left->accept($this) . ') ' .
-			$n->operator .
-			' (' . $n->right->accept($this) ')'
+			'WHEN ' . $this->parens($n, 'when') .
+			' THEN ' . $this->parens($n, 'then')
 		);
 	}
 
-	public function visitColumnReference($n) {
+	public function visitWildcardColumnExpression($n) {
 		$r = '';
 		if($n->table) $r .= $n->table->accept($this) . '.';
-		$r .= $n->column->accept($this);
+		$r .= '*';
 		return $r;
-	}
-
-	public function visitIntegerLiteral($n) {
-		return (string) $n->value;
-	}
-
-	public function visitRealLiteral($n) {
-		return (string) $n->value;
-	}
-
-	public function visitStringLiteral($n) {
-		return $this->database->quote($n->value);
-	}
-
-	public function visitNullLiteral($n) {
-		return 'NULL';
-	}
-
-	public function visitAnonymousPlaceholder($n) {
-		return '?';
-	}
-
-	public function visitNamedPlaceholder($n) {
-		return ':' . $n->name;
-	}
-
-	public function visitIdentifier($n) {
-		return '"' . str_replace('"', '""', $n->value) . '"';
-	}
-
-	protected function join($nodes) {
-		$parts = array();
-		foreach($nodes as $n) $parts[] = $n->accept($this);
-		return implode(', ', $parts);
 	}
 }
 

@@ -326,7 +326,7 @@ In `src/app/views/users/index.html.php`:
 Elsewhere:
 ```php
 Util::template('users/index.html.php', array(
-  'users' => Database::query('select "name" from "users")
+  'users' => Database::query('select "name" from "users"')
 ));
 ```
 

@@ -274,7 +274,7 @@ time the `Database` class is referenced in a context that requires a
 connection. Currently supports SQLite or MySQL.
 
 Here are some examples to illustrate the convenience of this module:
-```
+```php
 $query = Database::query(
   'select "name", "email" from "users" where "age" between ? and ?',
   $min_age, $max_age
@@ -283,10 +283,10 @@ foreach($query as $row) {
   do_something($row->name, $row->email);
 }
 
-$row = Database::row('select "name", from "users" where "id" = ?', $id);
+$row = Database::row('select "name" from "users" where "id" = ?', $id);
 do_something($row->name);
 
-$highest_age = Database::evaluate('select max("age") from "users");
+$highest_age = Database::evaluate('select max("age") from "users"');
 
 Database::execute(
   'insert into "users"("name", "email") values (?, ?)',
@@ -312,7 +312,7 @@ using local variables &ndash; these can be sent to the template using
 Example:
 
 In `src/app/views/users/index.html.php`:
-```
+```html
 <section>
   <h1>Users</h1>
   <ul>
@@ -324,7 +324,7 @@ In `src/app/views/users/index.html.php`:
 ```
 
 Elsewhere:
-```
+```php
 Util::template('users/index.html.php', array(
   'users' => Database::query('select "name" from "users")
 ));

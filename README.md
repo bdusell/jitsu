@@ -67,7 +67,7 @@ settings. The included `Makefile` defines rules for creating these files from
 their sources, which reside under `src/app/templates/`.
 
 The example project also includes configuation files for the build tools
-`Bower` and `GulpJS`. The example gulpfile is used to concatenate and minify
+Bower and GulpJS. The example gulpfile is used to concatenate and minify
 CSS and JavaScript assets.
 
 For projects that use a SQL database, the scripts `bin/makedb-sqlite` and
@@ -182,11 +182,10 @@ Routing is configured in the file `src/app/routes.php`. Map URL patterns to
 actions using `router::map($pattern, $callback)`. The first argument is a
 Rails-style URL pattern. The second argument is a PHP callable object.
 
-Patterns may include variables, globs, and optional parts. Variables are
-written like `:name` and do not match slashes. Globs are written like `*glob`
-and can match slashes. Parts enclosed in parentheses like in `foo(bar)` are
-optional. The values of variables and globs are passed as positional parameters
-to callbacks.
+Patterns may include `:variables`, `*globs`, and `(optional)` parts. Variables
+correspond to path components and do not match slashes, unlike globs, which
+match all characters. The captured values of variables and globs are passed as
+positional parameters to callbacks.
 
 If a pattern ends with a slash, a request to an equivalent URL without the slash
 will issue a permanent redirect to the version with the slash.

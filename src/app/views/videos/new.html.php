@@ -8,5 +8,8 @@
     <label for="id-input">URL</label>
     <input class="form-control" id="id-input" type="text" name="url" placeholder="Enter video URL" />
   </div>
-  <button type="submit" class="btn btn-default">Add</button>
+  <div>
+    <button type="submit" class="btn btn-primary">Add</button>
+    <a class="btn btn-default" href="videos/">Back</a>
+  </div>
 </form>

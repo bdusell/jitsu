@@ -1,30 +1,122 @@
-$primary-color: #a10000;
-$secondary-color: #f8f8f8;
-$text-color: #222;
-$content-width: 800px;
+$tag-spacing: 5px;
 
-.videos-header {
-  background-color: $primary-color;
-  color: $secondary-color;
-  h1 {
-    text-align: center;
+a.video-thumbnail:hover {
+  text-decoration: none;
+}
+
+.tag-list-container {
+  margin: 15px;
+}
+
+.tag-list {
+
+  list-style: none;
+  padding: 0;
+
+  li {
+
+    display: inline-block;
+    padding: 3px 8px !important;
+    margin: $tag-spacing;
+    position: relative;
+    background-color: #444;
+    color: #eee;
+    box-shadow: 2px 2px 2px rgba(black, 0.25);
+    border-radius: 5px;
+
+    .x-button {
+
+      display: none;
+      font-weight: bold;
+      text-align: center;
+      height: 20px;
+      width: 25px;
+      cursor: pointer;
+      user-select: none;
+
+      color: rgba(white, 0.5);
+
+      &:hover {
+        color: rgba(white, 0.9);
+      }
+
+      &:after {
+        content: "×";
+        text-shadow: 1px 1px 1px rgba(black, 0.9);
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
   }
 }
 
-.video-cell-container {
-  padding: 5px;
+.tag-container {
+
+  display: block;
+
+  & > * {
+    display: inline-block;
+  }
 }
 
-.video-cell {
-  box-shadow: 1px 1px 5px rgba(black, 0.2);
-  height: 150px;
-  background-color: transparent;
-  padding: 10px;
-  &:hover {
-    background-color: rgba(black, 0.1);
+.tag-edit-button {
+  @extend a;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tag-edit-button {
+  margin: 0 $tag-spacing;
+  &.start {
+    display: block;
   }
-  a {
-    width: 100%;
-    height: 100%;
+  &.done {
+    display: none;
   }
 }
+
+.editable .tag-edit-button {
+  &.start {
+    display: none;
+  }
+  &.done {
+    display: block;
+  }
+}
+
+.editable {
+
+  .tag-list > li {
+
+    padding-right: 0 !important;
+
+    .x-button {
+      display: inline-block;
+    }
+  }
+}
+
+.new-tag {
+
+  margin: $tag-spacing;
+
+  input {
+
+    border: none;
+    border-bottom: 1px dotted rgba(black, 0.5);
+    outline: none;
+
+    &:placeholder {
+      color: rgba(black, 0.3);
+    }
+  }
+}
+
+.new-tag {
+  display: none;
+}
+
+.editable .new-tag {
+  display: inline-block;
+}
+

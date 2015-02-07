@@ -25,8 +25,8 @@
   </head>
   <body>
 <?php Util::template('common/header.html.php', $vars); ?>
-    <div class="container">
+    <main class="container">
 <?php Util::template("$body.html.php", $vars); ?>
-    </div>
+    </main>
   </body>
 </html>

@@ -1,10 +1,11 @@
 var gulp = require('gulp');
 
 var del = require('del');
-var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
 var plumber = require('gulp-plumber');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
@@ -12,15 +13,10 @@ var minifyCss = require('gulp-minify-css');
 
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
+var browserify = require('browserify');
 
 var paths = {
   scripts: 'src/js/**/*.js',
-  vendorScripts: [
-    'bower_components/jquery/dist/jquery.js',
-    'bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js',
-    'bower_components/underscore/underscore.js',
-    'bower_components/backbone/backbone.js'
-  ],
   stylesheets: 'src/css/**/*.scss',
   mainStylesheet: 'src/css/main.scss'
 };
@@ -56,13 +52,17 @@ gulp.task('lint', function() {
 });
 
 gulp.task('js', function() {
-  return gulp.src(paths.vendorScripts.concat([paths.scripts]))
+  return browserify({
+    entries: ['./src/js/main.js'],
+    debug: true
+  }).bundle()
     .pipe(plumber())
-    .pipe(sourcemaps.init())
-      .pipe(concat('main.js'))
-    .pipe(sourcemaps.write())
+    .pipe(source('main.js'))
     .pipe(gulp.dest('build/dev/js'))
-    .pipe(uglify({ preserveComments: 'some' }))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({ loadMaps: true }))
+      .pipe(uglify({ preserveComments: 'some' }))
+    .pipe(sourcemaps.write())
     .pipe(rename('main.min.js'))
     .pipe(gulp.dest('build/prod/js'))
 });

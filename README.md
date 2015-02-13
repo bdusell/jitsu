@@ -1,39 +1,37 @@
 Phrame
 ======
 
-Phrame is a PHP framework for building modern, RESTful web applications. It
-features a library of PHP classes and functions which help overcome the many
+Phrame is a PHP framework for building modern web applications and REST APIs.
+It features a library of PHP classes and functions which help overcome the many
 shortcomings and idiosyncracies of the language and its standard library.
 
 Projects are designed to be trivial to install and configure on any system
 which has Apache set up to process `.php` and `.htaccess` files &ndash; a
-ubiquitous setup.
+ubiquitous setup, especially in shared hosting environments.
 
-## Features ##
+## Motivation ##
 
-PHP comes with some rudimentary web development utilities out of the box such
-as superglobals `$_GET` and `$_POST`, but not only do these horribly break
-encapsulation, they are insufficient to support a full suite of REST API
-functions. What's worse is that many of these built-in features have awkward
-interfaces or use function names which are just plain difficult to remember.
-For example, consider the function for HTML-escaping a string: its name is
-`htmlspecialchars`, and it accepts a bitmask for quoting options and a third
-argument for character encoding. This of course is not to be confused with the
-less useful `htmlentities`, which aggressively substitutes character entities
-wherever possible. Or consider the function to split a string by a delimiter:
-its name is `explode`, whereas the function named `str_split` actually
-partitions a string into chunks of a certain length.
+PHP comes with a rudimentary web development API out of the box in the form of
+"superglobal" variables such as `$_GET` and `$_SERVER`, a special file stream
+`php://input`, a host of built-in functions, and so on. Although workable, this
+API suffers from numerous problems. Not only does it horribly break
+encapsulation, it is insufficient to support a full suite of REST API functions
+without significant extra effort. What's worse is that many of these built-in
+features have awkward interfaces or use names which are just plain difficult to
+remember. How do I access the request URI? Is it a function call? A superglobal?
+I already have variables `$_GET` and `$_COOKIE`, so whatever happened to
+`$_HEADER`? Surely `headers_list` returns the headers received in the request.
+<i>Ad nauseam</i>.
 
 Phrame offers a normalized, more mnemonic API which irons out these quirks.
 Much of this API comes in the form of static functions which can be accessed
-through auto-loading. A few global functions are defined during startup as
-well, mostly because they are expected to be used in HTML templates.
+through auto-loading. A few global functions are included as well.
 
 * `Util` includes some must-have helper functions such as `Util::get` (array
   access with a default value), `Util::p` (debug printing), and
   `Util::template` (encapsulated PHP file inclusion)
 * Wrapper classes `XArray`, `XString`, and `XRegex` provide a rich,
-  object-oriented interface to their native PHP counterparts
+  object-oriented interface to their built-in PHP counterparts
 * `Request` and `Response` unify PHP's various methods for accessing data from
   the current HTTP request and building the HTTP response, respectively
 * `phrame\sql\Database` and `phrame\sql\Statement` are useful wrappers around
@@ -44,7 +42,7 @@ well, mostly because they are expected to be used in HTML templates.
 * The `repr` function returns a string of the PHP representation of a value
 
 Refer to the inline documentation for details. The library code is found under
-`lib/php/`.
+`src/`.
 
 The Phrame bootstrapping code does some additional configuring for a saner
 development experience.
@@ -62,17 +60,18 @@ development experience.
 
 In order to generate certain configuration files which are external to PHP
 (`.htaccess`, `ini.php`, `robots.txt`), Phrame leverages an executable script,
-`bin/process.php` to create them dynamically using the project's configuration
-settings. The included `Makefile` defines rules for creating these files from
-their sources, which reside under `src/app/templates/`.
+`src/bin/process.php`, to create them dynamically using the project's
+configuration settings. The `Makefile` included under `demo/` defines rules for
+creating these files from their sources, which reside under
+`demo/src/app/templates/`.
 
 The example project also includes configuation files for the build tools
 Bower and GulpJS. The example gulpfile is used to concatenate and minify
 CSS and JavaScript assets.
 
-For projects that use a SQL database, the scripts `bin/makedb-sqlite` and
-`bin/makedb-mysql` can be used to clobber the database. The files under
-`src/sql/` define your schema.
+For projects that use a SQL database, the scripts `src/bin/makedb-sqlite` and
+`src/bin/makedb-mysql` can be used to clobber the database. The files under
+`demo/src/sql/` define the schema of the example project.
 
 ## Usage ##
 
@@ -101,10 +100,9 @@ steps to install these build tools:
 
 ## Project Structure ##
 
-<dl>
-  <dt><code>bin/</code></dt>
-  <dd>Contains helper scripts used in the build process.</dd>
+A phrame project, as shown under `demo/`, should consist of the following:
 
+<dl>
   <dt><code>build/</code></dt>
   <dd>Contains the <code>dev</code> and <code>prod/</code> builds of the site,
   each of which contains bootstrapping PHP code which points to the Phrame
@@ -114,13 +112,12 @@ steps to install these build tools:
   <dt><code>db/</code></dt>
   <dd>For apps using SQLite, contains the SQLite database file.</dd>
 
-  <dt><code>lib/</code></dt>
-  <dd>Contains the Phrame PHP library code as well as some Makefile and Bash
-  utilities.</dd>
-
   <dt><code>src/</code></dt>
   <dd>Your application code. PHP, JavaScript, CSS, SQL, and the rest all live
   here.</dd>
+
+  <dt><code>assets/</code></dt>
+  <dd>Optionally, some static assets such as images, fonts, etc.</dd>
 </dl>
 
 ## Configuring ##
@@ -337,5 +334,5 @@ minified CSS.
 ## JavaScript ##
 
 The example gulpfile is set up to concatenate and minify all JavaScript files
-under `src/js/`.
+under `src/js/` using Browserify.
 

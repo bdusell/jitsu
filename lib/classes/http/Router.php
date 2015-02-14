@@ -20,7 +20,7 @@ class Router {
 	}
 
 	public function map($method, $pattern, $callback) {
-		$routes[] = func_get_args();
+		$this->routes[] = func_get_args();
 		return $this;
 	}
 

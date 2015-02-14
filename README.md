@@ -16,12 +16,12 @@ PHP comes with a rudimentary web development API out of the box in the form of
 `php://input`, a host of built-in functions, and so on. Although workable, this
 API suffers from numerous problems. Not only does it horribly break
 encapsulation, it is insufficient to support a full suite of REST API functions
-without significant extra effort. What's worse is that many of these built-in
+without some extra effort. What's worse is that many of these built-in
 features have awkward interfaces or use names which are just plain difficult to
-remember. How do I access the request URI? Is it a function call? A superglobal?
+remember. <q>How do I access the request URI? Is it a function call? A superglobal?
 I already have variables `$_GET` and `$_COOKIE`, so whatever happened to
-`$_HEADER`? Surely `headers_list` returns the headers received in the request.
-<i>Ad nauseam</i>.
+`$_HEADER`? Surely `headers_list` returns the headers received in the
+request.</q> <i>Ad nauseam</i>.
 
 Phrame offers a normalized, more mnemonic API which irons out these quirks.
 Much of this API comes in the form of static functions which can be accessed
@@ -42,7 +42,7 @@ through auto-loading. A few global functions are included as well.
 * The `repr` function returns a string of the PHP representation of a value
 
 Refer to the inline documentation for details. The library code is found under
-`src/`.
+`lib/`. All classes under the `phrame` namespace are found under `lib/classes`.
 
 The Phrame bootstrapping code does some additional configuring for a saner
 development experience.
@@ -60,17 +60,16 @@ development experience.
 
 In order to generate certain configuration files which are external to PHP
 (`.htaccess`, `ini.php`, `robots.txt`), Phrame leverages an executable script,
-`src/bin/process.php`, to create them dynamically using the project's
-configuration settings. The `Makefile` included under `demo/` defines rules for
-creating these files from their sources, which reside under
-`demo/src/app/templates/`.
+`run.php`, to create them dynamically using the project's configuration
+settings. The `Makefile` included under `demo/` defines rules for creating
+these files from templates which reside under `demo/src/php/templates/`.
 
 The example project also includes configuation files for the build tools
 Bower and GulpJS. The example gulpfile is used to concatenate and minify
 CSS and JavaScript assets.
 
-For projects that use a SQL database, the scripts `src/bin/makedb-sqlite` and
-`src/bin/makedb-mysql` can be used to clobber the database. The files under
+For projects that use a SQL database, the scripts `lib/bin/makedb-sqlite` and
+`lib/bin/makedb-mysql` can be used to clobber the database. The files under
 `demo/src/sql/` define the schema of the example project.
 
 ## Usage ##
@@ -100,7 +99,7 @@ steps to install these build tools:
 
 ## Project Structure ##
 
-A phrame project, as shown under `demo/`, should consist of the following:
+The example project under `demo/` consists of the following:
 
 <dl>
   <dt><code>build/</code></dt>
@@ -123,16 +122,12 @@ A phrame project, as shown under `demo/`, should consist of the following:
 ## Configuring ##
 
 Phrame's configuration system is fairly straightforward. A configuration file
-shared by both environments exists at `src/app/config.php`. Configuration files
+shared by both environments exists at `src/php/config.php`. Configuration files
 specific to each environment exist at `build/dev/config.php` and
 `build/prod/config.php`.
 
-The configuation files themselves are simply snippets of PHP code which use the
-`config` class. Configuration variables are set using
-`config::set($name, $value)` or, for pre-defined or previously set variables,
-<code>config::<var>name</var>($value)</code>. They can be accessed from
-anywhere using <code>config::<var>name</var>()</code> or the more explicit
-`config::get($name)`.
+The configuation files themselves are simply snippets of PHP code which set
+properties on a `$config` variable.
 
 Some of the essential pre-defined variables are:
 <dl>
@@ -175,8 +170,8 @@ Some of the essential pre-defined variables are:
 
 ## Routing ##
 
-Routing is configured in the file `src/app/routes.php`. Map URL patterns to
-actions using `router::map($pattern, $callback)`. The first argument is a
+Routing is configured in the file `src/php/routes.php`. Map URL patterns to
+actions using `$route->map($pattern, $callback)`. The first argument is a
 Rails-style URL pattern. The second argument is a PHP callable object.
 
 Patterns may include `:variables`, `*globs`, and `(optional)` parts. Variables
@@ -210,20 +205,25 @@ Refer to the detailed inline documentation in `ArrayUtil`, `StringUtil`, and
 
 ## Request Access ##
 
-Refer to the inline documentation in `Request`. This module gives you easy
-access to the HTTP method, URL, header fields, content body, and more.
+The class `phrame\http\AbstractRequest` defines an object-oriented interface
+for HTTP requests. The class `phrame\http\CurrentRequest` implements this
+interface for the current request being handled by the script, unifying the
+various API quirks for accessing the URI, headers, etc. The class
+`phrame\RequestUtil` is a singleton class which provides access to an instance
+of this class.
 
 ## Response Building ##
 
-Refer to the inline documentation in `Response`. This module gives you easy
-access to the response code, response headers, content type, and so on.
+Like the current HTTP request, the HTTP response is abstracted behind an
+interface, `phrame\http\AbstractResponse`, and implemented in
+`phrame\http\CurrentResponse`. An instance is accessible through the singleton
+`phrame\ResponseUtil`.
 
 ## Application Code ##
 
-All of the code under `src/` is yours to modify. The `src/js/` and `src/css/`
+See the example project under `demo/`. The `src/js/` and `src/css/`
 directories house source code for the JavaScript and stylesheets, respectively.
-
-The `src/app/` directory contains backend PHP code. It contains the following
+The `src/php/` directory contains backend PHP code. It contains the following
 directories.
 
 <dl>
@@ -234,7 +234,7 @@ directories.
 
   <dt><code>helpers/</code></dt>
   <dd>A couple of special classes live here. One, <code>Database</code>, is a
-  singleton class which provides access to the app's database. The other,
+  singleton class which provides access to the app's database. Another,
   <code>Pages</code>, defines a few site-wide functions, like how error pages
   (404, 403, 500, etc.) are served, how redirects are performed, etc.</dd>
 

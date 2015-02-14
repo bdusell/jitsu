@@ -16,6 +16,11 @@ function repr($x) {
 	return var_export($x, true);
 }
 
+/* Debug-print expressions. Return the first argument. */
+function p(/* $arg1, ... */) {
+	return call_user_func_array(array('\\phrame\\Util', 'p'), func_get_args());
+}
+
 /* Wrap a string in an `XString` object. */
 function xstring($s) {
 	return new \phrame\XString($s);

@@ -166,13 +166,21 @@ class StringUtil {
 	 * empty string. */
 	public static function substring($s, $offset, $length = null) {
 		if($offset >= strlen($s)) return '';
-		return substr($s, $offset, $length);
+		if($length === null) {
+			return substr($s, $offset);
+		} else {
+			return substr($s, $offset, $length);
+		}
 	}
 
 	/* Replace a portion of a string with another. */
 	public static function replace_substring($s, $new, $offset, $length = null) {
 		if($offset >= strlen($s)) return '';
-		return substr_replace($s, $new, $offset, $length);
+		if($length === null) {
+			return substr_replace($s, $new, $offset);
+		} else {
+			return substr_replace($s, $new, $offset, $length);
+		}
 	}
 
 	/* Get a substring of a string given a beginning and ending index.

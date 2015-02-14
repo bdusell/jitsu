@@ -29,7 +29,7 @@ class Application {
 				$this->router->route(
 					$response,
 					$request->method(),
-					$path
+					$route
 				);
 				$noexcept = true;
 			} catch(Exception $e) {

@@ -20,33 +20,28 @@ class Router {
 	}
 
 	public function map($method, $pattern, $callback) {
-		$this->routes[] = func_get_args();
+		$this->routes[] = array(strtoupper($method), $pattern, $callback);
 		return $this;
-	}
-
-	public function internal_error($callback) {
-		$this->callbacks[__FUNCTION__] = $callback;
 	}
 
 	public function bad_method($callback) {
 		$this->callbacks[__FUNCTION__] = $callback;
+		return $this;
 	}
 
 	public function not_found($callback) {
 		$this->callbacks[__FUNCTION__] = $callback;
+		return $this;
 	}
 
 	public function route($response, $method, $path) {
-		$impl = new _Router_impl(
-			$response,
-			$method,
-			$path,
-			$this->callbacks
-		);
-		foreach($this->routes as $route) {
-			call_user_func_array(array($impl, 'map'), $route);
-		}
-		return $impl->route();
+		return (new _Router_impl(array(
+			'response' => $response,
+			'method' => $method,
+			'path' => $path,
+			'callbacks' => $this->callbacks,
+			'routes' => $this->routes
+		)))->route();
 	}
 }
 
@@ -56,15 +51,14 @@ class _Router_impl {
 	private $method;
 	private $path;
 	private $callbacks;
+	private $routes;
 
-	private $routes = array();
 	private $matched_methods;
 
-	public function __construct($response, $method, $path, $callbacks) {
-		$this->response = $response;
-		$this->method = $method;
-		$this->path = $path;
-		$this->callbacks = $callbacks;
+	public function __construct($options) {
+		foreach($options as $name => $value) {
+			$this->$name = $value;
+		}
 	}
 
 	public final function route() {
@@ -86,14 +80,8 @@ class _Router_impl {
 		return false;
 	}
 
-	public final function map($method, $pat, $callback) {
-		$this->routes[] = array(strtoupper($method), $pat, $callback);
-	}
-
 	private function call($name) {
 		$args = func_get_args();
-		// TODO
-		//$args[0] = $this->response;
 		array_shift($args);
 		return call_user_func_array(
 			$this->callbacks[$name],
@@ -107,9 +95,7 @@ class _Router_impl {
 			if($trailing_slash && substr($this->path, -1) !== '/') {
 				$this->response->redirect($this->path . '/', 301);
 			} else {
-				if(strcasecmp($method, $this->method) == 0) {
-					// TODO
-					//$matches[0] = $this->response;
+				if(strcasecmp($method, $this->method) === 0) {
 					array_shift($matches);
 					call_user_func_array($func, $matches);
 					return true;
@@ -121,7 +107,7 @@ class _Router_impl {
 		return false;
 	}
 
-	public static function pattern_to_regex($pat, &$trailing_slash) {
+	private static function pattern_to_regex($pat, &$trailing_slash) {
 		$trailing_slash = false;
 		$regex = preg_replace_callback(
 			'!(:[A-Za-z_]+)|(\\*[A-Za-z_]+)|(/$)|(\\()|(\\))|(.+?)!',
@@ -138,12 +124,12 @@ class _Router_impl {
 				} elseif($matches[5] !== '') {
 					return ')?';
 				} else {
-					return preg_quote($matches[6], '|');
+					return preg_quote($matches[6], '#');
 				}
 			},
 			$pat
 		);
-		return "|^$regex$|";
+		return '#^' . $regex . '$#';
 	}
 }
 

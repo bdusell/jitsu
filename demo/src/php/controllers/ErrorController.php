@@ -16,26 +16,27 @@ class ErrorController {
 	}
 
 	public static function internal_error($exception) {
-		$response = ResponseUtil::instance();
+		$request = RequestUtil::instance();
 		$config = AppConfig::instance();
-		if(true || $config->buffer_output) {
-			$response->clear_buffer();
-			Pages::error(500, array(
-				'message' => StringUtil::capture(function() use($exception) {
-					\phrame\print_stack_trace($exception);
-				})
-			));
-		} else {
-			if(!headers_sent()) {
-				$response->code(500);
-				$response->content_type('text/plain');
-			}
-			\phrame\print_stack_trace($exception);
+		$message = null;
+		if($config->show_errors) {
+			$message = StringUtil::capture(function() use($exception) {
+				\phrame\print_stack_trace($exception);
+			});
 		}
+		Pages::error(500, array(
+			'method' => $request->method(),
+			'path' => $request->path(),
+			'message' => $message
+		));
 	}
 
 	public static function bad_method($methods) {
-		// TODO
+		$request = RequestUtil::instance();
+		Pages::error(405, array(
+			'method' => $request->method(),
+			'path' => $request->path()
+		));
 	}
 }
 

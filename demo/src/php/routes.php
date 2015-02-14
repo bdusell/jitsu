@@ -13,6 +13,5 @@ $router->map('POST',   'videos/:id/tags/', array('TagsController', 'create'));
 $router->map('DELETE', 'videos/:id/tags/:value', array('TagsController', 'delete'));
 $router->map('GET',    'echo/*path', array('StaticPagesController', 'echo_'));
 $router->not_found(array('ErrorController', 'not_found'));
-$router->internal_error(array('ErrorController', 'internal_error'));
 $router->bad_method(array('ErrorController', 'bad_method'));
 ?>

@@ -1,12 +1,8 @@
 #!/bin/bash
 DIR="$(dirname "$BASH_SOURCE")"
 . "$DIR/../bash/functions"
-echo -n 'working...'
+echo 'working...'
 {
-  # TODO appdir
-  cd "$DIR/../src/sql/mysql"
-} && {
-  echo
   confirm 'Do you really want to clobber the database?'
 } && {
   mysql -uroot -p <<SQL
@@ -20,4 +16,6 @@ SQL
   fi
 } && {
   echo 'done'
+} || {
+  echo 'failed'
 }

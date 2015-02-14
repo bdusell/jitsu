@@ -34,6 +34,11 @@ class Router {
 		return $this;
 	}
 
+	public function permanent_redirect($callback) {
+		$this->callbacks[__FUNCTION__] = $callback;
+		return $this;
+	}
+
 	public function route($response, $method, $path) {
 		return (new _Router_impl(array(
 			'response' => $response,
@@ -93,7 +98,8 @@ class _Router_impl {
 		$regex = self::pattern_to_regex($pat, $trailing_slash);
 		if(preg_match($regex, $this->path, $matches)) {
 			if($trailing_slash && substr($this->path, -1) !== '/') {
-				$this->response->redirect($this->path . '/', 301);
+				$this->call('permanent_redirect', $this->path . '/');
+				return true;
 			} else {
 				if(strcasecmp($method, $this->method) === 0) {
 					array_shift($matches);
@@ -110,7 +116,7 @@ class _Router_impl {
 	private static function pattern_to_regex($pat, &$trailing_slash) {
 		$trailing_slash = false;
 		$regex = preg_replace_callback(
-			'!(:[A-Za-z_]+)|(\\*[A-Za-z_]+)|(/$)|(\\()|(\\))|(.+?)!',
+			'#(:[A-Za-z_]+)|(\\*[A-Za-z_]+)|(/$)|(\\()|(\\))|(.+?)#',
 			function($matches) use(&$trailing_slash) {
 				if($matches[1] !== '') {
 					return '([^/]+)';

@@ -14,4 +14,5 @@ $router->map('DELETE', 'videos/:id/tags/:value', array('TagsController', 'delete
 $router->map('GET',    'echo/*path', array('StaticPagesController', 'echo_'));
 $router->not_found(array('ErrorController', 'not_found'));
 $router->bad_method(array('ErrorController', 'bad_method'));
+$router->permanent_redirect(array('ErrorController', 'permanent_redirect'));
 ?>

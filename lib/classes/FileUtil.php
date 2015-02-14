@@ -1,5 +1,7 @@
 <?php
 
+namespace phrame;
+
 /* Utilities for dealing with files. */
 class FileUtil {
 

@@ -1,8 +1,10 @@
 <?php
 
+namespace phrame;
+
 /* An object-oriented wrapper around the built-in PHP array type which offers
  * a richer API. */
-class XArray implements Countable, IteratorAggregate, ArrayAccess {
+class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 
 	public $value;
 
@@ -21,7 +23,7 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 	}
 
 	public function __call($name, $args) {
-		$func = array('ArrayUtil', $name);
+		$func = array('\\phrame\\ArrayUtil', $name);
 		self::_unbox($args);
 		if(
 			($inplace = array_key_exists($name, self::$inplace_methods)) ||
@@ -52,7 +54,7 @@ class XArray implements Countable, IteratorAggregate, ArrayAccess {
 		if(array_key_exists($name, self::$constructor_methods)) {
 			return new XArray(
 				call_user_func_array(
-					array('ArrayUtil', $name),
+					array('\\phrame\\ArrayUtil', $name),
 					$args
 				)
 			);

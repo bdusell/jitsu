@@ -1,3 +1,3 @@
 User-agent: *
-Disallow: <?= AppConfig::instance()->make_path('videos/search/') ?>
+Disallow: <?= AppConfig::make_path('videos/search/') ?>
 

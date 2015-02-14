@@ -38,6 +38,11 @@ class ErrorController {
 			'path' => $request->path()
 		));
 	}
+
+	public static function permanent_redirect($path) {
+		Pages::redirect($path, 301);
+		exit(0);
+	}
 }
 
 ?>

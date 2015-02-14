@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><?= html($title) ?> | <?= html(AppConfig::instance()->site_name) ?></title>
+    <title><?= html($title) ?> | <?= html(AppConfig::get('site_name')) ?></title>
 <?php if(isset($base)): ?>
     <base href="<?= html($base) ?>" />
 <?php endif; ?>

@@ -1,5 +1,7 @@
 <?php
 
+namespace phrame;
+
 /* An object representing a regular expression match. */
 class RegexUtilMatch {
 

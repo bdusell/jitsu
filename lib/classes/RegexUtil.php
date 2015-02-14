@@ -1,5 +1,7 @@
 <?php
 
+namespace phrame;
+
 /* Utilties for dealing with regular expressions. */
 class RegexUtil {
 

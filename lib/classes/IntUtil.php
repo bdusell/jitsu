@@ -1,5 +1,7 @@
 <?php
 
+namespace phrame;
+
 /* Utilities for dealing with integers. */
 class IntUtil {
 

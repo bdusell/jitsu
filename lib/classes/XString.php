@@ -1,5 +1,7 @@
 <?php
 
+namespace phrame;
+
 /* An object-oriented wrapper around the built-in PHP string type which offers
  * a richer API. */
 class XString {
@@ -22,7 +24,7 @@ class XString {
 
 	public function __call($name, $args) {
 		self::_unbox($args);
-		$func = array('StringUtil', $name);
+		$func = array('\\phrame\\StringUtil', $name);
 		array_unshift($args, $this->value);
 		if(array_key_exists($name, self::$unwrapped_methods)) {
 			return call_user_func_array($func, $args);
@@ -45,7 +47,7 @@ class XString {
 
 	public static function __callStatic($name, $args) {
 		self::_unbox($args);
-		$func = array('StringUtil', $name);
+		$func = array('\\phrame\\StringUtil', $name);
 		if(array_key_exists($name, self::$constructor_methods)) {
 			return new XString(
 				call_user_func_array(
@@ -87,7 +89,7 @@ class XString {
 
 	private function _replace($name, $old, $new, &$count) {
 		return new XString(call_user_func_array(
-			array('StringUtil', $name),
+			array('\\phrame\\StringUtil', $name),
 			array($this->value, $old, $new, &$count)
 		));
 	}

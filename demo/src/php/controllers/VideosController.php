@@ -1,5 +1,9 @@
 <?php
 
+use phrame\StringUtil;
+use phrame\ArrayUtil;
+use phrame\RequestUtil;
+use phrame\ResponseUtil;
 use phrame\sql\Ast as sql;
 
 class VideosController {
@@ -46,8 +50,9 @@ class VideosController {
 	}
 
 	public static function create() {
-		$name = Request::form('name');
-		$href = Request::form('url');
+		$request = RequestUtil::instance();
+		$name = $request->form('name');
+		$href = $request->form('url');
 		Database::execute(Database::interpret(
 			sql::insert(sql::table('videos')->cols('name', 'url'))->values(2)
 		), $name, $href);
@@ -55,7 +60,8 @@ class VideosController {
 	}
 
 	public static function search() {
-		$query = xstring(Request::form('query'));
+		$request = RequestUtil::instance();
+		$query = xstring($request->form('query'));
 		$tags = $query->split();
 		if(!$tags->is_empty()) {
 			$videos = Database::query(Database::interpret(

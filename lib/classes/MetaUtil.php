@@ -66,6 +66,11 @@ class MetaUtil {
 		return is_object($value) ? get_class($value) : gettype($value);
 	}
 
+	public static function public_methods($obj) {
+		$r = new \ReflectionObject($obj);
+		return $r->getMethods(\ReflectionMethod::IS_PUBLIC);
+	}
+
 	public static function register_autoloader($callback) {
 		spl_autoload_register($callback);
 	}

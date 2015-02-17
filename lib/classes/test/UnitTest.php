@@ -10,29 +10,45 @@ abstract class UnitTest extends Runner {
 	private $failed_tests;
 	private $passed_assertions;
 	private $failed_assertions;
+	private $current_method;
 
 	public function run() {
 		$this->passed_tests = $this->failed_tests = 0;
 		parent::run();
-		echo $this->passed_tests, '/',
-			($this->passed_tests + $this->failed_tests),
-			" tests passed\n";
-		return $this->failed_tests === 0;
+		$msg = (
+			$this->passed_tests . '/' .
+			($this->passed_tests + $this->failed_tests) .
+			" tests passed"
+		);
+		$r = $this->failed_tests === 0;
+		$msg = $r ? self::green($msg) : self::red($msg);
+		echo "\n", $msg, "\n";
+		return $r;
 	}
 
 	public function run_test($method) {
 		$this->passed_assertions = $this->failed_assertions = 0;
+		$this->current_method = $method;
 		try {
 			parent::run_test($method);
 		} catch(Exception $e) {
-			echo "\n", $method->getName(), " failed (exception thrown)\n";
+			echo "\n", self::red(
+				$method->getName() .
+				" failed (exception thrown)"
+			), "\n";
 			print_stack_trace($e);
 			++$this->failed_tests;
 		}
+		$this->current_method = null;
 		if($this->failed_assertions > 0) {
-			echo "\n", $method->getName(), ' failed (', $this->passed_assertions, '/',
-				($this->passed_assertions + $this->failed_assertions),
-				' assertions passed)';
+			echo self::red(
+				$method->getFileName() . ':' .
+				$method->getStartLine() . ': ' .
+				$method->getName() . ' failed (' .
+				$this->passed_assertions . '/' .
+				($this->passed_assertions + $this->failed_assertions) .
+				' assertions passed)'
+			);
 			++$this->failed_tests;
 		} else {
 			++$this->passed_tests;
@@ -40,15 +56,27 @@ abstract class UnitTest extends Runner {
 		echo "\n";
 	}
 
+	private static function red($s) {
+		return "\033[31m$s\033[0m";
+	}
+
+	private static function green($s) {
+		return "\033[32m$s\033[0m";
+	}
+
+	private static function cyan($s) {
+		return "\033[36m$s\033[0m";
+	}
+
 	private function rec($value, $msg) {
 		if($value) {
 			++$this->passed_assertions;
-			echo '.';
+			echo self::green('.');
 		} else {
 			++$this->failed_assertions;
-			echo 'F';
+			echo self::red("F"), "\n";
 			if($msg !== null) {
-				echo "\n  ", $msg, "\n";
+				echo $msg, "\n";
 			}
 		}
 		return $value;
@@ -64,12 +92,11 @@ abstract class UnitTest extends Runner {
 
 	protected function eq($x, $y, $msg = null) {
 		if(!$this->rec($x === $y, $msg)) {
-			if($msg === null) echo "\n";
-			echo "== expected ==\n";
+			echo self::cyan("---expected---"), "\n";
 			var_export($y);
-			echo "\n== got ==\n";
+			echo "\n", self::cyan("-----got------"), "\n";
 			var_export($x);
-			echo "\n== end ==\n";
+			echo "\n", self::cyan("--------------"), "\n";
 		}
 	}
 }

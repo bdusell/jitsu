@@ -27,12 +27,15 @@ class StringUtil {
 
 	/* Return the characters of a string as an array. */
 	public static function chars($s) {
+		if($s === '') return array();
 		return str_split($s);
 	}
 
 	/* Split a string into chunks of `$n` characters each as a sequential
-	 * array. The last chunk may have fewer than `$n` characters. */
+	 * array. The last chunk may have between 1 and `$n` characters. It is
+	 * an error for `$n` not to be greater than 0. */
 	public static function chunks($s, $n) {
+		if($s === '') return array();
 		return str_split($s, $n);
 	}
 

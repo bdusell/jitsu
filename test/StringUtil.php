@@ -6,9 +6,9 @@ use phrame\StringUtil as s;
 class StringUtilTest extends UnitTest {
 
 	public function test_length() {
-		$this->ok(s::length('aaa') === 3);
-		$this->ok(s::length('') === 0);
-		$this->ok(s::size('') === 0);
+		$this->eq(s::length('aaa'), 3);
+		$this->eq(s::length(''), 0);
+		$this->eq(s::size(''), 0);
 	}
 
 	public function test_equal() {
@@ -25,18 +25,22 @@ class StringUtilTest extends UnitTest {
 	}
 
 	public function test_chars() {
-		$this->ok(s::chars('abc') === array('a', 'b', 'c'));
+		$this->eq(s::chars('abc'), array('a', 'b', 'c'));
 		$this->eq(s::chars(''), array());
 	}
 
 	public function test_chunks() {
-		$this->ok(
-			s::chunks('abcde', 2) ===
+		$this->eq(
+			s::chunks('abcde', 2),
 			array('ab', 'cd', 'e')
 		);
-		$this->ok(
-			s::chunks('abc', 4) ===
+		$this->eq(
+			s::chunks('abc', 4),
 			array('abc')
+		);
+		$this->eq(
+			s::chunks('', 3),
+			array()
 		);
 	}
 }

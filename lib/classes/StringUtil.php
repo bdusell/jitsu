@@ -27,7 +27,7 @@ class StringUtil {
 
 	/* Return the characters of a string as an array. */
 	public static function chars($s) {
-		if($s === '') return array();
+		if(strlen($s) === 0) return array();
 		return str_split($s);
 	}
 
@@ -35,7 +35,7 @@ class StringUtil {
 	 * array. The last chunk may have between 1 and `$n` characters. It is
 	 * an error for `$n` not to be greater than 0. */
 	public static function chunks($s, $n) {
-		if($s === '') return array();
+		if(strlen($s) === 0) return array();
 		return str_split($s, $n);
 	}
 
@@ -74,28 +74,41 @@ class StringUtil {
 
 	/* Join array elements into a single string with a separator (default
 	 * is empty string). */
-	public static function join(/* $sep, $strs | $strs */) {
-		return call_user_func_array(
-			'implode',
-			func_get_args()
-		);
+	public static function join($sep, $strs = null) {
+		if($strs === null) {
+			return implode($sep);
+		} else {
+			return implode($sep, $strs);
+		}
 	}
 
 	/* Strip whitespace and null bytes from the beginning and end of a
 	 * string. Optionally provide a string listing the characters to strip
 	 * instead. */
 	public static function trim($s, $chars = null) {
-		return trim($s, $chars);
+		if($chars === null) {
+			return trim($s);
+		} else {
+			return trim($s, $chars);
+		}
 	}
 
 	/* Like `trim`, but only strips characters from the end. */
 	public static function rtrim($s, $chars = null) {
-		return rtrim($s, $chars);
+		if($chars === null) {
+			return rtrim($s);
+		} else {
+			return rtrim($s, $chars);
+		}
 	}
 
 	/* Like `trim`, but only strips characters from the beginning. */
 	public static function ltrim($s, $chars = null) {
-		return ltrim($s, $chars);
+		if($chars === null) {
+			return ltrim($s);
+		} else {
+			return ltrim($s, $chars);
+		}
 	}
 
 	/* Convert a string to lower case. */
@@ -140,15 +153,65 @@ class StringUtil {
 	}
 
 	/* Replace all non-overlapping instances of a substring with another
-	 * string. If `$count` is given, it is assigned the number of
-	 * replacements performed. */
-	public static function replace($s, $old, $new, &$count = null) {
-		return str_replace($old, $new, $s, $count);
+	 * string. */
+	public static function replace($s, $old, $new) {
+		if(strlen($old) === 0) {
+			if(strlen($s) === 0) {
+				return $new;
+			} else {
+				return $new . implode($new, str_split($s)) . $new;
+			}
+		} else {
+			return str_replace($old, $new, $s);
+		}
+	}
+
+	/* Like `replace`, but also return the number of replacements. Returns
+	 * an array . */
+	public static function count_replace($s, $old, $new) {
+		if(strlen($old) === 0) {
+			if(strlen($s) === 0) {
+				return array($new, 1);
+			} else {
+				return array(
+					$new . implode($new, str_split($s)) . $new,
+					strlen($s) + 1
+				);
+			}
+		} else {
+			$r = str_replace($old, $new, $s, $count);
+			return array($r, $count);
+		}
 	}
 
 	/* Like `replace` but case-insensitive. */
-	public static function ireplace($s, $old, $new, &$count = null) {
-		return str_ireplace($old, $new, $s, $count);
+	public static function ireplace($s, $old, $new) {
+		if(strlen($old) === 0) {
+			if(strlen($s) === 0) {
+				return $new;
+			} else {
+				return $new . implode($new, str_split($s)) . $new;
+			}
+		} else {
+			return str_ireplace($old, $new, $s);
+		}
+	}
+
+	/* Like `count_replace` but case-insensitive. */
+	public static function count_ireplace($s, $old, $new) {
+		if(strlen($old) === 0) {
+			if(strlen($s) === 0) {
+				return array($new, 1);
+			} else {
+				return array(
+					$new . implode($new, str_split($s)) . $new,
+					strlen($s) + 1
+				);
+			}
+		} else {
+			$r = str_ireplace($old, $new, $s, $count);
+			return array($r, $count);
+		}
 	}
 
 	/* Replace all non-overlapping instances of the keys of `$pairs` with

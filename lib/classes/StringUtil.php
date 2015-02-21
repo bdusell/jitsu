@@ -229,22 +229,34 @@ class StringUtil {
 	/* Get a substring of a string given an offset and length. If a length
 	 * is not given, the substring runs to the end of the string. If the
 	 * offset is greater than the length of the string, the result is an
-	 * empty string. */
+	 * empty string. If `$offset` is negative, the substring begins at
+	 * `-$offset` characters from the end. If `$length` is negative, the
+	 * result will be an empty string. */
 	public static function substring($s, $offset, $length = null) {
-		if($offset >= strlen($s)) return '';
+		$n = strlen($s);
+		if($offset >= $n) return '';
 		if($length === null) {
 			return substr($s, $offset);
 		} else {
+			if($n + $offset < 0) {
+				$length = $n + $offset + $length;
+			}
+			if($length < 0) return '';
 			return substr($s, $offset, $length);
 		}
 	}
 
 	/* Replace a portion of a string with another. */
 	public static function replace_substring($s, $new, $offset, $length = null) {
-		if($offset >= strlen($s)) return '';
+		$n = strlen($s);
+		if($offset >= $n) return $s;
 		if($length === null) {
 			return substr_replace($s, $new, $offset);
 		} else {
+			if($n + $offset < 0) {
+				$length = $n + $offset + $length;
+			}
+			if($length < 0) return '';
 			return substr_replace($s, $new, $offset, $length);
 		}
 	}

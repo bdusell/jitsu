@@ -68,14 +68,6 @@ class XString {
 		);
 	}
 
-	public function replace($old, $new, &$count = null) {
-		return $this->_replace('replace', $old, $new, $count);
-	}
-
-	public function ireplace($old, $new, &$count = null) {
-		return $this->_replace('ireplace', $old, $new, $count);
-	}
-
 	private static function _unbox(&$args) {
 		$tmp = $args;
 		$args = array();
@@ -85,13 +77,6 @@ class XString {
 			}
 			$args[] = $arg;
 		}
-	}
-
-	private function _replace($name, $old, $new, &$count) {
-		return new XString(call_user_func_array(
-			array('\\phrame\\StringUtil', $name),
-			array($this->value, $old, $new, &$count)
-		));
 	}
 
 	private static $unwrapped_methods = array(

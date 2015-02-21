@@ -173,6 +173,64 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::count_ireplace('', '', 'x'),
 			array('x', 1));
 	}
+
+	public function test_replace_multiple() {
+		$this->eq(
+			s::replace_multiple(':one :two', array(
+				':one' => 'a',
+				':two' => 'b'
+			)),
+			'a b'
+		);
+		$this->eq(
+			s::replace_multiple(':one :two', array(
+				':one' => ':one :two',
+				':two' => 'b'
+			)),
+			':one :two b'
+		);
+		$this->eq(
+			s::replace_multiple('', array(
+				'a' => 'b',
+				'b' => 'c'
+			)),
+			''
+		);
+		$this->eq(
+			s::replace_multiple('abcdef', array()),
+			'abcdef'
+		);
+	}
+
+	public function test_translate() {
+		$this->eq(s::translate('abcba', 'abc', '123'), '12321');
+		$this->eq(s::translate('', 'abc', '123'), '');
+		$this->eq(s::translate('abc', '', ''), 'abc');
+	}
+
+	public function test_substring() {
+		$this->eq(s::substring('abcdef', 2, 3), 'cde');
+		$this->eq(s::substring('abcdef', 2), 'cdef');
+		$this->eq(s::substring('abcdef', 2, 1000), 'cdef');
+		$this->eq(s::substring('abcdef', 1000, 3), '');
+		$this->eq(s::substring('abcdef', 2, 0), '');
+		$this->eq(s::substring('abcdef', -2), 'ef');
+		$this->eq(s::substring('abcdef', -4, 2), 'cd');
+		$this->eq(s::substring('abcdef', -1000), 'abcdef');
+		$this->eq(s::substring('abcdef', -7, 3), 'ab');
+	}
+
+	public function test_replace_substring() {
+		$this->eq(s::replace_substring('abcdef', 'x', 2, 3), 'abxf');
+		$this->eq(s::replace_substring('abcdef', 'x', 2), 'abx');
+		$this->eq(s::replace_substring('abcdef', 'x', 2, 1000), 'abx');
+		$this->eq(s::replace_substring('abcdef', 'x', 1000, 3), 'abcdef');
+		$this->eq(s::replace_substring('abcdef', 'x', 2, 0), 'abxcdef');
+		$this->eq(s::replace_substring('abcdef', 'x', -2), 'abcdx');
+		$this->eq(s::replace_substring('abcdef', 'x', -4, 2), 'abxef');
+		$this->eq(s::replace_substring('abcdef', 'x', -1000), 'x');
+		$this->eq(s::replace_substring('abcdef', 'x', -7, 3), 'xcdef');
+	}
 }
 
 ?>

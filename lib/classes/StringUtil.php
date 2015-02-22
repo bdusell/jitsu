@@ -960,7 +960,12 @@ class StringUtil {
 	 * function and return the result as a string. */
 	public static function capture($callback) {
 		ob_start();
-		call_user_func($callback);
+		try {
+			call_user_func($callback);
+		} catch(\Exception $e) {
+			ob_end_clean();
+			throw $e;
+		}
 		return ob_get_clean();
 	}
 }

@@ -1,7 +1,10 @@
 <?php
 
 use phrame\Util;
+use phrame\ArrayUtil;
+use phrame\RequestUtil;
 use phrame\ResponseUtil;
+use phrame\JSONUtil;
 
 class Pages {
 
@@ -14,9 +17,15 @@ class Pages {
 
 	public static function error($code, $vars = null) {
 		$response = ResponseUtil::instance();
+		$request = RequestUtil::instance();
 		$response->code($code);
-		$vars['title'] = $code . ': ' . self::$titles[$code];
-		self::page("errors/$code", $vars);
+		if($request->accepts('text/html')) {
+			$vars['title'] = $code . ': ' . self::$titles[$code];
+			self::page("errors/$code", $vars);
+		} else {
+			$response->content_type('text/plain');
+			self::text("errors/$code", $vars);
+		}
 	}
 
 	public static function redirect($url, $code = 303) {
@@ -37,6 +46,13 @@ class Pages {
 		);
 		Util::template(
 			dirname(__DIR__) . '/views/common/main.html.php',
+			$vars
+		);
+	}
+
+	public static function text($template, $vars) {
+		Util::template(
+			dirname(__DIR__) . '/views/' . $template . '.txt.php',
 			$vars
 		);
 	}

@@ -17,7 +17,7 @@ $(function() {
     var $this = $(this);
     var tags = JSON.parse($this.attr('data-tags'));
     var videoId = $this.attr('data-id');
-    var collection = new TagCollection(tags, { videoId: videoId });
+    var collection = new TagCollection(tags, { parse: true, videoId: videoId });
     var view = new TagListView({
       el: this,
       collection: collection
@@ -28,7 +28,7 @@ $(function() {
         var $this = $(this);
         var value = $this.val();
         if(value) {
-          collection.add({ value: $this.val() });
+          collection.create({ value: $this.val() });
           $this.val('');
         }
       }

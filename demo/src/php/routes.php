@@ -9,7 +9,7 @@ $router->map('GET',    'videos/:id/edit', array('VideosController', 'edit'));
 $router->map('PUT',    'videos/:id', array('VideosController', 'update'));
 $router->map('PATCH',  'videos/:id', array('VideosController', 'patch'));
 $router->map('DELETE', 'videos/:id', array('VideosController', 'delete'));
-$router->map('POST',   'videos/:id/tags/', array('TagsController', 'create'));
+$router->map('PUT',    'videos/:id/tags/:value', array('TagsController', 'update'));
 $router->map('DELETE', 'videos/:id/tags/:value', array('TagsController', 'delete'));
 $router->map('GET',    'echo/*path', array('StaticPagesController', 'echo_'));
 $router->not_found(array('ErrorController', 'not_found'));

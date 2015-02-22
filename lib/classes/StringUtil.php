@@ -226,12 +226,12 @@ class StringUtil {
 		return strtr($s, $old, $new);
 	}
 
-	/* Get a substring of a string given an offset and length. If a length
-	 * is not given, the substring runs to the end of the string. If the
+	/* Get a substring of a string given an offset and length. If the
+	 * length is null, the substring runs to the end of the string. If the
 	 * offset is greater than the length of the string, the result is an
-	 * empty string. If `$offset` is negative, the substring begins at
-	 * `-$offset` characters from the end. If `$length` is negative, the
-	 * result will be an empty string. */
+	 * empty string. A negative offset denotes an offset from the end of
+	 * the string. If the length is negative, the result will be an empty
+	 * string. */
 	public static function substring($s, $offset, $length = null) {
 		$n = strlen($s);
 		if($offset >= $n) return '';
@@ -261,14 +261,28 @@ class StringUtil {
 		}
 	}
 
-	/* Get a substring of a string given a beginning and ending index.
-	 * Negative indexes, indicating characters from the end of the string,
-	 * may be used. If the start index occurs after the end index, an empty
-	 * string will be returned. */
+	/* Get a substring of a string given a beginning and non-inclusive
+	 * ending index. Negative indexes denote offsets from the end of the
+	 * string. If the start index occurs after the end index, an empty
+	 * string is returned. If the end index is null, the slice runs to the
+	 * end of the string. */
 	public static function slice($s, $i, $j = null) {
-		// TODO
-		list($offset, $len) = Util::convert_slice_indexes($i, $j, strlen($s));
-		return substr($s, $offset, $len);
+		if($j === null) {
+			$len = null;
+		} elseif($j < 0) {
+			if($i < 0) {
+				$len = $j - $i;
+			} else {
+				$len = strlen($s) + $j - $i;
+			}
+		} else {
+			if($i < 0) {
+				$len = $j - (strlen($s) + $i);
+			} else {
+				$len = $j - $i;
+			}
+		}
+		return self::substring($s, $i, $len);
 	}
 
 	/* Replace a slice of a string with another. If `$j` is null, the slice

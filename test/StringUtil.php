@@ -12,16 +12,16 @@ class StringUtilTest extends UnitTest {
 	}
 
 	public function test_equal() {
-		$this->ok(s::equal('aaa', 'aaa'));
-		$this->not(s::equal('aaa', 'bbb'));
-		$this->ok(s::equal('', ''));
-		$this->not(s::equal('aaa', 'AAA'));
+		$this->eq(s::equal('aaa', 'aaa'), true);
+		$this->eq(s::equal('aaa', 'bbb'), false);
+		$this->eq(s::equal('', ''), true);
+		$this->eq(s::equal('aaa', 'AAA'), false);
 	}
 
 	public function test_iequal() {
-		$this->ok(s::iequal('aaa', 'AAA'));
-		$this->not(s::iequal('aaa', 'bbb'));
-		$this->ok(s::iequal('', ''));
+		$this->eq(s::iequal('aaa', 'AAA'), true);
+		$this->eq(s::iequal('aaa', 'bbb'), false);
+		$this->eq(s::iequal('', ''), true);
 	}
 
 	public function test_chars() {
@@ -212,24 +212,49 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::substring('abcdef', 2, 3), 'cde');
 		$this->eq(s::substring('abcdef', 2), 'cdef');
 		$this->eq(s::substring('abcdef', 2, 1000), 'cdef');
+		$this->eq(s::substring('abcdef', 1000), '');
 		$this->eq(s::substring('abcdef', 1000, 3), '');
 		$this->eq(s::substring('abcdef', 2, 0), '');
 		$this->eq(s::substring('abcdef', -2), 'ef');
 		$this->eq(s::substring('abcdef', -4, 2), 'cd');
 		$this->eq(s::substring('abcdef', -1000), 'abcdef');
 		$this->eq(s::substring('abcdef', -7, 3), 'ab');
+		$this->eq(s::substring('', 2, 4), '');
 	}
 
 	public function test_replace_substring() {
 		$this->eq(s::replace_substring('abcdef', 'x', 2, 3), 'abxf');
 		$this->eq(s::replace_substring('abcdef', 'x', 2), 'abx');
 		$this->eq(s::replace_substring('abcdef', 'x', 2, 1000), 'abx');
+		$this->eq(s::replace_substring('abcdef', 'x', 1000), 'abcdef');
 		$this->eq(s::replace_substring('abcdef', 'x', 1000, 3), 'abcdef');
 		$this->eq(s::replace_substring('abcdef', 'x', 2, 0), 'abxcdef');
 		$this->eq(s::replace_substring('abcdef', 'x', -2), 'abcdx');
 		$this->eq(s::replace_substring('abcdef', 'x', -4, 2), 'abxef');
 		$this->eq(s::replace_substring('abcdef', 'x', -1000), 'x');
 		$this->eq(s::replace_substring('abcdef', 'x', -7, 3), 'xcdef');
+		$this->eq(s::replace_substring('', 'x', 2, 4), '');
+	}
+
+	public function test_slice() {
+		$this->eq(s::slice('abcdef', 1, 3), 'bc');
+		$this->eq(s::slice('abcdef', 3, 4), 'd');
+		$this->eq(s::slice('abcdef', 3, 3), '');
+		$this->eq(s::slice('abcdef', 3, 2), '');
+		$this->eq(s::slice('abcdef', 2), 'cdef');
+		$this->eq(s::slice('abcdef', 2, 1000), 'cdef');
+		$this->eq(s::slice('abcdef', 1000), '');
+		$this->eq(s::slice('abcdef', 1000, 4), '');
+		$this->eq(s::slice('abcdef', 1000, 2000), '');
+		$this->eq(s::slice('abcdef', 0, -2), 'abcd');
+		$this->eq(s::slice('abcdef', 1, -1), 'bcde');
+		$this->eq(s::slice('abcdef', 3, -3), '');
+		$this->eq(s::slice('abcdef', 4, -5), '');
+		$this->eq(s::slice('abcdef', -4, -2), 'cd');
+		$this->eq(s::slice('abcdef', -4, 4), 'cd');
+		$this->eq(s::slice('abcdef', -1000), 'abcdef');
+		$this->eq(s::slice('abcdef', -1000, -2), 'abcd');
+		$this->eq(s::slice('abcdef', -1000, -100), '');
 	}
 }
 

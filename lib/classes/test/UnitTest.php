@@ -67,7 +67,7 @@ abstract class UnitTest extends Runner {
 				$this->passed_assertions . '/' .
 				($this->passed_assertions + $this->failed_assertions) .
 				' assertions passed)'
-			);
+			), "\n";
 			++$this->failed_tests;
 		} else {
 			++$this->passed_tests;

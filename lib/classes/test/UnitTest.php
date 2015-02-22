@@ -19,7 +19,7 @@ abstract class UnitTest extends Runner {
 		$msg = (
 			$this->passed_tests . '/' .
 			($this->passed_tests + $this->failed_tests) .
-			" tests passed"
+			' tests passed'
 		);
 		$r = $this->failed_tests === 0 && $this->passed_tests > 0;
 		$msg = $r ? self::green($msg) : self::red($msg);
@@ -35,16 +35,13 @@ abstract class UnitTest extends Runner {
 		try {
 			parent::run_test($method);
 		} catch(\Exception $e) {
-			echo "\n", self::red(
-				$method->getName() .
-				' failed (exception thrown)'
-			), "\n";
-			\phrame\print_stack_trace($e);
-			++$this->failed_tests;
+			echo self::red('E');
+			++$this->failed_assertions;
 		}
-		if($e === null) echo "\n";
+		echo "\n";
 		$this->current_method = null;
 		foreach($this->deferred_errors as $info) {
+			echo self::red('assertion failed'), "\n";
 			if(isset($info['file'])) {
 				echo $info['file'], ':', $info['line'], "\n";
 			}
@@ -60,6 +57,10 @@ abstract class UnitTest extends Runner {
 				echo "\n";
 				echo self::cyan('--------------'), "\n";
 			}
+		}
+		if($e !== null) {
+			echo self::red('exception thrown'), "\n";
+			\phrame\print_stack_trace($e);
 		}
 		if($this->failed_assertions > 0 || $this->passed_assertions === 0) {
 			echo self::red(
@@ -86,15 +87,15 @@ abstract class UnitTest extends Runner {
 		return "\033[36m$s\033[0m";
 	}
 
-	private function rec($value, $msg) {
+	private function rec($value, $msg, $i = 1) {
 		if($value) {
 			++$this->passed_assertions;
 			echo self::green('.');
 		} else {
 			++$this->failed_assertions;
-			echo self::red("F");
+			echo self::red('F');
 			$trace = debug_backtrace();
-			$this->deferred_errors[] = $trace[1] + array(
+			$this->deferred_errors[] = $trace[$i] + array(
 				'file' => null,
 				'line' => '???',
 				'message' => $msg

@@ -70,6 +70,10 @@ abstract class AbstractRequest {
 	 * quality ratings, ordered in descending order of quality. */
 	public abstract function accept();
 
+	public function accepts($type) {
+		return array_key_exists($type, $this->accept());
+	}
+
 	/* Get the HTTP referrer URI or null if it was not sent. */
 	public function referer() {
 		return $this->header('Referer');

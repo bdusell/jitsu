@@ -1,6 +1,9 @@
+#!/usr/bin/env php
 <?php
 
-$name = array_shift($argv);
+require dirname(__DIR__) . '/cli.php';
+
+$name = basename(array_shift($argv));
 $usage = function() use($name) {
 	echo <<<TXT
 Usage: $name <unit-test-file>

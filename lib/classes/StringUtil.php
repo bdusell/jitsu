@@ -249,14 +249,14 @@ class StringUtil {
 	/* Replace a portion of a string with another. */
 	public static function replace_substring($s, $new, $offset, $length = null) {
 		$n = strlen($s);
-		if($offset >= $n) return $s;
+		if($offset >= $n) return $s . $new;
 		if($length === null) {
 			return substr_replace($s, $new, $offset);
 		} else {
 			if($n + $offset < 0) {
 				$length = $n + $offset + $length;
 			}
-			if($length < 0) return '';
+			if($length < 0) $length = 0;
 			return substr_replace($s, $new, $offset, $length);
 		}
 	}
@@ -267,33 +267,36 @@ class StringUtil {
 	 * string is returned. If the end index is null, the slice runs to the
 	 * end of the string. */
 	public static function slice($s, $i, $j = null) {
+		return self::substring($s, $i, self::_slice_len($s, $i, $j));
+	}
+
+	/* Replace a slice of a string with another. If the ending index comes
+	 * after the starting index, the replacement is inserted at the
+	 * starting index. */
+	public static function replace_slice($s, $new, $i, $j = null) {
+		return self::replace_substring($s, $new, $i, self::_slice_len($s, $i, $j));
+	}
+
+	private static function _slice_len($s, $i, $j) {
 		if($j === null) {
-			$len = null;
+			return null;
 		} elseif($j < 0) {
 			if($i < 0) {
-				$len = $j - $i;
+				return $j - $i;
 			} else {
-				$len = strlen($s) + $j - $i;
+				return strlen($s) + $j - $i;
 			}
 		} else {
 			if($i < 0) {
-				$len = $j - (strlen($s) + $i);
+				return $j - (strlen($s) + $i);
 			} else {
-				$len = $j - $i;
+				return $j - $i;
 			}
 		}
-		return self::substring($s, $i, $len);
 	}
 
-	/* Replace a slice of a string with another. If `$j` is null, the slice
-	 * is until the end of the string. */
-	public static function replace_slice($s, $i, $j, $new) {
-		// TODO
-		list($offset, $len) = Util::convert_slice_indexes($i, $j, strlen($s));
-		return substr_replace($s, $new, $offset, $len);
-	}
-
-	/* Insert a string at a given offset in the string. */
+	/* Insert a string at a given offset in the string. A negative offset
+	 * denotes an offset from the end of the string. */
 	public static function insert($s, $new, $offset) {
 		return substr_replace($s, $new, $offset, 0);
 	}

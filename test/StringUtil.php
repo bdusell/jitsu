@@ -226,14 +226,15 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::replace_substring('abcdef', 'x', 2, 3), 'abxf');
 		$this->eq(s::replace_substring('abcdef', 'x', 2), 'abx');
 		$this->eq(s::replace_substring('abcdef', 'x', 2, 1000), 'abx');
-		$this->eq(s::replace_substring('abcdef', 'x', 1000), 'abcdef');
-		$this->eq(s::replace_substring('abcdef', 'x', 1000, 3), 'abcdef');
+		$this->eq(s::replace_substring('abcdef', 'x', 1000), 'abcdefx');
+		$this->eq(s::replace_substring('abcdef', 'x', 1000, 3), 'abcdefx');
 		$this->eq(s::replace_substring('abcdef', 'x', 2, 0), 'abxcdef');
 		$this->eq(s::replace_substring('abcdef', 'x', -2), 'abcdx');
 		$this->eq(s::replace_substring('abcdef', 'x', -4, 2), 'abxef');
 		$this->eq(s::replace_substring('abcdef', 'x', -1000), 'x');
+		$this->eq(s::replace_substring('abcdef', 'x', -1000, -100), 'xabcdef');
 		$this->eq(s::replace_substring('abcdef', 'x', -7, 3), 'xcdef');
-		$this->eq(s::replace_substring('', 'x', 2, 4), '');
+		$this->eq(s::replace_substring('', 'x', 2, 4), 'x');
 	}
 
 	public function test_slice() {
@@ -255,6 +256,23 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::slice('abcdef', -1000), 'abcdef');
 		$this->eq(s::slice('abcdef', -1000, -2), 'abcd');
 		$this->eq(s::slice('abcdef', -1000, -100), '');
+		$this->eq(s::slice('', 3, 5), '');
+	}
+
+	public function test_replace_slice() {
+		$this->eq(s::replace_slice('abcdef', 'x', 2, 4), 'abxef');
+		$this->eq(s::replace_slice('abcdef', 'x', 2), 'abx');
+		$this->eq(s::replace_slice('abcdef', 'x', 2, 1000), 'abx');
+		$this->eq(s::replace_slice('abcdef', 'x', 1000), 'abcdefx');
+		$this->eq(s::replace_slice('abcdef', 'x', 1000, 1003), 'abcdefx');
+		$this->eq(s::replace_slice('abcdef', 'x', 1000, 3), 'abcdefx');
+		$this->eq(s::replace_slice('abcdef', 'x', 2, 2), 'abxcdef');
+		$this->eq(s::replace_slice('abcdef', 'x', -2), 'abcdx');
+		$this->eq(s::replace_slice('abcdef', 'x', -4, 4), 'abxef');
+		$this->eq(s::replace_slice('abcdef', 'x', -1000), 'x');
+		$this->eq(s::replace_slice('abcdef', 'x', -1000, -100), 'xabcdef');
+		$this->eq(s::replace_slice('abcdef', 'x', -7, -4), 'xcdef');
+		$this->eq(s::replace_slice('', 'x', 2, 4), 'x');
 	}
 }
 

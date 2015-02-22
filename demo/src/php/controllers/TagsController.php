@@ -5,7 +5,7 @@ use phrame\sql\Ast as sql;
 
 class TagsController {
 
-	public static function update($video_id, $value) {
+	public static function create($video_id, $value) {
 		Database::execute(Database::interpret(
 			sql::insert_or_ignore(
 				sql::table('tags')->cols('video_id', 'value')

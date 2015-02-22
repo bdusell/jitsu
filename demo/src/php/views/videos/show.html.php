@@ -22,4 +22,6 @@
 </div>
 <div>
   <a href="videos/" class="btn btn-default">Back</a>
+  <a href="videos/<?= htmlattr(url($video->id)) ?>/edit"
+     class="btn btn-default">Edit</a>
 </div>

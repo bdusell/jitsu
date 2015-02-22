@@ -78,7 +78,7 @@ class VideosController {
 				)->where(sql::col('value')->in(
 					ArrayUtil::fill(sql::value(), $tags->length())
 				))
-			), $tags)->to_array();
+			), $tags->value)->to_array();
 		} else {
 			$videos = array();
 		}

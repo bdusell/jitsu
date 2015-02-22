@@ -6,16 +6,17 @@ require dirname(__DIR__) . '/cli.php';
 $name = basename(array_shift($argv));
 $usage = function() use($name) {
 	echo <<<TXT
-Usage: $name -i <init-file> ... <php-file> [arg1 arg2 ...]
+Usage: $name [-i <init-file>] <php-file> [arg1 arg2 ...]
 
-Process a set of files with the phrame library pre-loaded.
+Run a PHP script with full error reporting and the phrame library auto-loaded.
 
 Arguments:
   <php-file>  Main PHP file to run.
-  arg1 ...    Arguments passed to main PHP script as \$argv.
+  arg1 ...    Arguments passed to the main PHP script in \$argv.
 
 Options:
-  -i --init   PHP file to execute prior to running the main script.
+  -i --init   PHP file to execute prior to running the main script. Multiple
+              initialization scripts may be given.
   -h --help   This help message.
 
 TXT

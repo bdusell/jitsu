@@ -2,6 +2,7 @@
 
 use phrame\RequestUtil;
 use phrame\ResponseUtil;
+use phrame\StringUtil;
 
 require_once dirname(dirname(__DIR__)) . '/vendor/phrame/functions/common.php';
 require_once dirname(dirname(__DIR__)) . '/vendor/phrame/functions/errors.php';

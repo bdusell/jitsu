@@ -28,7 +28,7 @@ String and array functions have reasonable behavior on edge cases. The HTTP
 request and response APIs are unified under an object-oriented interface.
 Life is good.
 
-The file `lib/autoload.php` sets up
+Including the file `lib/autoload.php` sets up
 [PSR-4](http://www.php-fig.org/psr/psr-4/)-compliant auto-loading for Phrame
 classes, which are defined under the `phrame` namespace. Many functions are
 available in the form of static methods so that they can be accessed through
@@ -41,14 +41,15 @@ auto-loading. A few highlights are:
 * Wrapper classes `phrame\XArray`, `phrame\XString`, and `phrame\XRegex`
   provide a rich, object-oriented interface to their built-in PHP counterparts
 * The trait `phrame\Singleton` makes it easy to define singleton classes, in
-  case auto-loading some object would make your life easier.
+  case auto-loading some instance would make your life easier.
 * `phrame\RequestUtil` and `phrame\ResponseUtil` unify PHP's various methods
   for accessing data from the current HTTP request and building the HTTP
   response, respectively
 * `phrame\sql\Database` and `phrame\sql\Statement` are useful wrappers around
   PHP's PDO library, offering iterator syntax for SQL query results and greatly
   simplified parameter binding
-* `phrame\sql\Ast` provides a SQL syntax abstraction layer
+* `phrame\sql\Ast` provides a SQL syntax abstraction layer, allowing you to
+  switch freely between different SQL dialects like SQLite and MySQL
 
 Refer to the inline documentation for details. The library code is found under
 `lib/`. All classes under the `phrame` namespace are found under `lib/classes`.
@@ -71,16 +72,16 @@ do some extra configuring for a saner development experience:
 In order to generate certain configuration files which are external to PHP
 (`.htaccess`, `ini.php`, `robots.txt`), Phrame leverages an executable script,
 `run.php`, to create them dynamically using the project's configuration
-settings. A `Makefile` can be used to create these files from templates, which
-reside under `demo/src/php/templates/`.
+settings. The example `Makefile` contains rules to create these files from
+templates which reside under `demo/src/php/templates/`.
 
 The example project also includes configuation files for the build tools
-Bower and GulpJS. The example gulpfile is used to concatenate and minify
+Bower and Gulp. The example gulpfile is used to concatenate and minify
 CSS and JavaScript assets.
 
-For projects that use a SQL database, the scripts `lib/bin/makedb-sqlite` and
-`lib/bin/makedb-mysql` can be used to clobber the database. The files under
-`demo/src/sql/` define the schema of the example project.
+The scripts `lib/bin/makedb-sqlite` and `lib/bin/makedb-mysql` can be used to
+clobber a project's database. The files under `demo/src/sql/` define the schema
+of the example project.
 
 ## Usage ##
 
@@ -89,8 +90,7 @@ Phrame is designed so that any system which has Apache configured to run PHP
 serve a Phrame app simply by including a few of its bootstrapping files into a
 file named, say, `index.php`, generating an appropriate `.htaccess` file, and
 serving its directory to the web. On a Linux system, this could be as simple as
-generating a build in a directory and creating a symlink under `/var/www/` to
-it.
+generating a build and creating a symlink under `/var/www/` to its directory.
 
 In the example project, the build process requires the use of `gulp`, `bower`,
 and `make`. Follow these steps to install these build tools:
@@ -133,7 +133,7 @@ The example project under `demo/` consists of the following:
 Phrame uses a class called `phrame\SiteConfig` to manage configuration
 settings. Its base class, `phrame\Config`, can read settings from any PHP file
 written as a series of property assignments on a variable named `$config`. Some
-properties have get and set hooks which process the settings.
+properties have getter and setter hooks which process the settings.
 
 There is a common configuration file at `demo/src/php/config.php` which is
 merged with a build-specific configuration at
@@ -168,9 +168,11 @@ Some of the variables used are:
 
 ## Routing ##
 
-Routing is configured in the file `demo/src/php/routes.php`. URL patterns are
-mapped to actions using `$router->map($pattern, $callback)`. The first argument
-is a Rails-style URL pattern. The second argument is a PHP callable object.
+Routing is configured in the file `demo/src/php/routes.php`. Like the config
+files, this routing file operates on a variable `$router` to define the
+application's routing behavior. URL patterns are mapped to actions using
+`$router->map($pattern, $callback)`. The first argument is a Rails-style URL
+pattern. The second argument is a PHP callable object.
 
 Patterns may include `:variables`, `*globs`, and `(optional)` parts. Variables
 correspond to path components and do not match slashes. Globs, on the other
@@ -190,11 +192,11 @@ Phrame defines the wrapper classes `phrame\XArray` for native PHP `array`s,
 functions. These are object-oriented interfaces built on top of `ArrayUtil`,
 `StringUtil`, and `RegexUtil`, respectively, which serve as the
 non-object-oriented version of essentially the same API. When you want to use
-the normalized API without creating wrapped objects, use the `*Util` classes
-instead. In general, when a `*Util` function takes the native PHP equivalent as
-its first argument, it is also a method on the corresponding `X*` class. The
-`X*` class methods automatically unbox `X*` class arguments and wrap return
-values in `X*` classes where appropriate; the `*Util` functions do not.
+the normalized API without creating wrapped objects, use the -`Util` classes
+instead. In general, when a -`Util` function takes the native PHP equivalent as
+its first argument, it is also a method on the corresponding wrapper class. The
+wrapper class methods automatically unbox wrapped arguments and wrap return
+values where appropriate; the -`Util` functions do not.
 
 As an alternative to invoking `new XArray($array)`, etc. you can use the global
 functions `xarray`, `xstring`, and `xregex` to wrap values in these classes.
@@ -203,6 +205,8 @@ These functions are defined in `lib/functions/common.php`.
 Refer to the detailed inline documentation in `ArrayUtil`, `StringUtil`, and
 `RegexUtil` for method details.
 
+Unit tests are being written to verify edge case behavior in `StringUtil`.
+
 ## Request Access ##
 
 The class `phrame\http\AbstractRequest` defines an object-oriented interface
@@ -210,9 +214,9 @@ for HTTP requests. The class `phrame\http\CurrentRequest` implements this
 interface for the current request being handled by the script, unifying the
 various API quirks for accessing the URI, headers, etc. The class
 `phrame\RequestUtil` is a singleton class which provides access to an instance
-of this class. Of course, instantiating `phrame\CurrentRequest` will still
-result in the same data &ndash; it's merely a shim around PHP's superglobals,
-etc.
+of this class. Of course, instantiating `phrame\CurrentRequest` more than once
+will still result in the same data &ndash; it's merely a shim around PHP's
+superglobals, etc.
 
 ## Response Building ##
 
@@ -244,7 +248,7 @@ directories.
   <dd>Miscellaneous configuration files, namely the source for
   <code>.htaccess</code>, <code>robots.txt</code>, and <code>php.ini</code>.
   These are actually PHP files which are passed through the script
-  <code>bin/process.php</code>, which processes files with the Phrame library
+  <code>run.php</code>, which processes files with the Phrame library
   and the app's configuration settings loaded. This allows parts of these
   configuration files to be generated dynamically based on settings in
   <code>config.php</code>.</dd>
@@ -263,7 +267,7 @@ the SQL database through the magic of auto-loading. The example `Database`
 class simply makes all of the methods of the `phrame\sql\Database` class
 available as static methods. The database connection is established the first
 time the `Database` class is referenced in a context that requires a
-connection. Currently supports SQLite or MySQL.
+connection.
 
 Here are some examples to illustrate the convenience of this module:
 ```php
@@ -296,9 +300,9 @@ transition. This is provided in `phrame\sql\Ast`.
 
 ## HTML Templates ##
 
-Something PHP is actually good for! HTML templates are kept separate from
-application logic in files ending in `.html.php`. They reference dynamic
-values using simple local variables &ndash; these are sent to the template
+Something PHP is actually good for! The demo HTML templates are kept separate
+from application logic in files ending in `.html.php`. They reference dynamic
+values using simple local variables &ndash; these are sent to the templates
 using `phrame\Util::template`. The global functions `html` and `htmlattr`,
 proved in `lib/functions/common.php`, escape values interpolated in HTML
 properly.
@@ -323,6 +327,14 @@ Util::template('views/users/index.html.php', array(
   'users' => Database::query('select "id", "name" from "users"')
 ));
 ```
+
+## Unit Testing ##
+
+The class `phrame\test\UnitTest` can be used as a base class to define unit
+tests. Methods starting with `test` are treated as test cases. The script
+`lib/bin/test.php` can be used as a test case driver. Its argument should be
+a PHP file which defines a unit test class, and nothing else; the driver will
+automatically instantiate it, run it, and report results.
 
 ## Stylesheets ##
 

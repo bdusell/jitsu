@@ -11,6 +11,11 @@ function htmlattr($str) {
 	return htmlspecialchars($str, ENT_COMPAT | ENT_HTML5, 'UTF-8');
 }
 
+/* Escape a string for interpolation in a URL component. */
+function url($str) {
+	return urlencode($str);
+}
+
 /* Return a PHP-code representation of a value as a string. */
 function repr($x) {
 	return var_export($x, true);

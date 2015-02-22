@@ -20,6 +20,11 @@ class DeleteStatement extends LimitedStatement {
 		$this->validate_class('TableReference', 'table');
 		$this->validate_optional_class('Expression', 'where');
 	}
+
+	public function where($expr) {
+		$this->where = $expr;
+		return $this;
+	}
 }
 
 ?>

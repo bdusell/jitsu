@@ -123,11 +123,11 @@ abstract class CodeGenerationVisitor extends Visitor {
 	}
 
 	public function visitDeleteStatement($n) {
-		$r = 'DELETE FROM' . $n->table->accept($this);
+		$r = 'DELETE FROM ' . $n->table->accept($this);
 		if($n->where) {
-			$r .= $n->where->accept($this);
+			$r .= ' WHERE ' . $n->where->accept($this);
 		}
-		$r .= $this->visitLimitedStatement($n);
+		$r .= ' ' . $this->visitLimitedStatement($n);
 		return $r;
 	}
 

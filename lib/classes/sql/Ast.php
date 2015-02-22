@@ -25,6 +25,19 @@ class Ast {
 		));
 	}
 
+	public static function insert_or_ignore($table) {
+		return new ast\InsertStatement(array(
+			'type' => ast\InsertStatement::INSERT_OR_IGNORE,
+			'table' => $table
+		));
+	}
+
+	public static function delete($table) {
+		return new ast\DeleteStatement(array(
+			'table' => $table
+		));
+	}
+
 	public static function values(/* $value_array, ... */) {
 		return new ast\ValuesStatementCore(func_get_args());
 	}

@@ -61,6 +61,13 @@ abstract class Expression extends Node {
 			'in' => $expr
 		));
 	}
+
+	public function and_($expr) {
+		return new AndExpression(array(
+			'left' => $this,
+			'right' => $expr
+		));
+	}
 }
 
 ?>

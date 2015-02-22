@@ -1,38 +1,40 @@
 $tag-spacing: 5px;
+$tag-font-size: 14px;
 
 a.video-thumbnail:hover {
   text-decoration: none;
-}
-
-.tag-list-container {
-  margin: 15px;
 }
 
 .tag-list {
 
   list-style: none;
   padding: 0;
+  margin-top: 5px;
+  margin-bottom: 5px;
 
   li {
 
+    font-size: $tag-font-size;
     display: inline-block;
     padding: 3px 8px !important;
     margin: $tag-spacing;
     position: relative;
     background-color: #444;
     color: #eee;
-    box-shadow: 2px 2px 2px rgba(black, 0.25);
     border-radius: 5px;
+    vertical-align: bottom;
 
     .x-button {
 
       display: none;
+      padding: 0;
+      margin: 0;
       font-weight: bold;
       text-align: center;
-      height: 20px;
       width: 25px;
       cursor: pointer;
       user-select: none;
+      height: $tag-font-size;
 
       color: rgba(white, 0.5);
 
@@ -40,10 +42,12 @@ a.video-thumbnail:hover {
         color: rgba(white, 0.9);
       }
 
-      &:after {
+      &::after {
         content: "×";
         text-shadow: 1px 1px 1px rgba(black, 0.9);
-        display: inline-block;
+        padding: 0;
+        margin: 0;
+        display: inline;
         vertical-align: middle;
       }
     }
@@ -56,6 +60,7 @@ a.video-thumbnail:hover {
 
   & > * {
     display: inline-block;
+    vertical-align: middle;
   }
 }
 
@@ -86,7 +91,7 @@ a.video-thumbnail:hover {
 
 .editable {
 
-  .tag-list > li {
+  .tag-list li {
 
     padding-right: 0 !important;
 

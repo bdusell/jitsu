@@ -336,19 +336,21 @@ class StringUtil {
 	/* Return the part of a string starting with another string, or null
 	 * if it does not contain the string. */
 	public static function starting_with($s, $substr) {
+		if(strlen($substr) === 0) return $s;
 		$r = strstr($s, $substr);
 		return $r === false ? null : $r;
 	}
 
 	/* Like `starting_with` but case-insenstive. */
 	public static function istarting_with($s, $substr) {
+		if(strlen($substr) === 0) return $s;
 		$r = stristr($s, $substr);
 		return $r === false ? null : $r;
 	}
 
 	/* Return the last part of a string starting with a certain character,
-	 * or null if it does not contain that character. Note that `$char` is
-	 * a single character, not a string. */
+	 * or null if it does not contain that character. Note that `$char`
+	 * should be only a single character. */
 	public static function rstarting_with($s, $char) {
 		$r = strrchr($s, $char);
 		return $r === false ? null : $r;
@@ -364,12 +366,16 @@ class StringUtil {
 	/* Return the part of a string before a certain substring, or null if
 	 * it does not contain the string. */
 	public static function before($s, $substr) {
-		return strstr($s, $substr, true);
+		if(strlen($substr) === 0) return '';
+		$r = strstr($s, $substr, true);
+		return $r === false ? null : $r;
 	}
 
 	/* Like `before` but case-insensitive. */
 	public static function ibefore($s, $substr) {
-		return stristr($s, $substr, true);
+		if(strlen($substr) === 0) return '';
+		$r = stristr($s, $substr, true);
+		return $r === false ? null : $r;
 	}
 
 	/* Split a string into words. What constitutes as word characters is

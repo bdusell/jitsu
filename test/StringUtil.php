@@ -274,6 +274,90 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::replace_slice('abcdef', 'x', -7, -4), 'xcdef');
 		$this->eq(s::replace_slice('', 'x', 2, 4), 'x');
 	}
+
+	public function test_insert() {
+		$this->eq(s::insert('abcdef', 'x', 2), 'abxcdef');
+		$this->eq(s::insert('abcdef', 'x', -2), 'abcdxef');
+		$this->eq(s::insert('abcdef', 'x', 100), 'abcdefx');
+		$this->eq(s::insert('abcdef', 'x', -100), 'xabcdef');
+		$this->eq(s::insert('', 'x', 5), 'x');
+	}
+
+	public function test_pad() {
+		$this->eq(s::pad('x', 5), '  x  ');
+		$this->eq(s::pad('x', 9, 'yy'), 'yyyyxyyyy');
+	}
+
+	public function test_lpad() {
+		$this->eq(s::lpad('x', 5), '    x');
+		$this->eq(s::lpad('x', 6, 'yz'), 'yzyzyx');
+	}
+
+	public function test_rpad() {
+		$this->eq(s::rpad('x', 5), 'x    ');
+		$this->eq(s::rpad('x', 6, 'abc'), 'xabcab');
+	}
+
+	public function test_wrap() {
+		$this->eq(s::wrap('abcdef', 2), "ab\ncd\nef");
+		$this->eq(s::wrap('abcdef', 10), 'abcdef');
+		$this->eq(s::wrap('abcdefg', 3, 'x'), 'abcxdefxg');
+	}
+
+	public function test_repeat() {
+		$this->eq(s::repeat('x', 5), 'xxxxx');
+		$this->eq(s::repeat('x', 0), '');
+		$this->eq(s::repeat('abc', 2), 'abcabc');
+	}
+
+	public function test_reverse() {
+		$this->eq(s::reverse('abcdef'), 'fedcba');
+		$this->eq(s::reverse(''), '');
+	}
+
+	public function test_starting_with() {
+		$this->eq(s::starting_with('abcdef', 'cd'), 'cdef');
+		$this->eq(s::starting_with('abcdef', ''), 'abcdef');
+		$this->eq(s::starting_with('abcdef', 'xyz'), null);
+		$this->eq(s::starting_with('aaxaaxaa', 'x'), 'xaaxaa');
+	}
+
+	public function test_istarting_with() {
+		$this->eq(s::istarting_with('abCdef', 'cd'), 'Cdef');
+	}
+
+	public function test_rstarting_with() {
+		$this->eq(s::rstarting_with('aaxaa', 'x'), 'xaa');
+		$this->eq(s::rstarting_with('aaxaaxaa', 'x'), 'xaa');
+		$this->eq(s::rstarting_with('abcdef', 'x'), null);
+	}
+
+	public function test_starting_with_chars() {
+		$this->eq(s::starting_with_chars('aaxxaa', 'x'), 'xxaa');
+		$this->eq(s::starting_with_chars('aayxaa', 'xy'), 'yxaa');
+	}
+
+	public function test_before() {
+		$this->eq(s::before('abcdef', 'c'), 'ab');
+		$this->eq(s::before('abcdef', 'x'), null);
+		$this->eq(s::before('abcdef', 'de'), 'abc');
+		$this->eq(s::before('abcdef', ''), '');
+	}
+
+	public function test_ibefore() {
+		$this->eq(s::ibefore('aBcDef', 'cde'), 'aB');
+		$this->eq(s::ibefore('abCdEf', 'x'), null);
+	}
+
+	public function test_words() {
+		$this->eq(s::words('these are words'),
+			array('these', 'are', 'words'));
+		$this->eq(s::words("  these   are\n\twords  \n"),
+			array('these', 'are', 'words'));
+		$this->eq(s::words(''), array());
+		$this->eq(s::words("  \tabc  \t\n  ", "\n\t"),
+			array("\tabc", "\t\n"));
+	}
 }
 
 ?>

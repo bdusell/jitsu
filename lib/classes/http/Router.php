@@ -103,7 +103,11 @@ class _Router_impl {
 			} else {
 				if(strcasecmp($method, $this->method) === 0) {
 					array_shift($matches);
-					call_user_func_array($func, $matches);
+					$decoded_matches = array();
+					foreach($matches as $m) {
+						$decoded_matches[] = urldecode($m);
+					}
+					call_user_func_array($func, $decoded_matches);
 					return true;
 				} else {
 					$this->matched_methods[$method] = true;

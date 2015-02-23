@@ -5,30 +5,33 @@ namespace phrame\http;
 /* An HTTP request. */
 abstract class AbstractRequest {
 
-	/* Get the full URI sent in the request. */
-	public abstract function uri();
+	/* Get the full URL of the request, including the scheme, host name,
+	 * path, and query string. This is in raw form and not URL-decoded. */
+	public function full_url() {
+		return $this->scheme() . '://' . $this->host() . $this->uri();
+	}
+
+	/* Get the scheme used for the request, either `'http'` or `'https'`. */
+	public abstract function scheme();
+
+	/* Get the host name of the request. */
+	public abstract function host();
 
 	/* Get the HTTP method used in the request, _always_ in upper case
 	 * (e.g. `'GET'`, `'PUT'`, etc.). */
 	public abstract function method();
 
-	/* Get the requested URL, decoded. See `raw_url`. */
-	public abstract function url();
+	/* Get the request URI of the request. This consists of the path and
+	 * query string. Note that this is in raw form and not URL-decoded. */
+	public abstract function uri();
 
-	/* Get the requested URL, un-decoded. This consists of the part of the
-	 * URI after the authority (after the `.com`, etc. in a typical URL),
-	 * _including_ the query string. */
-	public abstract function raw_url();
-
-	/* Get the path part of the requested URI, decoded. This is the
-	 * hierarchical part between the authority and the query string. */
+	/* Get the path part of the requested URI. Note that this is in raw
+	 * form and not URL-decoded. */
 	public abstract function path();
 
-	/* Get the query string of the requested URI, decoded. */
+	/* Get the query string of the requested URI. Note that this is in raw
+	 * form and not URL-decoded. */
 	public abstract function query_string();
-
-	/* Get the raw query string of the requested URI. */
-	public abstract function raw_query_string();
 
 	/* Get form-encoded parameters from the current request.
 	 *
@@ -38,7 +41,7 @@ abstract class AbstractRequest {
 	 * appropriate part of the request based on the HTTP method used and
 	 * RESTful conventions. For GET and DELETE, they are parsed from the
 	 * query string. For everything else, they are parsed from the request
-	 * body. The parsed form is cached.
+	 * body.
 	 *
 	 * If called with the name of a parameter, returns the value of that
 	 * single parameter, or null if it does not exist.

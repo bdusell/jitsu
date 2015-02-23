@@ -5,12 +5,12 @@ namespace phrame\http;
 /* Get information about the current request being processed. */
 class CurrentRequest extends AbstractRequest {
 
-	private static $_parsed_url = false;
-	private static $_path = null;
-	private static $_query_string = null;
+	public function scheme() {
+		return isset($_SERVER['HTTPS']) ? 'https' : 'http';
+	}
 
-	public function uri() {
-		return $_SERVER['REQUEST_URI'];
+	public function host() {
+		return $_SERVER['HTTP_HOST'];
 	}
 
 	public function method() {
@@ -21,32 +21,19 @@ class CurrentRequest extends AbstractRequest {
 		return $result;
 	}
 
-	public function url() {
-		static $result = null;
-		if($result === null) {
-			$result = rawurldecode($this->raw_url());
-		}
-		return $result;
-	}
-
-	public function raw_url() {
+	public function uri() {
 		return $_SERVER['REQUEST_URI'];
 	}
 
 	public function path() {
-		/* TODO Allow slashes to be encoded in path components.
-		 * Currently encoded slashes will be treated as component
-		 * separators. */
-		$this->_parse_url();
-		return self::$_path;
+		static $result = null;
+		if($result === null) {
+			$result = parse_url($this->uri(), PHP_URL_PATH);
+		}
+		return $result;
 	}
 
 	public function query_string() {
-		$this->_parse_url();
-		return self::$_query_string;
-	}
-
-	public function raw_query_string() {
 		return $_SERVER['QUERY_STRING'];
 	}
 
@@ -64,7 +51,7 @@ class CurrentRequest extends AbstractRequest {
 				/* Note that parse_str automatically decodes
 				 * the result, so be sure to use the raw
 				 * query string. */
-				parse_str($this->raw_query_string(), $form);
+				parse_str($this->query_string(), $form);
 				break;
 			default:
 				// PUT, PATCH
@@ -173,13 +160,13 @@ class CurrentRequest extends AbstractRequest {
 			$info = $_FILES[$name];
 			if(($error = $info['error']) === UPLOAD_ERR_OK) {
 				if(!move_uploaded_file($info['tmp_name'], $dest_path)) {
-					throw new RuntimeException('unable to save uploaded file');
+					throw new \RuntimeException('unable to save uploaded file');
 				}
 			} else {
-				throw new RuntimeException(self::file_error_message($error), $error);
+				throw new \RuntimeException(self::file_error_message($error), $error);
 			}
 		} else {
-			throw new RuntimeException('no file uploaded under parameter "' . $name . '"');
+			throw new \RuntimeException('no file uploaded under parameter "' . $name . '"');
 		}
 		$info = $_FILES[$name];
 	}
@@ -190,7 +177,7 @@ class CurrentRequest extends AbstractRequest {
 			return 'no error';
 		case UPLOAD_ERR_INI_SIZE:
 		case UPLOAD_ERR_FORM_SIZE:
-			return 'uploaded file is prohibitively large';
+			return 'uploaded file is too large';
 		case UPLOAD_ERR_PARTIAL:
 			return 'incomplete file upload';
 		case UPLOAD_ERR_NO_FILE:
@@ -202,15 +189,6 @@ class CurrentRequest extends AbstractRequest {
 		*/
 		default:
 			return 'internal error';
-		}
-	}
-
-	private function _parse_url() {
-		if(!self::$_parsed_url) {
-			$parts = parse_url($this->url());
-			self::$_path = \phrame\Util::get($parts, 'path');
-			self::$_query_string = \phrame\Util::get($parts, 'query');
-			self::$_parsed_url = true;
 		}
 	}
 

@@ -3,8 +3,11 @@ var Backbone = require('../../shim/backbone');
 
 module.exports = Backbone.View.extend({
   tagName: 'li',
+  initialize: function() {
+    this.listenTo(this.model, 'change:value', this.render);
+  },
   render: function() {
-    this.$el.text(this.model.get('value'))
+    this.$el.empty().text(this.model.get('value'))
       .append($('<span>').addClass('x-button'));
     return this;
   },

@@ -1,1 +1,1 @@
-<p>Your path is: <code><?= html($path) ?></code></p>
+<p>Your path is <code><?= html($path) ?></code>.</p>

@@ -9,6 +9,10 @@ class CurrentRequest extends AbstractRequest {
 		return isset($_SERVER['HTTPS']) ? 'https' : 'http';
 	}
 
+	public function protocol() {
+		return $_SERVER['SERVER_PROTOCOL'];
+	}
+
 	public function host() {
 		return $_SERVER['HTTP_HOST'];
 	}

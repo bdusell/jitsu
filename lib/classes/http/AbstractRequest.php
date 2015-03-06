@@ -14,6 +14,9 @@ abstract class AbstractRequest {
 	/* Get the scheme used for the request, either `'http'` or `'https'`. */
 	public abstract function scheme();
 
+	/* Get the protocol/version string used in the request. */
+	public abstract function protocol();
+
 	/* Get the host name of the request. */
 	public abstract function host();
 

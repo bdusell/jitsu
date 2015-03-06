@@ -11,37 +11,47 @@ ubiquitous setup, especially in shared hosting environments.
 
 ## Motivation ##
 
-PHP comes with a rudimentary web development API out of the box in the form of
-"superglobal" variables such as `$_GET` and `$_SERVER`, a special file stream
-`php://input`, a host of built-in functions, and so on. Although workable, this
-API suffers from numerous problems. Not only does it horribly break
-encapsulation, it is insufficient to support a full suite of REST API functions
-without some extra effort. What's worse is that many of these built-in
-features have awkward interfaces or use names which are just plain difficult to
-remember. <q>How do I access the request URI? Is it a function call? A superglobal?
-I already have variables `$_GET` and `$_COOKIE`, so whatever happened to
-`$_HEADER`? Surely `headers_list` returns the headers received in the
-request.</q> <i>Ad nauseam</i>.
+PHP comes with a rudimentary web development API out of the box: "superglobal"
+variables such as `$_GET` and `$_SERVER`, a special file stream `php://input`,
+a host of built-in functions, and so on. Although workable, this API suffers
+from numerous problems. Not only does it horribly break encapsulation, it is
+insufficient to support a full suite of REST API functions without some extra
+effort. What's worse is that many of these built-in features have awkward
+interfaces or use names which are just plain difficult to remember. <q>How do
+I access the request URI? Is it a function call? A superglobal? I already have
+variables `$_GET` and `$_COOKIE`, so whatever happened to `$_HEADER`? Surely
+`headers_list` returns the headers received in the request.</q>
+<i>Ad nauseam</i>.
 
 Phrame offers a normalized, more mnemonic API which irons out these quirks.
 String and array functions have reasonable behavior on edge cases. The HTTP
 request and response APIs are unified under an object-oriented interface.
-Life is good.
+You can focus on developing your application rather than dealing with the
+surprises PHP throws your way.
 
 Including the file `lib/autoload.php` sets up
-[PSR-4](http://www.php-fig.org/psr/psr-4/)-compliant auto-loading for Phrame
-classes, which are defined under the `phrame` namespace. Many functions are
-available in the form of static methods so that they can be accessed through
-auto-loading. A few highlights are:
+[PSR-4](http://www.php-fig.org/psr/psr-4/)-compliant auto-loading for the
+Phrame library (namespace `phrame`). This means that merely referencing any
+class under the `phrame` namespace will implicitly include its definition, if
+it exists. Many library components which are actually functions are available
+in the form of static methods so that they can be accessed through
+auto-loading.
+
+A few highlights from the class/function library:
 
 * `phrame\Util` includes some must-have helper functions such as:
   * `get` (array access with a default value)
   * `p` (debug printing for expressions)
   * `template` (encapsulated PHP file inclusion)
+* Function collections `phrame\ArrayUtil`, `phrame\StringUtil`, and
+  `phrame\RegexUtil` provide a nicer interface for dealing with PHP arrays,
+  strings, and regular expressions
 * Wrapper classes `phrame\XArray`, `phrame\XString`, and `phrame\XRegex`
-  provide a rich, object-oriented interface to their built-in PHP counterparts
-* The trait `phrame\Singleton` makes it easy to define singleton classes, in
-  case auto-loading some instance would make your life easier.
+  build upon the above classes to provide a rich, object-oriented interface to
+  their built-in PHP counterparts
+* The trait `phrame\Singleton` makes it easy to define singleton classes, which
+  is useful for creating lazy-loaded objects which can be referenced from
+  anywhere
 * `phrame\RequestUtil` and `phrame\ResponseUtil` unify PHP's various methods
   for accessing data from the current HTTP request and building the HTTP
   response, respectively
@@ -51,12 +61,14 @@ auto-loading. A few highlights are:
 * `phrame\sql\Ast` provides a SQL syntax abstraction layer, allowing you to
   switch freely between different SQL dialects like SQLite and MySQL
 
-Refer to the inline documentation for details. The library code is found under
-`lib/`. All classes under the `phrame` namespace are found under `lib/classes`.
-Some files which define functions are found under `lib/functions`.
+The best source for documentation is the inline comments above each class and
+function. The Phrame library code is found under `lib/`. All classes under the
+`phrame` namespace are found under `lib/classes`. Some files which define
+functions are found under `lib/functions`.
 
 The example project under `demo` shows how to bootstrap the Phrame library and
-do some extra configuring for a saner development experience:
+do some extra configuring for a saner development experience. It does the
+following:
 
 * Sets up class auto-loading
 * Uses a flexible, general-purpose configuration system which allows an
@@ -85,12 +97,12 @@ of the example project.
 
 ## Usage ##
 
-Phrame is designed so that any system which has Apache configured to run PHP
-(a reasonably recent version of it, anyway) and read `.htaccess` files can
-serve a Phrame app simply by including a few of its bootstrapping files into a
-file named, say, `index.php`, generating an appropriate `.htaccess` file, and
-serving its directory to the web. On a Linux system, this could be as simple as
-generating a build and creating a symlink under `/var/www/` to its directory.
+Phrame is designed so that any system which has Apache configured to run (a
+recent version of) PHP and process `.htaccess` files can serve a Phrame app
+simply by including a few of its bootstrapping files into a file named, say,
+`index.php`, generating an appropriate `.htaccess` file, and serving its
+directory to the web. On a Linux system, this could be as simple as generating
+a build and creating a symlink under `/var/www/` to its directory.
 
 In the example project, the build process requires the use of `gulp`, `bower`,
 and `make`. Follow these steps to install these build tools:
@@ -198,9 +210,9 @@ its first argument, it is also a method on the corresponding wrapper class. The
 wrapper class methods automatically unbox wrapped arguments and wrap return
 values where appropriate; the -`Util` functions do not.
 
-As an alternative to invoking `new XArray($array)`, etc. you can use the global
-functions `xarray`, `xstring`, and `xregex` to wrap values in these classes.
-These functions are defined in `lib/functions/common.php`.
+As an alternative to invoking `new \phrame\XArray($array)`, etc. you can use
+the global functions `xarray`, `xstring`, and `xregex` to wrap values in these
+classes. These functions are defined in `lib/functions/common.php`.
 
 Refer to the detailed inline documentation in `ArrayUtil`, `StringUtil`, and
 `RegexUtil` for method details.

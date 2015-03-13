@@ -440,16 +440,30 @@ class StringUtil {
 		return strnatcasecmp($a, $b);
 	}
 
+	private static function _substr_cmp($a, $offset, $length, $b, $flag) {
+		if($length === null) {
+			$length = strlen($a) + (
+				$offset < 0 ? -strlen($a) - $offset : 0
+			);
+		} elseif($offset < ($n = -strlen($a))) {
+			$length = max($length - ($n - $offset), 0);
+		}
+		if($length == 0 || $offset >= strlen($a)) {
+			return strlen($b) === 0 ? 0 : -1;
+		}
+		return substr_compare($a, $b, $offset, $length, $flag);
+	}
+
 	/* Like `cmp` but uses only a substring of the first string in the
 	 * comparison. Use a null length to compare to the end of the
-	 * string. */
+	 * string. A negative offset counts from the end of the string. */
 	public static function substring_cmp($a, $offset, $length, $b) {
-		return substr_compare($a, $b, $offset, $length);
+		return self::_substr_cmp($a, $offset, $length, $b, false);
 	}
 
 	/* Like `substring_cmp` but case-insensitive. */
 	public static function substring_icmp($a, $offset, $length, $b) {
-		return substr_compare($a, $b, $offset, $length, true);
+		return self::_substr_cmp($a, $offset, $length, $b, true);
 	}
 
 	/* Tell whether a string includes a certain substring. Optionally

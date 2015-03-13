@@ -358,6 +358,117 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::words("  \tabc  \t\n  ", "\n\t"),
 			array("\tabc", "\t\n"));
 	}
+
+	public function test_word_count() {
+		$this->eq(s::word_count('these are words'), 3);
+		$this->eq(s::word_count("  \nsome\t\twords  "), 2);
+		$this->eq(s::word_count('   '), 0);
+		$this->eq(s::word_count(''), 0);
+		$this->eq(s::word_count(" \n \n ", "\n"), 2);
+	}
+
+	public function test_word_indexes() {
+		$this->eq(s::word_indexes('a b c'),
+			array(0 => 'a', 2 => 'b', 4 => 'c'));
+		$this->eq(s::word_indexes(''),
+			array());
+		$this->eq(s::word_indexes("  \n  ", "\n"),
+			array(2 => "\n"));
+	}
+
+	public function test_word_wrap() {
+		$this->eq(s::word_wrap('abc def ghi', 5),
+			"abc\ndef\nghi");
+		$this->eq(s::word_wrap('', 5), '');
+		$this->eq(s::word_wrap('abc def ghi', 8),
+			"abc def\nghi");
+		$this->eq(s::word_wrap('abc def', 5, 'X'),
+			'abcXdef');
+	}
+
+	public function test_cmp() {
+		$this->eq(s::cmp('', ''), 0);
+		$this->lt(s::cmp('aaa', 'aaaa'), 0);
+		$this->lt(s::cmp('aaa', 'aab'), 0);
+		$this->gt(s::cmp('bbb', 'aaa'), 0);
+		$this->eq(s::cmp('aaa', 'aaa'), 0);
+	}
+
+	public function test_icmp() {
+		$this->eq(s::icmp('', ''), 0);
+		$this->eq(s::icmp('aaa', 'AAA'), 0);
+		$this->lt(s::icmp('aaa', 'bbb'), 0);
+		$this->lt(s::icmp('aaa', 'BBB'), 0);
+	}
+
+	public function test_ncmp() {
+		$this->eq(s::ncmp('abc', 'abcdef', 3), 0);
+		$this->lt(s::ncmp('abc', 'abcdef', 5), 0);
+		$this->eq(s::ncmp('', '', 5), 0);
+		$this->eq(s::ncmp('abc', 'def', 0), 0);
+	}
+
+	public function test_incmp() {
+		$this->eq(s::incmp('abcdef', 'ABCdefghi', 6), 0);
+		$this->eq(s::incmp('', '', 10), 0);
+		$this->eq(s::incmp('fsdfgf', 'gfsd', 0), 0);
+		$this->lt(s::incmp('abcxxx', 'ABDxxx', 3), 0);
+	}
+
+	public function test_locale_cmp() {
+		$this->eq(s::locale_cmp('', ''), 0);
+		$this->eq(s::locale_cmp('a', 'a'), 0);
+		$this->lt(s::locale_cmp('a', 'b'), 0);
+	}
+
+	public function test_human_cmp() {
+		$this->eq(s::human_cmp('', ''), 0);
+		$this->lt(s::human_cmp('test9', 'test10'), 0);
+	}
+
+	public function test_human_icmp() {
+		$this->eq(s::human_icmp('', ''), 0);
+		$this->lt(s::human_icmp('TEST9', 'test10'), 0);
+		$this->lt(s::human_icmp('test9', 'TEST10'), 0);
+	}
+
+	public function test_substring_cmp() {
+		$this->eq(s::substring_cmp('xabcx', 1, 3, 'abc'), 0);
+		$this->ne(s::substring_cmp('xabcx', 1, 3, 'def'), 0);
+		$this->lt(s::substring_cmp('xabcx', 1, 0, 'xyz'), 0);
+		$this->eq(s::substring_cmp('xabcx', 1, 0, ''), 0);
+		$this->eq(s::substring_cmp('xxabc', 2, 5, 'abc'), 0);
+		$this->lt(s::substring_cmp('xxabc', 2, 5, 'abcd'), 0);
+		$this->eq(s::substring_cmp('xxxxx', 5, 5, ''), 0);
+		$this->lt(s::substring_cmp('xxxxx', 5, 5, 'a'), 0);
+		$this->eq(s::substring_cmp('xabcx', 10, 5, ''), 0);
+		$this->lt(s::substring_cmp('xabcx', 10, 5, 'xyz'), 0);
+		$this->eq(s::substring_cmp('xxabc', 2, null, 'abc'), 0);
+		$this->eq(s::substring_cmp('xxabc', -3, null, 'abc'), 0);
+		$this->eq(s::substring_cmp('abcxx', -7, 5, 'abc'), 0);
+		$this->eq(s::substring_cmp('abcde', -7, null, 'abcde'), 0);
+		$this->eq(s::substring_cmp('abcde', -15, 5, ''), 0);
+		$this->eq(s::substring_cmp('abcde', -15, null, 'abcde'), 0);
+	}
+
+	public function test_substring_icmp() {
+		$this->eq(s::substring_icmp('xabcx', 1, 3, 'ABC'), 0);
+		$this->ne(s::substring_icmp('xabcx', 1, 3, 'DEF'), 0);
+		$this->lt(s::substring_icmp('xabcx', 1, 0, 'XYZ'), 0);
+		$this->eq(s::substring_icmp('xabcx', 1, 0, ''), 0);
+		$this->eq(s::substring_icmp('xxabc', 2, 5, 'ABC'), 0);
+		$this->lt(s::substring_icmp('xxabc', 2, 5, 'ABCD'), 0);
+		$this->eq(s::substring_icmp('xxxxx', 5, 5, ''), 0);
+		$this->lt(s::substring_icmp('xxxxx', 5, 5, 'A'), 0);
+		$this->eq(s::substring_icmp('xabcx', 10, 5, ''), 0);
+		$this->lt(s::substring_icmp('XABCX', 10, 5, 'xyz'), 0);
+		$this->eq(s::substring_icmp('XXABC', 2, null, 'abc'), 0);
+		$this->eq(s::substring_icmp('xxabc', -3, null, 'abc'), 0);
+		$this->eq(s::substring_icmp('abcxx', -7, 5, 'abc'), 0);
+		$this->eq(s::substring_icmp('abcde', -7, null, 'abcde'), 0);
+		$this->eq(s::substring_icmp('abcde', -15, 5, ''), 0);
+		$this->eq(s::substring_icmp('abcde', -15, null, 'abcde'), 0);
+	}
 }
 
 ?>

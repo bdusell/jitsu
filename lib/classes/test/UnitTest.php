@@ -50,10 +50,10 @@ abstract class UnitTest extends Runner {
 			}
 			if(array_key_exists('expected', $info)) {
 				echo self::cyan('---expected---'), "\n";
-				var_export($info['expected']);
-				echo "\n";
-				echo self::cyan('----actual----'), "\n";
 				var_export($info['actual']);
+				echo "\n";
+				echo self::cyan('---' . $info['operation'] . '---'), "\n";
+				var_export($info['expected']);
 				echo "\n";
 				echo self::cyan('--------------'), "\n";
 			}
@@ -116,10 +116,42 @@ abstract class UnitTest extends Runner {
 		if(!$this->rec($x === $y, $msg)) {
 			$this->add_error_info(array(
 				'expected' => $y,
+				'operation' => 'to be',
 				'actual' => $x
 			));
 		}
 	}
+
+	protected function ne($x, $y, $msg = null) {
+		if(!$this->rec($x !== $y, $msg)) {
+			$this->add_error_info(array(
+				'expected' => $y,
+				'operation' => 'not to be',
+				'actual' => $x
+			));
+		}
+	}
+
+	protected function lt($x, $y, $msg = null) {
+		if(!$this->rec($x < $y, $msg)) {
+			$this->add_error_info(array(
+				'expected' => $y,
+				'operation' => 'to be less than',
+				'actual' => $x
+			));
+		}
+	}
+
+	protected function gt($x, $y, $msg = null) {
+		if(!$this->rec($x > $y, $msg)) {
+			$this->add_error_info(array(
+				'expected' => $y,
+				'operation' => 'to be greater than',
+				'actual' => $x
+			));
+		}
+	}
+
 
 	private function add_error_info($info) {
 		$this->deferred_errors[count($this->deferred_errors) - 1] += $info;

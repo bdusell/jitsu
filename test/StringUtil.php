@@ -658,6 +658,33 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::last_part('', ''), '');
 		$this->eq(s::last_part('', 'abc'), '');
 	}
+
+	public function test_is_lower() {
+		$this->eq(s::is_lower('a'), true);
+		$this->eq(s::is_lower('A'), false);
+		$this->eq(s::is_lower('abcdef'), true);
+		$this->eq(s::is_lower('ABCDEF'), false);
+		$this->eq(s::is_lower('abcDEF'), false);
+		$this->eq(s::is_lower(''), false);
+	}
+
+	public function test_is_upper() {
+		$this->eq(s::is_upper('a'), false);
+		$this->eq(s::is_upper('A'), true);
+		$this->eq(s::is_upper('abcdef'), false);
+		$this->eq(s::is_upper('ABCDEF'), true);
+		$this->eq(s::is_upper('ABCdef'), false);
+	}
+
+	/* The other is_ functions aren't really worth it. */
+
+	public function test_is_whitespace() {
+		$this->eq(s::is_whitespace(' '), true);
+		$this->eq(s::is_whitespace("\n\n\t "), true);
+		$this->eq(s::is_whitespace('abc'), false);
+		$this->eq(s::is_whitespace("\n\tgfdgfd"), false);
+		$this->eq(s::is_whitespace(''), false);
+	}
 }
 
 ?>

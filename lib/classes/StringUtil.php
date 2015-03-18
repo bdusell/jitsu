@@ -597,12 +597,14 @@ class StringUtil {
 		}
 	}
 
-	/* Return whether all characters in a string are lower case. */
+	/* Return whether all characters in a string are lower case. False if
+	 * `$s` is empty. */
 	public static function is_lower($s) {
 		return ctype_lower($s);
 	}
 
-	/* Return whether all characters in a string are upper case. */
+	/* Return whether all characters in a string are upper case. False if
+	 * `$s` is empty. */
 	public static function is_upper($s) {
 		return ctype_upper($s);
 	}
@@ -649,7 +651,8 @@ class StringUtil {
 		return ctype_punct($s);
 	}
 
-	/* Return whether all characters in a string are whitespace. */
+	/* Return whether all characters in a string are whitespace. False if
+	 * `$s` is empty. */
 	public static function is_whitespace($s) {
 		return ctype_space($s);
 	}

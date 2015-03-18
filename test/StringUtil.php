@@ -589,6 +589,53 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::iremove_suffix('', 'abc'), null);
 		$this->eq(s::iremove_suffix('', ''), '');
 	}
+
+	public function test_find() {
+		$this->eq(s::find('abcdef', 'cde'), 2);
+		$this->eq(s::find('abcdef', 'xyz'), null);
+		$this->eq(s::find('abcdef', 'abcdef'), 0);
+		$this->eq(s::find('abcdef', 'abcdefghi'), null);
+		$this->eq(s::find('abcdef', ''), 0);
+		$this->eq(s::find('', 'abc'), null);
+		$this->eq(s::find('', ''), 0);
+		$this->eq(s::find('abcdef', 'bcd', 2), null);
+		$this->eq(s::find('abcdef', 'de', 2), 3);
+		$this->eq(s::find('abcdef', '', 2), 2);
+		$this->eq(s::find('abcdef', 'bcd', 10), null);
+		$this->eq(s::find('xxxabcxxxabcxxx', 'abc'), 3);
+	}
+
+	public function test_ifind() {
+		$this->eq(s::ifind('abCdEf', 'cDe'), 2);
+		$this->eq(s::ifind('abcdef', 'xyz'), null);
+		$this->eq(s::ifind('abCDef', 'aBcdeF'), 0);
+		$this->eq(s::ifind('abcdef', 'abcdefghi'), null);
+		$this->eq(s::ifind('abcdef', ''), 0);
+		$this->eq(s::ifind('', 'abc'), null);
+		$this->eq(s::ifind('', ''), 0);
+		$this->eq(s::ifind('abcdef', 'bcd', 2), null);
+		$this->eq(s::ifind('abcDef', 'de', 2), 3);
+		$this->eq(s::ifind('abcdef', '', 2), 2);
+		$this->eq(s::ifind('abcdef', 'bcd', 10), null);
+		$this->eq(s::ifind('xxxABCxxxabcxxx', 'abc'), 3);
+	}
+
+	public function test_rfind() {
+		$this->eq(s::rfind('xxxabcxxxabcxxx', 'abc'), 9);
+		$this->eq(s::rfind('abcdef', 'cde'), 2);
+		$this->eq(s::rfind('abcdef', 'xyz'), null);
+		$this->eq(s::rfind('abcdef', 'abcdef'), 0);
+		$this->eq(s::rfind('abcdef', 'abcdefghi'), null);
+		$this->eq(s::rfind('abcdef', ''), 6);
+		$this->eq(s::rfind('', 'abc'), null);
+		$this->eq(s::rfind('', ''), 0);
+		$this->eq(s::rfind('abcdef', 'cde', 2), 2);
+		$this->eq(s::rfind('abcdef', 'cde', 4), 2);
+		$this->eq(s::rfind('abcdef', 'cde', 5), null);
+		$this->eq(s::rfind('abcdef', 'bc', 2), 1);
+		$this->eq(s::rfind('abcdef', '', 2), 4);
+		$this->eq(s::rfind('abcdef', 'bcd', 10), null);
+	}
 }
 
 ?>

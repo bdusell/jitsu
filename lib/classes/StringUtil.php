@@ -576,6 +576,7 @@ class StringUtil {
 	/* Get the first part of a string delimited by a substring, or the
 	 * whole string if it does not contain that substring. */
 	public static function first_part($s, $substr) {
+		if(strlen($substr) === 0) return '';
 		$pos = strpos($s, $substr);
 		return $pos === false ? $s : substr($s, 0, $pos);
 	}
@@ -584,7 +585,16 @@ class StringUtil {
 	 * string if it does not contain that substring. */
 	public static function last_part($s, $substr) {
 		$pos = self::rfind($s, $substr);
-		return $pos === null ? $s : substr($s, $pos + strlen($substr));
+		if($pos === null) {
+			return $s;
+		} else {
+			$len = $pos + strlen($substr);
+			if($len === strlen($s)) {
+				return '';
+			} else {
+				return substr($s, $len);
+			}
+		}
 	}
 
 	/* Return whether all characters in a string are lower case. */

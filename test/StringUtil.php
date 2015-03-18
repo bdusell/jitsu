@@ -636,6 +636,28 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::rfind('abcdef', '', 2), 4);
 		$this->eq(s::rfind('abcdef', 'bcd', 10), null);
 	}
+
+	public function test_first_part() {
+		$this->eq(s::first_part('abc/def', '/'), 'abc');
+		$this->eq(s::first_part('abc/def/ghi', '/'), 'abc');
+		$this->eq(s::first_part('abc', '/'), 'abc');
+		$this->eq(s::first_part('abcdef', ''), '');
+		$this->eq(s::first_part('abcdef', 'abcdef'), '');
+		$this->eq(s::first_part('abc', 'abcdef'), 'abc');
+		$this->eq(s::first_part('', ''), '');
+		$this->eq(s::first_part('', 'abc'), '');
+	}
+
+	public function test_last_part() {
+		$this->eq(s::last_part('abc/def', '/'), 'def');
+		$this->eq(s::last_part('abc/def/ghi', '/'), 'ghi');
+		$this->eq(s::last_part('abc', '/'), 'abc');
+		$this->eq(s::last_part('abcdef', ''), '');
+		$this->eq(s::last_part('abcdef', 'abcdef'), '');
+		$this->eq(s::last_part('abc', 'abcdef'), 'abc');
+		$this->eq(s::last_part('', ''), '');
+		$this->eq(s::last_part('', 'abc'), '');
+	}
 }
 
 ?>

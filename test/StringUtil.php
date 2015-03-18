@@ -685,6 +685,24 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::is_whitespace("\n\tgfdgfd"), false);
 		$this->eq(s::is_whitespace(''), false);
 	}
+
+	public function test_count() {
+		$this->eq(s::count('xxabcxxxabcxxabcx', 'abc'), 3);
+		$this->eq(s::count('xxxx', 'abc'), 0);
+		$this->eq(s::count('ababa', 'aba'), 1);
+		$this->eq(s::count('', 'abc'), 0);
+		$this->eq(s::count('abcdef', ''), 7);
+		$this->eq(s::count('xxabcxxxabcxxabcx', 'abc', 6), 2);
+		$this->eq(s::count('xxabcxxxabcxxabcx', 'abc', 30), 0);
+		$this->eq(s::count('xxabcxxxabcxxabcx', 'abc', 6, 5), 1);
+		$this->eq(s::count('xxabcxxxabcxxabcx', 'abc', 6, 0), 0);
+		$this->eq(s::count('abc', 'abcdef'), 0);
+		$this->eq(s::count('abcdef', '', 3), 4);
+		$this->eq(s::count('abcdef', '', 3, 2), 3);
+		$this->eq(s::count('abcdef', '', 10), 0);
+		$this->eq(s::count('abcdef', 'abc', 6), 0);
+		$this->eq(s::count('abcdef', '', 6), 1);
+	}
 }
 
 ?>

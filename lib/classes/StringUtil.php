@@ -660,10 +660,30 @@ class StringUtil {
 	/* Count the number of times a string contains a substring, excluding
 	 * overlaps. Optionally provide a starting offset and length. */
 	public static function count($s, $substr, $offset = 0, $length = null) {
-		if($length !== null) {
-			$length = min(strlen($s) - $offset, $length);
+		if(strlen($substr) === 0) {
+			if($offset > strlen($s)) {
+				return 0;
+			} else {
+				$r = strlen($s) - $offset;
+				if($length !== null) $r = min($r, $length);
+				return $r + 1;
+			}
+		} else {
+			if($offset >= strlen($s)) {
+				return 0;
+			} else {
+				if($length === null) {
+					return substr_count($s, $substr, $offset);
+				} else {
+					$length = min(strlen($s) - $offset, $length);
+					if($length === 0) {
+						return 0;
+					} else {
+						return substr_count($s, $substr, $offset, $length);
+					}
+				}
+			}
 		}
-		return substr_count($s, $substr, $offset, $length);
 	}
 
 	/* Get the length of the initial segment of a string which contains

@@ -448,7 +448,11 @@ class StringUtil {
 		} elseif($offset < ($n = -strlen($a))) {
 			$length = max($length - ($n - $offset), 0);
 		}
-		if($length == 0 || $offset >= strlen($a)) {
+		if(
+			$length == 0 ||
+			$offset >= ($an = strlen($a)) ||
+			$an === 0 && $offset <= 0
+		) {
 			return strlen($b) === 0 ? 0 : -1;
 		}
 		return substr_compare($a, $b, $offset, $length, $flag);
@@ -469,21 +473,23 @@ class StringUtil {
 	/* Tell whether a string includes a certain substring. Optionally
 	 * provide a starting offset. */
 	public static function contains($s, $substr, $offset = 0) {
+		if(strlen($substr) === 0) return true;
 		return strpos($s, $substr, $offset) !== false;
 	}
 
 	/* Like `contains` but case-insensitive. */
 	public static function icontains($s, $substr, $offset = 0) {
+		if(strlen($substr) === 0) return true;
 		return stripos($s, $substr, $offset) !== false;
 	}
 
 	/* Tell whether a string includes one of the characters listed in
 	 * the string `$chars`. */
 	public static function contains_chars($s, $chars) {
-		return strpbrk($s, $chars) !== false;
+		return strlen($chars) !== 0 && strpbrk($s, $chars) !== false;
 	}
 
-	/* Alias for `contains_chars`. */
+	/* Tell whether a string contains a character. */
 	public static function contains_char($s, $char) {
 		return strpbrk($s, $char) !== false;
 	}
@@ -500,14 +506,18 @@ class StringUtil {
 
 	/* Tell whether a string ends with a certain suffix. */
 	public static function ends_with($str, $suffix) {
-		if($suffix === '') return true;
-		return substr_compare($str, $suffix, -strlen($suffix)) === 0;
+		if(($n = strlen($suffix)) === 0) {
+			return true;
+		}
+		return self::substring_cmp($str, -$n, null, $suffix) === 0;
 	}
 
 	/* Like `ends_with` but case-insensitive. */
 	public static function iends_with($str, $suffix) {
-		if($suffix === '') return true;
-		return substr_compare($str, $suffix, -strlen($suffix), null, true) === 0;
+		if(($n = strlen($suffix)) === 0) {
+			return true;
+		}
+		return self::substring_icmp($str, -$n, null, $suffix) === 0;
 	}
 
 	/* Remove a prefix from a string, or return null if the subject string

@@ -24,10 +24,10 @@ variables `$_GET` and `$_COOKIE`, so whatever happened to `$_HEADER`? Surely
 <i>Ad nauseam</i>.
 
 Phrame offers a normalized, more mnemonic API which irons out these quirks.
-String and array functions have reasonable behavior on edge cases. The HTTP
-request and response APIs are unified under an object-oriented interface.
-You can focus on developing your application rather than dealing with the
-surprises PHP throws your way.
+String and array functions have reasonable behavior on edge cases (no more
+"empty needle" errors). The HTTP request and response APIs are unified under
+an object-oriented interface. You can focus on developing your application
+rather than coping with PHP's unhelpful default behavior.
 
 Including the file `lib/autoload.php` sets up
 [PSR-4](http://www.php-fig.org/psr/psr-4/)-compliant auto-loading for the

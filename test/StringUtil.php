@@ -449,6 +449,9 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::substring_cmp('abcde', -7, null, 'abcde'), 0);
 		$this->eq(s::substring_cmp('abcde', -15, 5, ''), 0);
 		$this->eq(s::substring_cmp('abcde', -15, null, 'abcde'), 0);
+		$this->lt(s::substring_cmp('', 0, 1, 'abc'), 0);
+		$this->lt(s::substring_cmp('', -5, 1, 'abc'), 0);
+		$this->lt(s::substring_cmp('', -3, null, 'abc'), 0);
 	}
 
 	public function test_substring_icmp() {
@@ -468,6 +471,75 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::substring_icmp('abcde', -7, null, 'abcde'), 0);
 		$this->eq(s::substring_icmp('abcde', -15, 5, ''), 0);
 		$this->eq(s::substring_icmp('abcde', -15, null, 'abcde'), 0);
+	}
+
+	public function test_contains() {
+		$this->eq(s::contains('xabcx', 'abc'), true);
+		$this->eq(s::contains('xabcx', 'def'), false);
+		$this->eq(s::contains('xxxxx', ''), true);
+		$this->eq(s::contains('', ''), true);
+		$this->eq(s::contains('', 'xxx'), false);
+		$this->eq(s::contains('xxxabcxx', 'abc', 2), true);
+		$this->eq(s::contains('xxxabcxx', 'abc', 4), false);
+	}
+
+	public function test_icontains() {
+		$this->eq(s::icontains('xabcx', 'ABC'), true);
+		$this->eq(s::icontains('xabcx', 'DEF'), false);
+		$this->eq(s::icontains('xxxxx', ''), true);
+		$this->eq(s::icontains('', ''), true);
+		$this->eq(s::icontains('', 'xxx'), false);
+		$this->eq(s::icontains('xxxAbCxx', 'aBc', 2), true);
+		$this->eq(s::icontains('xxxabcxx', 'abc', 4), false);
+	}
+
+	public function test_contains_chars() {
+		$this->eq(s::contains_chars('abcdef', 'xycz'), true);
+		$this->eq(s::contains_chars('abcdef', 'xyz'), false);
+		$this->eq(s::contains_chars('abcdef', ''), false);
+	}
+
+	public function test_contains_char() {
+		$this->eq(s::contains_char('abcdef', 'e'), true);
+		$this->eq(s::contains_char('abcdef', 'x'), false);
+	}
+
+	public function test_begins_with() {
+		$this->eq(s::begins_with('abcdef', 'abc'), true);
+		$this->eq(s::begins_with('abcdef', 'xyz'), false);
+		$this->eq(s::begins_with('abcdef', 'cde'), false);
+		$this->eq(s::begins_with('', 'abc'), false);
+		$this->eq(s::begins_with('abcdef', ''), true);
+		$this->eq(s::begins_with('abc', 'abcdef'), false);
+	}
+
+	public function test_ibegins_with() {
+		$this->eq(s::ibegins_with('aBcdef', 'AbC'), true);
+		$this->eq(s::ibegins_with('abcdef', 'xyz'), false);
+		$this->eq(s::ibegins_with('abcdef', 'cde'), false);
+		$this->eq(s::ibegins_with('', 'abc'), false);
+		$this->eq(s::ibegins_with('AbCdef', ''), true);
+		$this->eq(s::ibegins_with('abc', 'abcdef'), false);
+	}
+
+	public function test_ends_with() {
+		$this->eq(s::ends_with('abcdef', 'def'), true);
+		$this->eq(s::ends_with('abcdef', 'xyz'), false);
+		$this->eq(s::ends_with('abcdef', 'bcd'), false);
+		$this->eq(s::ends_with('a', 'def'), false);
+		$this->eq(s::ends_with('', 'def'), false);
+		$this->eq(s::ends_with('abcdef', ''), true);
+		$this->eq(s::ends_with('def', 'abcdef'), false);
+	}
+
+	public function test_iends_with() {
+		$this->eq(s::iends_with('abcDeF', 'Def'), true);
+		$this->eq(s::iends_with('abcdef', 'xyz'), false);
+		$this->eq(s::iends_with('abcdef', 'bcd'), false);
+		$this->eq(s::iends_with('a', 'def'), false);
+		$this->eq(s::iends_with('', 'def'), false);
+		$this->eq(s::iends_with('abcdef', ''), true);
+		$this->eq(s::iends_with('def', 'abcdef'), false);
 	}
 }
 

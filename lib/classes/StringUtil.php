@@ -536,13 +536,13 @@ class StringUtil {
 	/* Like `remove_prefix`, but for a suffix instead of a prefix. */
 	public static function remove_suffix($str, $suffix) {
 		return self::ends_with($str, $suffix) ?
-			self::substring($str, strlen(0, strlen($str) - strlen($suffix))) : null;
+			self::substring($str, 0, strlen($str) - strlen($suffix)) : null;
 	}
 
 	/* Like `remove_suffix`, but case-insensitive. */
 	public static function iremove_suffix($str, $suffix) {
 		return self::iends_with($str, $suffix) ?
-			self::substring($str, strlen(0, strlen($str) - strlen($suffix))) : null;
+			self::substring($str, 0, strlen($str) - strlen($suffix)) : null;
 	}
 
 	/* Get the starting offset of a substring within a string, or null if

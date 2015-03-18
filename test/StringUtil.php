@@ -541,6 +541,54 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::iends_with('abcdef', ''), true);
 		$this->eq(s::iends_with('def', 'abcdef'), false);
 	}
+
+	public function test_remove_prefix() {
+		$this->eq(s::remove_prefix('abcdef', 'abc'), 'def');
+		$this->eq(s::remove_prefix('abcdef', 'xyz'), null);
+		$this->eq(s::remove_prefix('abcdef', 'cde'), null);
+		$this->eq(s::remove_prefix('abcdef', ''), 'abcdef');
+		$this->eq(s::remove_prefix('abcdef', 'abcdef'), '');
+		$this->eq(s::remove_prefix('abc', 'xyzijk'), null);
+		$this->eq(s::remove_prefix('abc', 'abcdef'), null);
+		$this->eq(s::remove_prefix('', 'abc'), null);
+		$this->eq(s::remove_prefix('', ''), '');
+	}
+
+	public function test_iremove_prefix() {
+		$this->eq(s::iremove_prefix('aBCdEf', 'ABc'), 'dEf');
+		$this->eq(s::iremove_prefix('abcdef', 'xyz'), null);
+		$this->eq(s::iremove_prefix('abcdef', 'cde'), null);
+		$this->eq(s::iremove_prefix('abcdef', ''), 'abcdef');
+		$this->eq(s::iremove_prefix('abcdef', 'aBcDEf'), '');
+		$this->eq(s::iremove_prefix('abc', 'xyzijk'), null);
+		$this->eq(s::iremove_prefix('abc', 'abcdef'), null);
+		$this->eq(s::iremove_prefix('', 'abc'), null);
+		$this->eq(s::iremove_prefix('', ''), '');
+	}
+
+	public function test_remove_suffix() {
+		$this->eq(s::remove_suffix('abcdef', 'def'), 'abc');
+		$this->eq(s::remove_suffix('abcdef', 'xyz'), null);
+		$this->eq(s::remove_suffix('abcdef', 'bcd'), null);
+		$this->eq(s::remove_suffix('abcdef', ''), 'abcdef');
+		$this->eq(s::remove_suffix('abcdef', 'abcdef'), '');
+		$this->eq(s::remove_suffix('abc', 'xyzijk'), null);
+		$this->eq(s::remove_suffix('abc', 'abcdef'), null);
+		$this->eq(s::remove_suffix('', 'abc'), null);
+		$this->eq(s::remove_suffix('', ''), '');
+	}
+
+	public function test_iremove_suffix() {
+		$this->eq(s::iremove_suffix('aBcdEf', 'DeF'), 'aBc');
+		$this->eq(s::iremove_suffix('abcdef', 'xyz'), null);
+		$this->eq(s::iremove_suffix('abcdef', 'bcd'), null);
+		$this->eq(s::iremove_suffix('abcdef', ''), 'abcdef');
+		$this->eq(s::iremove_suffix('abcdef', 'AbcdEf'), '');
+		$this->eq(s::iremove_suffix('abc', 'xyzijk'), null);
+		$this->eq(s::iremove_suffix('abc', 'abcdef'), null);
+		$this->eq(s::iremove_suffix('', 'abc'), null);
+		$this->eq(s::iremove_suffix('', ''), '');
+	}
 }
 
 ?>

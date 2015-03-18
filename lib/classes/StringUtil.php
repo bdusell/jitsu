@@ -689,8 +689,12 @@ class StringUtil {
 	/* Get the length of the initial segment of a string which contains
 	 * only the characters listed in `$chars`. Optionally provide a
 	 * range of indexes to check. */
-	public static function span($s, $chars, $begin = null, $end = null) {
-		return strspn($s, $chars, $begin, $end);
+	public static function span($s, $chars, $begin = 0, $end = null) {
+		if($end === null) {
+			return strspn($s, $chars, $begin);
+		} else {
+			return strspn($s, $chars, $begin, $end);
+		}
 	}
 
 	/* Escape a string by adding backslashes in front of certain

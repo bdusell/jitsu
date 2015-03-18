@@ -703,6 +703,11 @@ class StringUtilTest extends UnitTest {
 		$this->eq(s::count('abcdef', 'abc', 6), 0);
 		$this->eq(s::count('abcdef', '', 6), 1);
 	}
+
+	public function test_span() {
+		$this->eq(s::span('aaab', 'a'), 3);
+		$this->eq(s::span('xyz', 'a'), 0);
+	}
 }
 
 ?>

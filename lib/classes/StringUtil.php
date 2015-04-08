@@ -167,7 +167,7 @@ class StringUtil {
 	}
 
 	/* Like `replace`, but also return the number of replacements. Returns
-	 * an array . */
+	 * an array `array($result, $count)`. */
 	public static function count_replace($s, $old, $new) {
 		if(strlen($old) === 0) {
 			if(strlen($s) === 0) {

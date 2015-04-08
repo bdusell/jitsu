@@ -4,8 +4,15 @@ namespace phrame\http;
 
 abstract class AbstractResponse {
 
-	/* Set the HTTP response code of the response. If `$code` is not given,
-	 * return the currently set response code. */
+	/* Set the HTTP status line of the response. Supply an HTTP version
+	 * string, status code, and status text (or "reason phrase"). The
+	 * version string 'HTTP/1.1' represents the modern HTTP version. */
+	public abstract function status($version, $code, $reason);
+
+	/* Set the HTTP status line of the response by supplying a status code.
+	 * If called with no arguments, return the currently set response code.
+	 * If called with just a response code, send that response code and
+	 * fill in an appropiate protocol string and status string. */
 	public abstract function code($code = null);
 
 	/* Set a header in the response. */

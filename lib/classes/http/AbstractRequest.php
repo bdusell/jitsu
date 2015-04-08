@@ -74,10 +74,68 @@ abstract class AbstractRequest {
 	/* Get a list of the acceptable content types of the response as an
 	 * associative array mapping content type strings to their respective
 	 * quality ratings, ordered in descending order of quality. */
-	public abstract function accept();
+	public function accept() {
+		return self::parse_negotiation($this->header('Accept'));
+	}
 
-	public function accepts($type) {
-		return array_key_exists($type, $this->accept());
+	private static function parse_negotiation($str) {
+		$result = array();
+		$parts = preg_split('/\s*,\s*/', $str);
+		foreach($parts as $part) {
+			$matches = null;
+			if(preg_match('/^(.*?)\s*(;\s*q=(.*))?$/', $part, $matches)) {
+				$type = $matches[1];
+				if(array_key_exists(2, $matches) && is_numeric($matches[3])) {
+					$quality = (float) $matches[3];
+				} else {
+					$quality = 1.0;
+				}
+				$result[$type] = $quality;
+			}
+		}
+		arsort($result);
+		return $result;
+	}
+
+	/* Given an array of acceptable content types, return the index of the
+	 * content type with the highest quality rating in the `Accept`
+	 * header. Return null if no content type is acceptable. */
+	public function negotiate_content_type($acceptable) {
+		$accept = $this->accept();
+		$expected = array_flip($acceptable);
+		foreach($accept as $pattern => $quality) {
+			$regex = self::ct_pattern_regex($pattern);
+			if($regex === null) {
+				if(array_key_exists($pattern, $expected)) {
+					return $expected[$pattern];
+				}
+			} else {
+				foreach($acceptable as $i => $type) {
+					if(preg_match($regex, $type)) {
+						return $i;
+					}
+				}
+			}
+		}
+	}
+
+	private static function ct_pattern_regex($pattern) {
+		$wildcard = false;
+		$regex = preg_replace_callback(
+			'/(\\*)|(.+?)/',
+			function($matches) use(&$wildcard) {
+				if($matches[1] !== '') {
+					$wildcard = true;
+					return '[^/]*';
+				} else {
+					return preg_quote($matches[2], '#');
+				}
+			},
+			$pattern
+		);
+		if($wildcard) {
+			return '#^' . $regex . '$#';
+		}
 	}
 
 	/* Get the HTTP referrer URI or null if it was not sent. */

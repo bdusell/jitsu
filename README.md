@@ -189,13 +189,31 @@ pattern. The second argument is a PHP callable object.
 Patterns may include `:variables`, `*globs`, and `(optional)` parts. Variables
 correspond to path components and do not match slashes. Globs, on the other
 hand, match all characters. The captured values of variables and globs are
-passed as positional parameters to callbacks.
+URL-decoded and passed as positional parameters to callbacks.
 
 If a pattern ends with a slash, a request to an equivalent URL without the slash
 will issue a permanent redirect to the version with the slash.
 
 Patterns are tested in order, so they should be listed in decreasing order of
-specificity.
+specificity. For example:
+
+```php
+$router->map('GET', 'users/current', function() { /* ... */ });
+$router->map('GET', 'users/:id',     function($id) { /* ... */ });
+$router->map('GET', '*path',         function($path) { /* ... */ });
+```
+
+Phrame itself allows forward slashes to be encoded in path components, but some
+server configurations may disallow this. For example, it is common for Apache
+to re-encode encoded forward slashes in incoming URLs, or to refuse such
+requests with 404 Not Found. This is a security measure to prevent crafty
+individuals from gaining access to paths on the filesystem through unsanitized
+inputs. You can allow encoded slashes by adding back the following directive in
+the virtual host in your Apache configuration file:
+
+```apache
+AllowEncodedSlashes Off
+```
 
 ## Wrapper Classes ##
 

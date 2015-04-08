@@ -32,7 +32,7 @@ gulp.task('clean', function(cb) {
 });
 
 gulp.task('css', function() {
-  gulp.src(paths.mainStylesheet)
+  return gulp.src(paths.mainStylesheet)
     .pipe(plumber())
     .pipe(sourcemaps.init())
       .pipe(sass())

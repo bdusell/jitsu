@@ -6,7 +6,7 @@ namespace phrame\http;
 class CurrentRequest extends AbstractRequest {
 
 	public function scheme() {
-		return isset($_SERVER['HTTPS']) ? 'https' : 'http';
+		return $_SERVER['REQUEST_SCHEME'];
 	}
 
 	public function protocol() {
@@ -124,10 +124,6 @@ class CurrentRequest extends AbstractRequest {
 		}
 	}
 
-	public function accept() {
-		return self::_parse_negotiation($this->header('Accept'));
-	}
-
 	public function cookie($name = null) {
 		return $name === null ? $_COOKIE : \phrame\Util::get($_COOKIE, $name);
 	}
@@ -175,6 +171,21 @@ class CurrentRequest extends AbstractRequest {
 		$info = $_FILES[$name];
 	}
 
+	/* Get the IP address of the remote endpoint. */
+	public function origin_ip_address() {
+		return $_SERVER['REMOTE_ADDR'];
+	}
+
+	/* Get the port number of the remote endpoint. */
+	public function origin_port() {
+		return $_SERVER['REMOTE_PORT'];
+	}
+
+	/* Timestamp of the start of the request. */
+	public function timestamp() {
+		return $_SERVER['REQUEST_TIME'];
+	}
+
 	private static function file_error_message($code) {
 		switch($code) {
 		case UPLOAD_ERR_OK:
@@ -202,25 +213,6 @@ class CurrentRequest extends AbstractRequest {
 
 	private static function _env_to_header($name) {
 		return strtolower(str_replace('_', '-', $name));
-	}
-
-	private static function _parse_negotiation($str) {
-		$result = array();
-		$parts = preg_split('/\s*,\s*/', $str);
-		foreach($parts as $part) {
-			$matches = null;
-			if(preg_match('/^(.*?)\s*(;\s*q=(.*))?$/', $part, $matches)) {
-				$type = $matches[1];
-				if(array_key_exists(2, $matches) && is_numeric($matches[3])) {
-					$quality = (float) $matches[3];
-				} else {
-					$quality = 1.0;
-				}
-				$result[$type] = $quality;
-			}
-		}
-		arsort($result);
-		return $result;
 	}
 }
 

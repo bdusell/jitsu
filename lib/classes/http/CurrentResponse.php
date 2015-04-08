@@ -6,6 +6,12 @@ namespace phrame\http;
  * client. */
 class CurrentResponse extends AbstractResponse {
 
+	/* Note that this is mutually exclusive with `code()`. */
+	public function status($version, $code, $reason) {
+		header("$version $code $reason");
+	}
+
+	/* Note that this is mutually exclusive with `status()`. */
 	public function code($code = null) {
 		if($code === null) return http_response_code();
 		else return http_response_code($code);

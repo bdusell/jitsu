@@ -10,7 +10,8 @@ abstract class Database {
 	private $mode = \PDO::FETCH_OBJ;
 
 	/* Connect to the database upon construction. Accepts a PDO driver
-	 * string and an optional username and password. */
+	 * string and an optional username and password. An array of PDO
+	 * options may also be passed. */
 	public function __construct(
 		$driver_str, $username = null, $password = null,
 		$options = null)
@@ -21,11 +22,15 @@ abstract class Database {
 				$driver_str,
 				$username,
 				$password,
-				$options + array(
-					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
-				)
+				array(
+					/* Check error codes and throw our own
+					* `Error` exceptions. */
+					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_SILENT
+				) + $options
 			);
 		} catch(\PDOException $e) {
+			/* The PDO constructor always throws an exception on
+			 * error. */
 			self::exception_error('database connection failed', $e);
 		}
 	}
@@ -60,6 +65,9 @@ abstract class Database {
 			$stmt->execute();
 			return $stmt;
 		} else {
+			/* Otherwise, use the one-shot query method. Honestly,
+			 * I'm not sure if this has any benefit on
+			 * performance. */
 			if(($result = $this->conn->query($query)) === false) {
 				$this->result_error('unable to execute SQL query', $query);
 			}
@@ -88,33 +96,22 @@ abstract class Database {
 		return $this->query_with($query, $args)->value();
 	}
 
-	/* Execute a SQL statement. If there are no arguments after the SQL
-	statement, return the number of affected rows. Otherwise, return
-	a `SQLStatement`. */
+	/* Execute a SQL statement. Returns a `SQLStatement`. Note that the
+	 * number of affected rows is available via
+	 * `SQLStatement->affected_rows`. */
 	public function execute(/* $statement, ... */) {
 		self::args(func_get_args(), $statement, $args);
 		return $this->execute_with($statement, $args);
 	}
 
 	public function execute_with($statement, $args) {
-		if($args) {
-			return $this->query_with($statement, $args);
-		} else {
-			if(($result = $this->conn->exec($statement)) === false) {
-				$this->result_error('unable to execute SQL statement', $statement);
-			}
-			return $result;
-		}
+		return $this->query_with($statement, $args);
 	}
 
 	/* Prepare a SQL statement and return it as a `SQLStatement`. */
 	public function prepare($statement) {
-		try {
-			if(($result = $this->conn->prepare($statement)) === false) {
-				$this->result_error('unable to prepare statement', $statement);
-			}
-		} catch(\PDOException $e) {
-			self::exception_error('unable to prepare statement', $e, $statement);
+		if(($result = $this->conn->prepare($statement)) === false) {
+			$this->result_error('unable to prepare statement', $statement);
 		}
 		return $this->wrap_statement($result);
 	}
@@ -123,7 +120,7 @@ abstract class Database {
 	 * Note that the result includes quotes added around the string. */
 	public function quote($s) {
 		if(($result = $this->conn->quote($s)) === false) {
-			$this->result_error("unable to quote string value '$s'");
+			$this->result_error('driver does not implement string quoting');
 		}
 		return $result;
 	}
@@ -131,7 +128,7 @@ abstract class Database {
 	/* Escape characters in a string that have special meaning in SQL
 	 * "like" patterns. Note that this should be coupled with an `ESCAPE`
 	 * clause in the SQL; for example,
-	 *     "percentage" LIKE '%foo\%bar%' ESCAPE '\'
+	 *     "column" LIKE '%foo\%bar%' ESCAPE '\'
 	 * A `\` is the default escape character. */
 	public function escape_like($s, $esc = '\\') {
 		return str_replace(
@@ -141,20 +138,27 @@ abstract class Database {
 		);
 	}
 
-	/* Get the id of the last inserted record. */
+	/* Get the id of the last inserted record. Note that the result is
+	 * always a *string*. */
 	public function last_insert_id() {
 		$result = $this->conn->lastInsertId();
 		if($this->conn->errorCode() === 'IM001') {
-			$this->result_error('unable to get last insert id');
+			$this->result_error('driver does not support getting last insert ID');
 		}
 		return $result;
 	}
 
 	/* Transaction handling. */
 
-	/* Begin a transaction. */
+	/* Begin a transaction. Note that uncommitted transactions are
+	 * automatically rolled back when the script terminates. */
 	public function begin() {
-		if(!$this->conn->beginTransaction()) {
+		try {
+			$r = $this->conn->beginTransaction();
+		} catch(\PDOException $e) {
+			$this->exception_error('database does not support transactions');
+		}
+		if(!$r) {
 			$this->result_error('unable to begin transaction');
 		}
 	}
@@ -167,11 +171,12 @@ abstract class Database {
 	/* Roll back a transaction. */
 	public function rollback() {
 		try {
-			if(!$this->conn->rollBack()) {
-				$this->result_error('unable to roll back transaction because no transaction is active');
-			}
+			$r = $this->conn->rollBack();
 		} catch(\PDOException $e) {
-			self::exception_error('unable to roll back transaction', $e);
+			self::exception_error('unable to roll back transaction because no transaction is active', $e);
+		}
+		if(!$r) {
+			$this->result_error('unable to roll back transaction');
 		}
 	}
 
@@ -180,6 +185,19 @@ abstract class Database {
 		if(!$this->conn->commit()) {
 			$this->result_error('unable to commit transaction');
 		}
+	}
+
+	/* Run a callback safely in a transaction. If the callback throws an
+	 * exception, the transaction will be rolled back. */
+	public function transaction($callback) {
+		$this->begin();
+		try {
+			call_user_func($callback);
+		} catch(\Exception $e) {
+			$this->rollback();
+			throw $e;
+		}
+		$this->commit();
 	}
 
 	/* Database connection attributes. */
@@ -203,7 +221,7 @@ abstract class Database {
 	string (case-insensitive) and correspond to a PDO constant with the
 	PDO::ATTR_ prefix dropped. */
 	public function attribute($name) {
-		if(is_null($result = $this->conn->getAttribute(self::attr_value($name)))) {
+		if(($result = $this->conn->getAttribute(self::attr_value($name))) === null) {
 			$this->result_error("unable to get attribute '$name'");
 		}
 		return $result;

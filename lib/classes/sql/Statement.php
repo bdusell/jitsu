@@ -172,7 +172,7 @@ class Statement implements \Iterator {
 
 	/* Return the number of columns in the result set, or 0 if there is no
 	 * result set. */
-	public function num_columns() {
+	public function column_count() {
 		return $this->stmt->columnCount();
 	}
 

@@ -65,9 +65,8 @@ abstract class Database {
 			$stmt->execute();
 			return $stmt;
 		} else {
-			/* Otherwise, use the one-shot query method. Honestly,
-			 * I'm not sure if this has any benefit on
-			 * performance. */
+			/* Otherwise, use the one-shot query method, without
+			 * using a prepared statement. */
 			if(($result = $this->conn->query($query)) === false) {
 				$this->result_error('unable to execute SQL query', $query);
 			}
@@ -96,16 +95,27 @@ abstract class Database {
 		return $this->query_with($query, $args)->value();
 	}
 
-	/* Execute a SQL statement. Returns a `SQLStatement`. Note that the
-	 * number of affected rows is available via
-	 * `SQLStatement->affected_rows`. */
+	/* Execute a SQL statement. Returns a `SQLStatement`. If called with
+	 * no parameters, returns the number of affected rows. Otherwise, 
+	 * returns a `SQLStatement`. Note that the number of affected rows is
+	 * still available via `SQLStatement->affected_rows`. */
 	public function execute(/* $statement, ... */) {
 		self::args(func_get_args(), $statement, $args);
 		return $this->execute_with($statement, $args);
 	}
 
 	public function execute_with($statement, $args) {
-		return $this->query_with($statement, $args);
+		if($args) {
+			/* If there are arguments, prepare the statement and
+			 * execute it. */
+			return $this->query_with($statement, $args);
+		} else {
+			/* Otherwise, use the one-shot exec method, without
+			 * using a prepared statement. */
+			if(($result = $this->conn->exec($statement)) === false) {
+				$this->result_error('unable to execute SQL statement', $statement);
+			}
+		}
 	}
 
 	/* Prepare a SQL statement and return it as a `SQLStatement`. */

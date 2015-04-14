@@ -128,7 +128,12 @@
 	???
 
 <cast-expr> ->
-	"cast" "(" <expr> "as" <type-name> ")"
+	"cast" "(" <expr> "as" <type> ")"
+
+<type> ->
+	<type-name>
+	["character" "set" <character-set-name>]
+	["collate" <collation-name>]
 
 <type-name> ->
 	???
@@ -137,7 +142,13 @@
 	"exists" "(" <select-stmt> ")"
 
 <collate-expr> ->
-	<expr> "collate" ("binary" | ???)
+	<expr> "collate" <collation-name>
+
+<collation-name> ->
+	"binary" | ???
+
+<character-set-name> ->
+	???
 
 <negation-expr> ->
 	"-" <expr>
@@ -260,3 +271,79 @@
 <delete-stmt> ->
 	"delete" "from" <table-ref> ["where" <expr>]
 
+<create-table-stmt> ->
+	"create" ["temporary"] "table" ["if" "not" "exists"]
+	<table-ref> "("
+	<column-definition>+{","}
+	("," <table-constraint>)*
+	")"
+	<table-modifier>*{","}
+
+<table-modifier> ->
+	???
+
+<column-definition> ->
+	<identifier> <type>
+	[<collate-clause>]
+	[<not-null-clause>]
+	[<default-value-clause>]
+	[<autoincrement-clause>]
+	[<key-clause>]
+	[<foreign-key-clause>]
+
+<not-null-clause> ->
+	"not" "null"
+
+<default-value-clause> ->
+	"default" ( <literal-expr> | "(" <expr> ")" )
+
+<autoincrement-clause> ->
+	"autoincrement" (SQLite) / "auto_increment" (MySQL)
+
+<key-clause> ->
+	<primary-key-clause> |
+	<unique-clause>
+
+<primary-key-clause> ->
+	"primary" "key"
+
+<unique-clause> ->
+	"unique"
+
+<table-constraint> ->
+	<primary-key-constraint> |
+	<index-constraint> |
+	<unique-constraint> |
+	<foreign-key-constraint> |
+	<check-constraint>
+
+<primary-key-constraint> ->
+	["constraint" <identifier>] "primary" "key" "(" <identifier>+{","} ")"
+
+<index-constraint> ->
+	"index" [<identifier>] "(" <identifier>+{","} ")"
+
+<unique-constraint> ->
+	["constraint" <identifier>] "unique" "(" <identifier>+{","} ")"
+
+<foreign-key-constraint> ->
+	["constraint" <identifier>] "foreign" "key" "(" <identifier>+{","} ")" <foreign-key-clause>
+
+<check-constraint> ->
+	"check" "(" <expr> ")"
+
+<foreign-key-clause> ->
+	"references" <table-ref>
+	["(" <identifier>+{","} ")"]
+	["on" "delete" <foreign-key-trigger-name>]
+	["on" "update" <foreign-key-trigger-name>]
+	[
+		["not"] "deferrable"
+		["initially" ("deferred" | "immediate")]
+	]
+
+<foreign-key-trigger-name> ->
+	"set" "null" |
+	"cascade" |
+	"restrict" |
+	"no" "action"

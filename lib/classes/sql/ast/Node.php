@@ -101,6 +101,12 @@ abstract class Node {
 		}
 	}
 
+	protected function validate_optional_bool($prop) {
+		if($prop !== null) {
+			$this->validate_bool($prop);
+		}
+	}
+
 	protected function validate_int($prop) {
 		if(!is_int($this->$prop)) {
 			$this->error($prop, 'must be an integer');

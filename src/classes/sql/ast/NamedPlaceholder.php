@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* A named placeholder for a bind parameter.
  *

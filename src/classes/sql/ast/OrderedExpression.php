@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* An expression with an ASC or DESC qualifier.
  *

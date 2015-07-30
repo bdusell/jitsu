@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\http;
+namespace jitsu\http;
 
 class Router {
 

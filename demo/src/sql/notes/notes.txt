@@ -93,7 +93,7 @@ attribute UNICODE
 
 attribute BINARY
     Shorthand for specifying binary collation. Causes characters to be compared
-    by numeric value.
+    by codepoint.
 
 modifier NATIONAL
     The standard SQL way to prefix a string type which uses a custom character
@@ -145,7 +145,7 @@ LONGTEXT
     TEXT with a 4-byte length prefix.
 
 ENUM('value1', 'value2', ...)
-    Enumerated type. Possible value are those listed plus NULL and the special
+    Enumerated type. Possible values are those listed plus NULL and the special
     error value ''. Represented internally as integers.
 
 SET('value1', 'value2', ...)
@@ -228,8 +228,8 @@ RTRIM
 [ custom ]
     Can be registered through sqlite_create_collation().
 
-Phrame
-======
+Jitsu
+=====
 
 Field Types
 -----------

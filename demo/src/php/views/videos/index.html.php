@@ -2,7 +2,7 @@
 <div class="row">
 <?php
   foreach($videos as $video):
-    \phrame\Util::template(__DIR__ . '/_item.html.php', array('video' => $video));
+    \jitsu\Util::template(__DIR__ . '/_item.html.php', array('video' => $video));
   endforeach;
 ?>
   <div class="col-xs-6 col-md-2">

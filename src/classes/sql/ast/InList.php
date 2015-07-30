@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* A list on the right side of an `IN` operator.
  *

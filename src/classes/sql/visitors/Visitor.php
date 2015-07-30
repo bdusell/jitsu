@@ -1,13 +1,13 @@
 <?php
 
-namespace phrame\sql\visitors;
+namespace jitsu\sql\visitors;
 
-use phrame\StringUtil;
+use jitsu\StringUtil;
 
 class Visitor {
 
 	const METHOD_PREFIX = 'visit';
-	const CLASS_PREFIX = 'phrame\\sql\\ast\\';
+	const CLASS_PREFIX = 'jitsu\\sql\\ast\\';
 
 	/* Whenever `visitSomeClass()` is called but not found, try calling
 	 * `visitParentClassOfSomeClass`. */

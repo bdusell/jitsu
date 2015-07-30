@@ -1,8 +1,8 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
-/* Utilities for introspection. */
+/* Utilities for introspection and reflection. */
 class MetaUtil {
 
 	public static function constant_exists($name) {
@@ -58,7 +58,7 @@ class MetaUtil {
 	}
 
 	public static function apply_constructor($class_name, $args) {
-		(new \ReflectionClass($class_name))->newInstanceArgs($args);
+		return (new \ReflectionClass($class_name))->newInstanceArgs($args);
 	}
 
 	/* Get the class or type of a value as a string. */
@@ -71,8 +71,29 @@ class MetaUtil {
 		return $r->getMethods(\ReflectionMethod::IS_PUBLIC);
 	}
 
-	public static function register_autoloader($callback) {
+	public static function register_autoloader($namespace, $callback = null) {
 		spl_autoload_register($callback);
+	}
+
+	public static function autoload_namespace($namespace, $dirs) {
+		$trimmed = trim($namespace, '\\');
+		$prefix = strlen($trimmed) === 0 ? '' : $trimmed . '\\';
+		$dirs = (array) $dirs;
+		foreach($dirs as &$dir) {
+			$dir = rtrim($dir, '/') . '/';
+		}
+		spl_autoload_register(function($class) use ($prefix, $dirs) {
+			if(($suffix = StringUtil::remove_prefix($class, $prefix)) !== null) {
+				$path = str_replace('\\', '/', $suffix) . '.php';
+				foreach($dirs as $dir) {
+					$filename = $dir . $path;
+					if(is_file($filename)) {
+						require $filename;
+						return;
+					}
+				}
+			}
+		});
 	}
 }
 

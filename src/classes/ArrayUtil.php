@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 require_once __DIR__ . '/impl/slice.php';
 

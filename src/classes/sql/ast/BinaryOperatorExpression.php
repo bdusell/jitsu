@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* A simple expression consisting of a binary operator and two sub-
  * expressions.

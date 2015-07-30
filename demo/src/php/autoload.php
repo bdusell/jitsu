@@ -1,15 +1,12 @@
 <?php
 
-use phrame\MetaUtil;
+use jitsu\MetaUtil;
 
-MetaUtil::register_autoloader(function($class) {
-	$dirs = array('models', 'controllers', 'helpers');
-	foreach($dirs as $dir) {
-		$filename = __DIR__ . '/' . $dir . '/' . $class . '.php';
-		if(file_exists($filename)) {
-			require $filename;
-		}
-	}
-});
+MetaUtil::autoload_namespace('DemoApp', array(
+	__DIR__,
+	__DIR__ . '/models',
+	__DIR__ . '/controllers',
+	__DIR__ . '/helpers'
+));
 
 ?>

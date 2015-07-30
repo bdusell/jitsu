@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\http;
+namespace jitsu\http;
 
 abstract class AbstractResponse {
 
@@ -44,15 +44,15 @@ abstract class AbstractResponse {
 	public abstract function redirect($url, $code);
 
 	/* Start buffering PHP print output to the body of this response. */
-	public abstract function start_buffer();
+	public abstract function start_output_buffering();
 
 	/* Write buffered PHP print output to the body of this response and
 	 * stop buffering. */
-	public abstract function flush_buffer();
+	public abstract function flush_output_buffer();
 
 	/* Discard buffered PHP print output from the body of this response and
 	 * stop buffering. */
-	public abstract function clear_buffer();
+	public abstract function clear_output_buffer();
 }
 
 ?>

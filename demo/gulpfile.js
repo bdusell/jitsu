@@ -41,7 +41,6 @@ gulp.task('css', function() {
     .pipe(rename('main.css'))
     .pipe(gulp.dest('build/dev/css'))
     .pipe(minifyCss())
-    .pipe(rename('main.min.css'))
     .pipe(gulp.dest('build/prod/css'));
 });
 
@@ -62,7 +61,6 @@ gulp.task('js', function() {
     .pipe(gulp.dest('build/dev/js'))
     .pipe(buffer())
     .pipe(uglify({ preserveComments: 'some' }))
-    .pipe(rename('main.min.js'))
     .pipe(gulp.dest('build/prod/js'))
 });
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* A complete, executable SELECT or VALUES statement.
  *

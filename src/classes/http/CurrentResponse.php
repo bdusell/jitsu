@@ -1,75 +1,58 @@
 <?php
 
-namespace phrame\http;
+namespace jitsu\http;
 
-/* Utilities for building the current response about to be sent back to the
- * client. */
+use \jitsu\Response;
+
 class CurrentResponse extends AbstractResponse {
 
-	/* Note that this is mutually exclusive with `code()`. */
 	public function status($version, $code, $reason) {
-		header("$version $code $reason");
+		return Response::status($version, $code, $reason);
 	}
 
 	/* Note that this is mutually exclusive with `status()`. */
 	public function code($code = null) {
-		if($code === null) return http_response_code();
-		else return http_response_code($code);
+		return Response::code($code);
 	}
 
-	/* Set a header in the response. Overwrites any previous header with
-	 * the same name. Must be called before output is written, just like
-	 * PHP `header`. */
 	public function header($name, $value) {
-		header("$name: $value");
+		return Response::header($name, $value);
 	}
 
 	public function cookie($name, $value,
 		$lifespan = null, $domain = null, $path = null)
 	{
-		setcookie(
-			$name,
-			$value,
-			$lifespan === null ? 0 : time() + $lifespan,
-			$path,
-			$domain
-		);
+		return Response::cookie($name, $value, $lifespan, $domain, $path);
 	}
 
 	public function delete_cookie($name,
 		$domain = null, $path = null)
 	{
-		setcookie($name, '', 1, $path, $domain);
+		return Response::delete_cookie($name, $domain, $path);
 	}
 
 	public function redirect($url, $code) {
-		header('Location: ' . $url, true, $code);
+		return Response::redirect($url, $code);
 	}
 
-	public function start_buffer() {
-		ob_start();
+	public function start_output_buffering() {
+		return Response::start_output_buffering();
 	}
 
-	public function flush_buffer() {
-		ob_end_flush();
+	public function flush_output_buffer() {
+		return Response::flush_output_buffer();
 	}
 
-	public function clear_buffer() {
-		ob_end_clean();
+	public function clear_output_buffer() {
+		return Response::clear_output_buffer();
 	}
 
-	/* Shorthand for sending a PHP array as a JSON object in the
-	 * response. */
 	public function json($obj, $pretty = false) {
-		$this->content_type('application/json');
-		echo JSONUtil::encode($obj, $pretty);
+		return Response::json($obj, $pretty);
 	}
 
-	/* Shorthand for sending a file with a given content type in the
-	 * response. */
 	public function file($path, $content_type) {
-		$this->content_type($content_type);
-		readfile($path);
+		return Response::file($path, $content_type);
 	}
 }
 

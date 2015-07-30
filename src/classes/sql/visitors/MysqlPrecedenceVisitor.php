@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\visitors;
+namespace jitsu\sql\visitors;
 
 class MysqlPrecedenceVisitor extends Visitor {
 

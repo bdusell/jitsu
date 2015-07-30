@@ -1,14 +1,14 @@
 <?php
 
-/* Include this script to register the phrame class autoloader. */
+/* Include this script to register the jitsu class autoloader. */
 
 spl_autoload_register(function($class) {
 
-	/* Auto-load classes under the `phrame` namespace. */
-	$prefix = 'phrame\\';
+	/* Auto-load classes under the `jitsu` namespace. */
+	$prefix = 'jitsu\\';
 	$base_dir = __DIR__ . '/classes/';
 
-	/* Is this a phrame class? */
+	/* Is this a jitsu class? */
 	$len = strlen($prefix);
 	if(strncmp($class, $prefix, $len) !== 0) {
 		return;

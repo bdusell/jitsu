@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\http;
+namespace jitsu\http;
 
 /* An HTTP request. */
 abstract class AbstractRequest {
@@ -76,6 +76,15 @@ abstract class AbstractRequest {
 	 * quality ratings, ordered in descending order of quality. */
 	public function accept() {
 		return self::parse_negotiation($this->header('Accept'));
+	}
+
+	/* Return whether the request will accept a certain content type. */
+	public function accepts($content_type) {
+		$accept = $this->accept();
+		return (
+			array_key_exists($content_type, $accept) &&
+			$accept[$content_type] > 0
+		);
 	}
 
 	private static function parse_negotiation($str) {

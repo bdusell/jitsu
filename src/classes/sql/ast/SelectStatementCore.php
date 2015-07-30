@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* The core of a SELECT or VALUES statement, consisting of the part which does
  * not contain an ORDER or LIMIT clause.

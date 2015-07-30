@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 /* General-purpose utility functions. */
 class Util {

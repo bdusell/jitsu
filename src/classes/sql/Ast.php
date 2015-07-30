@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql;
+namespace jitsu\sql;
 
 class Ast {
 

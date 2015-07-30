@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* Two SELECT or VALUES statement cores connected by a UNION operator.
  *

@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql;
+namespace jitsu\sql;
 
 /* A useful wrapper around the PDO library. */
 abstract class Database {
@@ -13,9 +13,11 @@ abstract class Database {
 	 * string and an optional username and password. An array of PDO
 	 * options may also be passed. */
 	public function __construct(
-		$driver_str, $username = null, $password = null,
-		$options = null)
-	{
+		$driver_str,
+		$username = null,
+		$password = null,
+		$options = null
+	) {
 		if($options === null) $options = array();
 		try {
 			$this->conn = new \PDO(
@@ -38,7 +40,7 @@ abstract class Database {
 	/* Querying. */
 
 	/* Execute a one-shot SQL query and return the resulting rows in an
-	iterable `SQLStatement` object. The remaining parameters may be used to
+	iterable `Statement` object. The remaining parameters may be used to
 	pass arguments to the query. If there is only a single array passed as
 	an additional argument, its contents are used as the parameters.
 
@@ -95,10 +97,11 @@ abstract class Database {
 		return $this->query_with($query, $args)->value();
 	}
 
-	/* Execute a SQL statement. Returns a `SQLStatement`. If called with
-	 * no parameters, returns the number of affected rows. Otherwise, 
-	 * returns a `SQLStatement`. Note that the number of affected rows is
-	 * still available via `SQLStatement->affected_rows`. */
+	/* Execute a SQL statement. If called with arguments, returns a
+	 * `Statement`. Note that the number of affected rows is available via
+	 * `Statement->affected_rows()`. If called with no arguments, returns a
+	 * `StatementStub` object instead, which provides only the
+	 * `affected_rows()` method. */
 	public function execute(/* $statement, ... */) {
 		self::args(func_get_args(), $statement, $args);
 		return $this->execute_with($statement, $args);
@@ -115,10 +118,11 @@ abstract class Database {
 			if(($result = $this->conn->exec($statement)) === false) {
 				$this->result_error('unable to execute SQL statement', $statement);
 			}
+			return new StatementStub($result);
 		}
 	}
 
-	/* Prepare a SQL statement and return it as a `SQLStatement`. */
+	/* Prepare a SQL statement and return it as a `Statement`. */
 	public function prepare($statement) {
 		if(($result = $this->conn->prepare($statement)) === false) {
 			$this->result_error('unable to prepare statement', $statement);
@@ -127,7 +131,7 @@ abstract class Database {
 	}
 
 	/* Escape and quote a string value for interpolation in a SQL query.
-	 * Note that the result includes quotes added around the string. */
+	 * Note that the result *includes* quotes added around the string. */
 	public function quote($s) {
 		if(($result = $this->conn->quote($s)) === false) {
 			$this->result_error('driver does not implement string quoting');
@@ -148,8 +152,8 @@ abstract class Database {
 		);
 	}
 
-	/* Get the id of the last inserted record. Note that the result is
-	 * always a *string*. */
+	/* Get the id of the last inserted record. *Note that the result is
+	 * always a string*. */
 	public function last_insert_id() {
 		$result = $this->conn->lastInsertId();
 		if($this->conn->errorCode() === 'IM001') {
@@ -173,12 +177,12 @@ abstract class Database {
 		}
 	}
 
-	/* Tell whether a transaction is active. */
+	/* Return whether a transaction is active. */
 	public function in_transaction() {
 		return $this->conn->inTransaction();
 	}
 
-	/* Roll back a transaction. */
+	/* Roll back the current transaction. */
 	public function rollback() {
 		try {
 			$r = $this->conn->rollBack();
@@ -190,7 +194,7 @@ abstract class Database {
 		}
 	}
 
-	/* Commit a transaction. */
+	/* Commit the current transaction. */
 	public function commit() {
 		if(!$this->conn->commit()) {
 			$this->result_error('unable to commit transaction');
@@ -229,7 +233,7 @@ abstract class Database {
 
 	/* Get a database connection attribute. The name passed should be a
 	string (case-insensitive) and correspond to a PDO constant with the
-	PDO::ATTR_ prefix dropped. */
+	`PDO::ATTR_` prefix dropped. */
 	public function attribute($name) {
 		if(($result = $this->conn->getAttribute(self::attr_value($name))) === null) {
 			$this->result_error("unable to get attribute '$name'");
@@ -238,8 +242,8 @@ abstract class Database {
 	}
 
 	/* Set a database connection attribute, using the same attribute name
-	convention as attribute(). The value should be a string (case-
-	insensitive) corresponding to a PDO constant with the PDO:: prefix
+	convention as `attribute()`. The value should be a string (case-
+	insensitive) corresponding to a PDO constant with the `PDO::` prefix
 	dropped. */
 	public function set_attribute($name, $value) {
 		if(!$this->conn->setAttribute(self::attr_value($name), constant('PDO::' . strtoupper($value)))) {
@@ -272,7 +276,7 @@ abstract class Database {
 
 	/* Access the fetch mode. Give no argument to get the current mode and
 	 * provide an argument to set it. The fetch mode determines the form in
-	 * which rows are fetched. Use the `PDO::FETCH_*` constants directly.
+	 * which rows are fetched. Use the `PDO::FETCH_` constants directly.
 	 * The default, `PDO::FETCH_OBJ`, causes rows to be returned as
 	 * `stdClass` objects with property names corresponding to column
 	 * names. */
@@ -306,7 +310,7 @@ abstract class Database {
 
 	// Raise an error.
 	private static function raise_error($msg, $errstr, $code = null, $state = null, $sql = null) {
-		throw new \phrame\sql\Error("$msg: $errstr", $errstr, $code, $state, $sql);
+		throw new \jitsu\sql\Error("$msg: $errstr", $errstr, $code, $state, $sql);
 	}
 
 	// Convert an attribute name to its integer constant.
@@ -316,7 +320,7 @@ abstract class Database {
 
 	// Wrap a statement.
 	private function wrap_statement($stmt) {
-		return new \phrame\sql\Statement($stmt, $this->mode);
+		return new \jitsu\sql\Statement($stmt, $this->mode);
 	}
 }
 

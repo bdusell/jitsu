@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql;
+namespace jitsu\sql;
 
 /* An exception class for database-related errors. */
 class Error extends \Exception {

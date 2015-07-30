@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 /* An object-oriented wrapper around the built-in PHP array type which offers
  * a richer API. */
@@ -23,7 +23,7 @@ class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 	}
 
 	public function __call($name, $args) {
-		$func = array('\\phrame\\ArrayUtil', $name);
+		$func = array('\\jitsu\\ArrayUtil', $name);
 		self::_unbox($args);
 		if(
 			($inplace = array_key_exists($name, self::$inplace_methods)) ||
@@ -54,7 +54,7 @@ class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 		if(array_key_exists($name, self::$constructor_methods)) {
 			return new XArray(
 				call_user_func_array(
-					array('\\phrame\\ArrayUtil', $name),
+					array('\\jitsu\\ArrayUtil', $name),
 					$args
 				)
 			);

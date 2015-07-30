@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* A complete, executable statement with optional ORDER BY, LIMIT, and OFFSET
  * clauses. */

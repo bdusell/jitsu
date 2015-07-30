@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* An identifier, such as a column or table name. */
 class Identifier extends Node {

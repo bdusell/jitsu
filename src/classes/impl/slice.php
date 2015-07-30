@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\impl;
+namespace jitsu\impl;
 
 /* Normalize an index to be within the range [0, `$length`], where
  * a negative value will be treated as an offset from `$length`.

@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* A SELECT statement, minus the optional ORDER BY and LIMIT clauses.
  *

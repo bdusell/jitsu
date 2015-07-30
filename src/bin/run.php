@@ -8,7 +8,7 @@ $usage = function() use($name) {
 	echo <<<TXT
 Usage: $name [-i <init-file>] <php-file> [arg1 arg2 ...]
 
-Run a PHP script with full error reporting and the phrame library auto-loaded.
+Run a PHP script with full error reporting and the jitsu library auto-loaded.
 
 Arguments:
   <php-file>  Main PHP file to run.

@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\visitors;
+namespace jitsu\sql\visitors;
 
 abstract class CodeGenerationVisitor extends Visitor {
 
@@ -185,9 +185,13 @@ abstract class CodeGenerationVisitor extends Visitor {
 		return $this->binary($n, '!=');
 	}
 
+	public function insertCommand($type) {
+		return $type;
+	}
+
 	public function visitInsertStatement($n) {
 		return (
-			$n->type . ' INTO ' .
+			$this->insertCommand($n->type) . ' INTO ' .
 			$n->table->accept($this) . ' ' .
 			$n->select->accept($this)
 		);

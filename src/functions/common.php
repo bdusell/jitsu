@@ -23,22 +23,22 @@ function repr($x) {
 
 /* Debug-print expressions. Return the first argument. */
 function p(/* $arg1, ... */) {
-	return call_user_func_array(array('\\phrame\\Util', 'p'), func_get_args());
+	return call_user_func_array(array('\\jitsu\\Util', 'p'), func_get_args());
 }
 
 /* Wrap a string in an `XString` object. */
 function xstring($s) {
-	return new \phrame\XString($s);
+	return new \jitsu\XString($s);
 }
 
 /* Wrap an array in an `XArray` object. */
 function xarray($a) {
-	return new \phrame\XArray($a);
+	return new \jitsu\XArray($a);
 }
 
 /* Create an `XRegex` object. */
 function xregex(/* $pat [, $flags [, $start [, $end ]]] */) {
-	return \phrame\MetaUtil::apply_constructor('\\phrame\\XRegex', func_get_args());
+	return \jitsu\MetaUtil::apply_constructor('\\jitsu\\XRegex', func_get_args());
 }
 
 ?>

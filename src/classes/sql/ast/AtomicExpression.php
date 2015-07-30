@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* An expression which is syntactically atomic; there can be no ambiguity as to
  * how it associates with other operators.

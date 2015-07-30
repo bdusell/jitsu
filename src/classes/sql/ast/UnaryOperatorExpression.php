@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* An expression consisting of a unary operator (left or right) and a sub-
  * expression.

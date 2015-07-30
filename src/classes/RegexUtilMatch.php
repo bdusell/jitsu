@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 /* An object representing a regular expression match. */
 class RegexUtilMatch {

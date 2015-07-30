@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\test;
+namespace jitsu\test;
 
 require_once dirname(dirname(__DIR__)) . '/functions/errors.php';
 
@@ -60,7 +60,7 @@ abstract class UnitTest extends Runner {
 		}
 		if($e !== null) {
 			echo self::red('exception thrown'), "\n";
-			\phrame\print_stack_trace($e);
+			\jitsu\print_stack_trace($e);
 		}
 		if($this->failed_assertions > 0 || $this->passed_assertions === 0) {
 			echo self::red(

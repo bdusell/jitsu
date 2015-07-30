@@ -1,7 +1,7 @@
 <?php
 
-use phrame\test\UnitTest;
-use phrame\StringUtil as s;
+use jitsu\test\UnitTest;
+use jitsu\StringUtil as s;
 
 class StringUtilTest extends UnitTest {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu\util;
 
 /* A mixin for creating singleton classes. Implement `instantiate` to return
  * some object. All methods of that object become available as static methods

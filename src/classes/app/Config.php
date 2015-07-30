@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu\app;
 
 /* A generic bag of configuration settings. Extensions may add getter and
  * setter hooks by defining methods prefixed with `get_` and `set_`. */
@@ -9,11 +9,9 @@ class Config {
 	private $attrs = array();
 
 	/* Initialize with a file name or an array of attributes. */
-	public function __construct($arg = null) {
-		if(is_string($arg)) {
-			$this->read($arg);
-		} elseif(is_array($arg)) {
-			$this->_set_many($arg);
+	public function __construct() {
+		foreach(func_get_args() as $arg) {
+			$this->merge($arg);
 		}
 	}
 
@@ -28,9 +26,20 @@ class Config {
 	/* Set a variable. */
 	public function set($name, $value = null) {
 		if(func_num_args() === 1) {
-			$this->_set_many($name);
+			$this->merge($name);
 		} else {
 			$this->_set_one($name, $value);
+		}
+		return $this;
+	}
+
+	/* Merge configuration settings. If a string is passed, read settings
+	 * from the named file. */
+	public function merge($arg) {
+		if(is_string($arg)) {
+			$this->read($arg);
+		} else {
+			$this->_set_many($name);
 		}
 		return $this;
 	}

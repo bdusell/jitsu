@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\ast;
+namespace jitsu\sql\ast;
 
 /* A table constraint with an optional name and a list of column names. */
 class ColumnGroupTableConstraint extends TableConstraint {

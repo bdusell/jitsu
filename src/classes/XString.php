@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 /* An object-oriented wrapper around the built-in PHP string type which offers
  * a richer API. */
@@ -24,7 +24,7 @@ class XString {
 
 	public function __call($name, $args) {
 		self::_unbox($args);
-		$func = array('\\phrame\\StringUtil', $name);
+		$func = array('\\jitsu\\StringUtil', $name);
 		array_unshift($args, $this->value);
 		if(array_key_exists($name, self::$unwrapped_methods)) {
 			return call_user_func_array($func, $args);
@@ -47,7 +47,7 @@ class XString {
 
 	public static function __callStatic($name, $args) {
 		self::_unbox($args);
-		$func = array('\\phrame\\StringUtil', $name);
+		$func = array('\\jitsu\\StringUtil', $name);
 		if(array_key_exists($name, self::$constructor_methods)) {
 			return new XString(
 				call_user_func_array(

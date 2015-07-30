@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu\app;
 
 /* A bag of site configuration settings with some special methods on top. */
 class SiteConfig extends Config {
@@ -44,7 +44,7 @@ class SiteConfig extends Config {
 	}
 
 	public function remove_path($abs_path) {
-		return StringUtil::remove_prefix($abs_path, $this->base_path);
+		return \jitsu\StringUtil::remove_prefix($abs_path, $this->base_path);
 	}
 
 	/* Given a relative path, append it to the `base_url` to form an

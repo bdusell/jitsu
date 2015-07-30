@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><?= html($title) ?> | <?= html(AppConfig::get('site_name')) ?></title>
+    <title><?= html($title) ?> | <?= html($site_name) ?></title>
 <?php if(isset($base)): ?>
     <base href="<?= html($base) ?>" />
 <?php endif; ?>
 <?php if(isset($favicon)): ?>
-    <link rel="icon" type="image/<?= \phrame\FileUtil::get_extension($favicon) ?>" href="<?= html($favicon) ?>" />
+    <link rel="icon" type="image/<?= \jitsu\FileUtil::get_extension($favicon) ?>" href="<?= html($favicon) ?>" />
 <?php endif; ?>
 <?php if(isset($stylesheets)): ?>
 <?php   foreach($stylesheets as $css): ?>
@@ -24,9 +24,9 @@
 <?php endif; ?>
   </head>
   <body>
-<?php \phrame\Util::template(__DIR__ . '/header.html.php', $vars); ?>
+<?php \jitsu\Util::template(__DIR__ . '/header.html.php', $vars); ?>
     <main class="container">
-<?php \phrame\Util::template(dirname(__DIR__) . "/$body.html.php", $vars); ?>
+<?php \jitsu\Util::template(dirname(__DIR__) . "/$body.html.php", $vars); ?>
     </main>
   </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql;
+namespace jitsu\sql;
 
 /* A convenient wrapper around the PDO statement class which implements an
  * iterator interface. */
@@ -11,7 +11,7 @@ class Statement implements \Iterator {
 
 	/* Construct with a `PDOStatement` instance. Optionally specify a fetch
 	 * mode, which determines what kind of object rows are returned as.
-	 * Use the `PDO::FETCH_*` constants directly. The default is
+	 * Use the `PDO::FETCH_` constants directly. The default is
 	 * `PDO::FETCH_OBJ`, so that rows are returned as objects with property
 	 * names corresponding to column names. */
 	public function __construct($stmt, $mode = \PDO::FETCH_OBJ) {
@@ -26,6 +26,7 @@ class Statement implements \Iterator {
 	 * referenced by name.
 	 *
 	 * Example:
+	 *
 	 *     $stmt = $db->prepare('select id, name from users');
 	 *     $stmt->bind_output('name', $name);
 	 *     foreach($stmt as $row) echo $name, "\n";
@@ -54,12 +55,14 @@ class Statement implements \Iterator {
 	 * colon).
 	 *
 	 * Example 1:
+	 *
 	 *     $stmt = $db->prepare('select id, name from users where phone = ?');
 	 *     $stmt->bind_input(1, $phone);
 	 *     $phone = '5551234567';
 	 *     $stmt->execute();
 	 *
 	 * Example 2:
+	 *
 	 *     $stmt = $db->prepare('select id, name from users where phone = :phone');
 	 *     $stmt->bind_input(':phone', $phone);
 	 */
@@ -74,7 +77,7 @@ class Statement implements \Iterator {
 		}
 	}
 
-	/* Assign a value to an input parameter of a prepared statement. If no
+	/* Assign a value to an input parameter of a prepared statement. If
 	 * `$type` is null, the appropriate type is used based on the PHP type
 	 * of the value. */
 	public function assign_input($param, $value, $type = null, $inout = false) {
@@ -94,7 +97,8 @@ class Statement implements \Iterator {
 	 * positional parameter array may be passed as a single array argument
 	 * or as a variadic argument list.
 	 *
-	 * Example 1:
+	 * Example:
+	 *
 	 *     $stmt = $db->prepare('select * from users where first = ? and last = ?');
 	 *     $stmt->assign('John', 'Doe');
 	 */
@@ -260,7 +264,7 @@ class Statement implements \Iterator {
 
 	private function raise_error($msg) {
 		list($state, $code, $errstr) = $this->stmt->errorInfo();
-		throw new \phrame\sql\Error($msg, $errstr, $code, $state);
+		throw new \jitsu\sql\Error($msg, $errstr, $code, $state);
 	}
 }
 

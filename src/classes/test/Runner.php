@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\test;
+namespace jitsu\test;
 
 abstract class Runner {
 

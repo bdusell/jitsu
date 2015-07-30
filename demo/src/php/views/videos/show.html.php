@@ -10,7 +10,7 @@
     <div class="tag-container">
       <div class="tag-list-view"
         data-id="<?= htmlattr($video->id) ?>"
-        data-tags="<?= htmlattr(\phrame\JSONUtil::encode($tags->to_array())) ?>">
+        data-tags="<?= htmlattr(\jitsu\JSONUtil::encode($tags->to_array())) ?>">
       </div>
       <div class="new-tag">
         <input type="text" placeholder="new tag" size="10" />

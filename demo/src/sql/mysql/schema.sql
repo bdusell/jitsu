@@ -1,6 +1,6 @@
-drop database if exists phrame;
-create database phrame;
-use phrame;
+drop database if exists demo_database;
+create database demo_database;
+use demo_database;
 
 create table `videos` (
 	`id` integer not null primary key auto_increment,

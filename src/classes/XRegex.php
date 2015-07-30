@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 /* An object-oriented wrapper for PHP's PCRE patterns which offers a richer
  * API. */

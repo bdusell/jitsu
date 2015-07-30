@@ -1,4 +1,5 @@
-<?php $e = AppConfig::instance()->show_errors ? '1' : '0'; ?>
+<?php $config = \DemoApp\Application::config(); ?>
+<?php $e = $config->show_errors ? '1' : '0'; ?>
 short_open_tag = 1
 asp_tags = 0
 zend.script_encoding = "UTF-8"

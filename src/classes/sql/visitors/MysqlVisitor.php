@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame\sql\visitors;
+namespace jitsu\sql\visitors;
 
 class MysqlVisitor extends CodeGenerationVisitor {
 
@@ -17,6 +17,17 @@ class MysqlVisitor extends CodeGenerationVisitor {
 			'CONCAT(' . $n->left->accept($this) . ', ' .
 			$n->right->accept($this) . ')'
 		);
+	}
+
+	public function insertCommand($type) {
+		switch($type) {
+		case \jitsu\sql\ast\InsertStatement::INSERT_OR_REPLACE:
+			return 'INSERT ON DUPLICATE KEY UPDATE';
+		case \jitsu\sql\ast\InsertStatement::INSERT_OR_IGNORE:
+			return 'INSERT IGNORE';
+		default:
+			return $type;
+		}
 	}
 }
 

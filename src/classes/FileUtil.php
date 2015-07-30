@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 /* Utilities for dealing with files. */
 class FileUtil {

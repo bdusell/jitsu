@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 /* Utilties for dealing with regular expressions. */
 class RegexUtil {

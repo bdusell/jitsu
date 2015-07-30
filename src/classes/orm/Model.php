@@ -1,47 +1,49 @@
 <?php
 
-namespace phrame;
+namespace jitsu\orm;
 
 class Model {
 
 	const id = 'id';
 
-	private $_attrs;
+	private $database;
+	private $attrs;
 
-	public function __construct($attrs) {
-		$this->_attrs = $attrs;
+	public function __construct($database, $attrs = array()) {
+		$this->database = $database;
+		$this->attrs = $attrs;
 	}
 
 	public function to_object() {
-		return self::_to_object($this->_attrs);
+		return self::_to_object($this->attrs);
 	}
 
 	public function to_array() {
-		return self::_to_array($this->_attrs);
+		return self::_to_array($this->attrs);
 	}
 
 	public function get($name) {
-		return self::_get_attr($this->_attrs, $name);
+		return self::_get_attr($this->attrs, $name);
 	}
 
 	public function set($name, $value) {
-		self::_set_attr($this->_attrs, $value);
+		self::_set_attr($this->attrs, $value);
 	}
 
 	public function id() {
 		return $this->get($this->_id_col());
 	}
 
-	public static function fetch($id) {
+	public static function fetch($database, $id) {
 		$table = self::_table_name();
 		$col = self::_id_col();
-		$row = \Database::row_with(
+		$row = $database->row_with(
 <<<SQL
 select * from "$table" where "$col" = ? limit 1
 SQL
 		, array($id));
 		$class = get_called_class();
-		return $row === null ? null : new $class($row);
+		return $row === null ? null : new $class($database, $row);
 	}
 
 	public function save() {
@@ -61,12 +63,12 @@ SQL
 			}
 			$cols = join(', ', $col_parts);
 			$qmarks = join(', ', $qmark_parts);
-			\Database::execute_with(
+			$this->database->execute_with(
 <<<SQL
 insert into "$table"($cols) values ($qmarks)
 SQL
 			, $values);
-			$this->set($idcol, \Database::last_insert_id());
+			$this->set($idcol, $this->database->last_insert_id());
 		} else {
 			$set_parts = array();
 			$values = array();
@@ -76,7 +78,7 @@ SQL
 			}
 			$values[] = $this->id();
 			$sets = join(', ', $set_parts);
-			\Database::execute_with(
+			$this->database->execute_with(
 <<<SQL
 update "$table" $sets where "$idcol" = ? limit 1
 SQL

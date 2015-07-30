@@ -1,6 +1,6 @@
 <?php
 
-namespace phrame;
+namespace jitsu;
 
 /* Activate or deactivate all error reporting. In either case, convert errors
  * to `ErrorException`s (see `handle_errors`). */
@@ -11,7 +11,7 @@ function set_error_visibility($value) {
 	handle_fatal_errors($value);
 }
 
-/* Set up phrame-style error handling. The handler simply converts errors to
+/* Set up jitsu-style error handling. The handler simply converts errors to
  * `ErrorException`s whenever an error is encountered (except when the `@`
  * operator was used). */
 function handle_errors() {
@@ -24,7 +24,7 @@ function handle_errors() {
 	});
 }
 
-/* Set up phrame-style fatal error handling. Depending on the `$visible`
+/* Set up jitsu-style fatal error handling. Depending on the `$visible`
  * argument, the handler either prints the error or silences it. Note that in
  * either case, in order to silence the usual error output, the default output
  * for *all* errors is disabled. */
@@ -46,7 +46,7 @@ function handle_fatal_errors($visible) {
 	}
 }
 
-/* Set up phrame-style exception handling. Depending on the `$visible`
+/* Set up jitsu-style exception handling. Depending on the `$visible`
  * argument, the handler either prints a stack trace and exits or silently
  * exits. */
 function handle_exceptions($visible) {
@@ -84,7 +84,7 @@ function init_error_visibility($value) {
 	ini_set('report_memleaks', $value);
 }
 
-/* Print a phrame-style stack trace of an exception. */
+/* Print a jitsu-style stack trace of an exception. */
 function print_stack_trace($e) {
 	echo get_class($e), ' [', $e->getCode(), ']: ', $e->getMessage(), "\n";
 	foreach($e->getTrace() as $level) {

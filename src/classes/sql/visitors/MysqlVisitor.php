@@ -34,6 +34,14 @@ class MysqlVisitor extends CodeGenerationVisitor {
 		return 'AUTO_INCREMENT';
 	}
 
+	public function visitBitfieldType($n) {
+		return 'BIT(' . $n->width . ')';
+	}
+
+	public function visitBooleanType($n) {
+		return 'BOOL';
+	}
+
 	public function visitIntegerType($n) {
 		$r = self::integerName($n->bytes);
 		if(!$n->signed) $r .= ' UNSIGNED';
@@ -51,6 +59,66 @@ class MysqlVisitor extends CodeGenerationVisitor {
 			return 'INT';
 		} else {
 			return 'BIGINT';
+		}
+	}
+
+	public function visitDecimalType($n) {
+		return 'DECIMAL(' . $n->digits . ', ' . $n->decimals . ')';
+	}
+
+	public function visitRealType($n) {
+		return $n->bytes <= 4 ? 'FLOAT' : 'DOUBLE';
+	}
+
+	public function visitDateType($n) {
+		return 'DATE';
+	}
+
+	public function visitTimeType($n) {
+		return 'TIME';
+	}
+
+	public function visitDatetimeType($n) {
+		return 'DATETIME';
+	}
+
+	public function visitTimestampType($n) {
+		return 'TIMESTAMP';
+	}
+
+	public function visitYearType($n) {
+		return 'YEAR';
+	}
+
+	public function visitFixedStringType($n) {
+		return 'CHAR(' . $n->length . ')';
+	}
+
+	public function visitStringType($n) {
+		return 'VARCHAR(' . $n->maximum_length . ')';
+	}
+
+	public function visitByteStringType($n) {
+		return 'VARBINARY(' . $n->maximum_length . ')';
+	}
+
+	public function visitTextType($n) {
+		return self::prefixSizeName($n->prefix_size) . 'TEXT';
+	}
+
+	public function visitBlobType($n) {
+		return self::prefixSizeName($n->prefix_size) . 'BLOB';
+	}
+
+	private static function prefixSizeName($size) {
+		if($size <= 1) {
+			return 'TINY';
+		} elseif($size <= 2) {
+			return '';
+		} elseif($size <= 3) {
+			return 'MEDIUM';
+		} else {
+			return 'LONG';
 		}
 	}
 }

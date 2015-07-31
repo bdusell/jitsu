@@ -98,7 +98,7 @@ class Ast {
 		));
 	}
 
-	public static function col_def($type, $name, $clauses) {
+	public static function col_def($type, $name, $clauses = array()) {
 		$attrs = array(
 			'name' => self::name($name),
 			'type' => $type
@@ -130,14 +130,95 @@ class Ast {
 		return new ast\PrimaryKeyClause(array());
 	}
 
+	public static function unique() {
+		return new ast\UniqueClause(array());
+	}
+
 	public static function autoincrement() {
 		return new ast\AutoincrementClause(array());
+	}
+
+	public static function not_null() {
+		return new ast\NotNullClause(array());
+	}
+
+	public static function bitfield_type($width) {
+		return new ast\BitfieldType(array(
+			'width' => $width
+		));
+	}
+
+	public static function bool_type() {
+		return new ast\BooleanType(array());
 	}
 
 	public static function int_type($bytes = 4, $signed = true) {
 		return new ast\IntegerType(array(
 			'bytes' => $bytes,
 			'signed' => $signed
+		));
+	}
+
+	public static function decimal_type($digits, $decimals) {
+		return new ast\DecimalType(array(
+			'digits' => $digits,
+			'decimals' => $decimals
+		));
+	}
+
+	public static function real_type($bytes = 8) {
+		return new ast\RealType(array(
+			'bytes' => $bytes
+		));
+	}
+
+	public static function date_type() {
+		return new ast\DateType(array());
+	}
+
+	public static function time_type() {
+		return new ast\TimeType(array());
+	}
+
+	public static function datetime_type() {
+		return new ast\DatetimeType(array());
+	}
+
+	public static function timestamp_type() {
+		return new ast\TimestampType(array());
+	}
+
+	public static function year_type() {
+		return new ast\YearType(array());
+	}
+
+	public static function fixed_string_type($length) {
+		return new ast\FixedStringType(array(
+			'length' => $length
+		));
+	}
+
+	public static function string_type($max_length = 255 /* 2^8 - 1 */) {
+		return new ast\StringType(array(
+			'maximum_length' => $max_length
+		));
+	}
+
+	public static function byte_string_type($max_length = 255) {
+		return new ast\ByteStringType(array(
+			'maximum_length' => $max_length
+		));
+	}
+
+	public static function text_type($prefix_size = 2) {
+		return new ast\TextType(array(
+			'prefix_size' => $prefix_size
+		));
+	}
+
+	public static function blob_type($prefix_size = 2) {
+		return new ast\BlobType(array(
+			'prefix_size' => $prefix_size
 		));
 	}
 }

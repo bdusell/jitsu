@@ -613,12 +613,12 @@ DECIMAL(DIGITS, DECIMALS)
     PHP:     real / string / \jitsu\Decimal ?
     Example: "price" DECIMAL(11, 2)
 
-REAL(DIGITS, DECIMALS)
+REAL(BYTES)
 
     MySQL:   FLOAT/DOUBLE/REAL(M, D)
     SQLite:  REAL
     PHP:     real
-    Example: "ph" REAL(10, 8)
+    Example: "ph" REAL(4)
 
 DATE
 

@@ -518,7 +518,21 @@ abstract class CodeGenerationVisitor extends Visitor {
 		return $r;
 	}
 
+	abstract public function visitBitfieldType($n);
+	abstract public function visitBooleanType($n);
 	abstract public function visitIntegerType($n);
+	abstract public function visitDecimalType($n);
+	abstract public function visitRealType($n);
+	abstract public function visitDateType($n);
+	abstract public function visitTimeType($n);
+	abstract public function visitDatetimeType($n);
+	abstract public function visitTimestampType($n);
+	abstract public function visitYearType($n);
+	abstract public function visitFixedStringType($n);
+	abstract public function visitStringType($n);
+	abstract public function visitByteStringType($n);
+	abstract public function visitTextType($n);
+	abstract public function visitBlobType($n);
 }
 
 ?>

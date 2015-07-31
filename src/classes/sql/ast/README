@@ -11,7 +11,8 @@ symbol corresponds to a class.
 	<select-stmt> |
 	<insert-stmt> |
 	<update-stmt> |
-	<delete-stmt>
+	<delete-stmt> |
+	<create-table-stmt>
 
 <select-stmt> ->
 	<select-stmt-core>

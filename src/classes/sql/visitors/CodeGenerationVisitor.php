@@ -419,6 +419,106 @@ abstract class CodeGenerationVisitor extends Visitor {
 		$r .= '*';
 		return $r;
 	}
+
+	public function visitCreateTableStatement($n) {
+		$r = 'CREATE ';
+		if($n->temporary) $r .= 'TEMPORARY ';
+		$r .= 'TABLE ';
+		if($n->if_not_exists) $r .= 'IF NOT EXISTS ';
+		$r .= (
+			$n->name->accept($this) .
+			' (' . $this->join(array_merge(
+				$n->columns,
+				$n->constraints
+			)) . ')'
+		);
+		if($n->modifiers) {
+			$r .= ' ' . $this->join($n->modifiers);
+		}
+		return $r;
+	}
+
+	public function visitColumnDefinition($n) {
+		$r = $n->name->accept($this) . ' ' . $n->type->accept($this);
+		if($n->not_null) $r .= ' ' . $n->not_null->accept($this);
+		if($n->default) $r .= ' ' . $n->default->accept($this);
+		if($n->autoincrement) $r .= ' ' . $n->autoincrement->accept($this);
+		if($n->key) $r .= ' ' . $n->key->accept($this);
+		if($n->foreign_key) $r .= ' ' . $n->foreign_key->accept($this);
+		return $r;
+	}
+
+	public function visitNotNullClause($n) {
+		return 'NOT NULL';
+	}
+
+	public function visitDefaultValueClause($n) {
+		$expr = $n->value->accept($this);
+		if(!($n->value instanceof \jitsu\sql\ast\LiteralExpression)) {
+			$expr = '(' . $expr . ')';
+		}
+		return 'DEFAULT ' . $expr;
+	}
+
+	public function visitAutoincrementClause($n) {
+		return 'AUTOINCREMENT';
+	}
+
+	public function visitPrimaryKeyClause($n) {
+		return 'PRIMARY KEY';
+	}
+
+	public function visitUniqueClause($n) {
+		return 'UNIQUE';
+	}
+
+	private function constraintClause($n, $text) {
+		$r = '';
+		if($n->name) $r .= 'CONSTRAINT ' . $n->name->accept($this) . ' ';
+		$r .= $text . ' (' . $this->join($n->columns) . ')';
+		return $r;
+	}
+
+	public function visitPrimaryKeyConstraint($n) {
+		return $this->constraintClause($n, 'PRIMARY KEY');
+	}
+
+	public function visitIndexConstraint($n) {
+		$r = 'INDEX ';
+		if($n->name) $r .= $n->name->accept($this) . ' ';
+		$r .= '(' . $this->join($n->columns) . ')';
+		return $r;
+	}
+
+	public function visitUniqueConstraint($n) {
+		return $this->constraintClause($n, 'UNIQUE');
+	}
+
+	public function visitForeignKeyConstraint($n) {
+		return (
+			$this->constraintClause($n, 'FOREIGN KEY') .
+			' ' . $n->references($this)
+		);
+	}
+
+	public function visitCheckConstraint($n) {
+		return 'CHECK (' . $n->expr->accept($this) . ')';
+	}
+
+	public function visitForeignKeyClause($n) {
+		$r = 'REFERENCES ' . $n->table;
+		if($n->columns) $r .= '(' . $this->join($n->columns) . ')';
+		if($n->on_delete !== null) $r .= ' ON DELETE ' . $n->on_delete;
+		if($n->on_update !== null) $r .= ' ON UPDATE ' . $n->on_update;
+		if($n->deferrable !== null) {
+			if(!$n->deferrable) $r .= ' NOT';
+			$r .= ' DEFERRABLE';
+		}
+		if($n->initially !== null) $r .= ' INITIALLY ' . $n->initially;
+		return $r;
+	}
+
+	abstract public function visitIntegerType($n);
 }
 
 ?>

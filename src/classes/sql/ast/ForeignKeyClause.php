@@ -32,10 +32,10 @@ class ForeignKeyClause extends Node {
 		parent::__construct($attrs);
 		$this->validate_class('TableReference', 'table');
 		$this->validate_optional_array('Identifier', 'columns');
-		$this->validate_const('on_delete');
-		$this->validate_const('on_update');
+		$this->validate_optional_const('on_delete');
+		$this->validate_optional_const('on_update');
 		$this->validate_optional_bool('deferrable');
-		$this->validate_const('initially');
+		$this->validate_optional_const('initially');
 	}
 }
 

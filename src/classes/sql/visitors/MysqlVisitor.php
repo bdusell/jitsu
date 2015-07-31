@@ -29,6 +29,30 @@ class MysqlVisitor extends CodeGenerationVisitor {
 			return $type;
 		}
 	}
+
+	public function visitAutoincrementClause($n) {
+		return 'AUTO_INCREMENT';
+	}
+
+	public function visitIntegerType($n) {
+		$r = self::integerName($n->bytes);
+		if(!$n->signed) $r .= ' UNSIGNED';
+		return $r;
+	}
+
+	private static function integerName($size) {
+		if($size <= 1) {
+			return 'TINYINT';
+		} elseif($size <= 2) {
+			return 'SMALLINT';
+		} elseif($size <= 3) {
+			return 'MEDIUMINT';
+		} elseif($size <= 4) {
+			return 'INT';
+		} else {
+			return 'BIGINT';
+		}
+	}
 }
 
 ?>

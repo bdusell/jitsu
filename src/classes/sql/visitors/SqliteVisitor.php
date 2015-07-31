@@ -7,6 +7,10 @@ class SqliteVisitor extends CodeGenerationVisitor {
 	public function __construct($database) {
 		parent::__construct($database, new SqlitePrecedenceVisitor());
 	}
+
+	public function visitIntegerType($n) {
+		return 'INTEGER';
+	}
 }
 
 ?>

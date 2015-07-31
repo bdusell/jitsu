@@ -52,17 +52,19 @@ class Ast {
 
 	public static function table($name) {
 		return new ast\TableReference(array(
-			'table' => new ast\Identifier(array(
-				'value' => $name
-			)),
+			'table' => self::name($name)
 		));
 	}
 
 	public static function col($name) {
 		return new ast\ColumnReference(array(
-			'column' => new ast\Identifier(array(
-				'value' => $name
-			))
+			'column' => self::name($name)
+		));
+	}
+
+	public static function name($name) {
+		return new ast\Identifier(array(
+			'value' => $name
 		));
 	}
 
@@ -78,6 +80,65 @@ class Ast {
 		} elseif($value === null) {
 			return new ast\NullLiteral(array());
 		}
+	}
+
+	public static function create_table(
+		$name,
+		$column_defs,
+		$constraints = array(),
+		$modifiers = array()
+	) {
+		return new ast\CreateTableStatement(array(
+			'temporary' => false,
+			'if_not_exists' => false,
+			'name' => $name,
+			'columns' => $column_defs,
+			'constraints' => $constraints,
+			'modifiers' => $modifiers
+		));
+	}
+
+	public static function col_def($type, $name, $clauses) {
+		$attrs = array(
+			'name' => self::name($name),
+			'type' => $type
+		);
+		foreach($clauses as $c) {
+			$attrs[self::get_col_def_key($c)] = $c;
+		}
+		return new ast\ColumnDefinition($attrs);
+	}
+
+	private static function get_col_def_key($c) {
+		if($c instanceof ast\NotNullClause) {
+			return 'not_null';
+		} elseif($c instanceof ast\DefaultValueClause) {
+			return 'default';
+		} elseif($c instanceof ast\AutoincrementClause) {
+			return 'autoincrement';
+		} elseif($c instanceof ast\KeyClause) {
+			return 'key';
+		} elseif($c instanceof ast\ForeignKeyClause) {
+			return 'foreign_key';
+		} else {
+			throw new \InvalidArgumentException(
+				'invalid column definition clause');
+		}
+	}
+
+	public static function primary_key() {
+		return new ast\PrimaryKeyClause(array());
+	}
+
+	public static function autoincrement() {
+		return new ast\AutoincrementClause(array());
+	}
+
+	public static function int_type($bytes = 4, $signed = true) {
+		return new ast\IntegerType(array(
+			'bytes' => $bytes,
+			'signed' => $signed
+		));
 	}
 }
 

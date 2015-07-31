@@ -89,6 +89,12 @@ abstract class Node {
 		$this->validate_string($prop);
 	}
 
+	protected function validate_optional_const($prop) {
+		if($prop !== null) {
+			$this->validate_const($prop);
+		}
+	}
+
 	protected function validate_string($prop) {
 		if(!is_string($this->$prop)) {
 			$this->error($prop, 'must be a string');

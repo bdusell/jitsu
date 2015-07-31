@@ -1,8 +1,13 @@
 $tag-spacing: 5px;
 $tag-font-size: 14px;
 
-a.video-thumbnail:hover {
-  text-decoration: none;
+a.video-thumbnail {
+  &:hover {
+    text-decoration: none;
+  }
+  & > * {
+    display: inline-block;
+  }
 }
 
 .tag-list {

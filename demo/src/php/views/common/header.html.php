@@ -35,7 +35,7 @@
       </ul>
       <form id="search-form" class="navbar-form navbar-right" role="search" method="GET" action="videos/search">
         <div class="form-group">
-          <input id="search-input" type="text" class="form-control" placeholder="Type any tag" name="query" />
+          <input id="search-input" type="text" class="form-control" placeholder="Type any tag" name="query">
         </div>
         <button type="submit" class="btn btn-default">Search</button>
       </form>

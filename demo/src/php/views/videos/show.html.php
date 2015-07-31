@@ -13,7 +13,7 @@
         data-tags="<?= htmlattr(\jitsu\JSONUtil::encode($tags->to_array())) ?>">
       </div>
       <div class="new-tag">
-        <input type="text" placeholder="new tag" size="10" />
+        <input type="text" placeholder="new tag" size="10">
       </div>
       <div class="tag-edit-button start">edit</div>
       <div class="tag-edit-button done">done</div>

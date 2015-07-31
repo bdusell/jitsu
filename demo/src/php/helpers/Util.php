@@ -54,6 +54,7 @@ class Util {
 		$response = $data->response;
 		$config = $data->config;
 		$buffering = $config->output_buffering;
+		ini_set('default_charset', 'UTF-8');
 		if($buffering) {
 			$response->start_output_buffering();
 		}

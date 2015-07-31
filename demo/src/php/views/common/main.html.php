@@ -1,20 +1,19 @@
-<?php ini_set('default_charset', 'UTF-8'); ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= html($title) ?> | <?= html($site_name) ?></title>
 <?php if(isset($base)): ?>
-    <base href="<?= html($base) ?>" />
+    <base href="<?= html($base) ?>">
 <?php endif; ?>
 <?php if(isset($favicon)): ?>
-    <link rel="icon" type="image/<?= \jitsu\FileUtil::get_extension($favicon) ?>" href="<?= html($favicon) ?>" />
+    <link rel="icon" type="image/<?= \jitsu\FileUtil::get_extension($favicon) ?>" href="<?= html($favicon) ?>">
 <?php endif; ?>
 <?php if(isset($stylesheets)): ?>
 <?php   foreach($stylesheets as $css): ?>
-    <link rel="stylesheet" type="text/css" href="<?= htmlattr($css) ?>" />
+    <link rel="stylesheet" type="text/css" href="<?= htmlattr($css) ?>">
 <?php   endforeach; ?>
 <?php endif; ?>
 <?php if(isset($scripts)): ?>

@@ -12,12 +12,14 @@ class Configure implements \jitsu\app\Handler {
 		}
 		$data->path = $path;
 		$data->available_methods = array();
-		if(isset($config->sql_driver)) {
-			self::add_database($data);
+		if($config->has('sql_driver')) {
+			list($database, $visitor) = self::get_database($data);
+			$data->database = $database;
+			$data->sql_visitor = $visitor;
 		}
 	}
 
-	private static function add_database($data) {
+	private static function get_database($data) {
 		$config = $data->config;
 		$options = array(
 			\PDO::ATTR_PERSISTENT =>
@@ -25,14 +27,13 @@ class Configure implements \jitsu\app\Handler {
 		);
 		switch($config->sql_driver) {
 		case 'sqlite':
-			$data->database = new LazySqliteDatabase(
+			$db = new LazySqliteDatabase(
 				$config->sqlite_file,
 				$options
 			);
-			$data->sql_visitor = new \jitsu\sql\visitors\SqliteVisitor($data->database);
-			return;
+			return array($db, new \jitsu\sql\visitors\SqliteVisitor($db));
 		case 'mysql':
-			$data->database = new LazyMysqlDatabase(
+			$db = new LazyMysqlDatabase(
 				$config->database_host,
 				$config->database_name,
 				$config->database_user,
@@ -40,8 +41,7 @@ class Configure implements \jitsu\app\Handler {
 				'utf8mb4',
 				$options
 			);
-			$data->sql_visitor = new \jitsu\sql\visitors\MysqlVisitor($data->database);
-			return;
+			return array($db, new \jitsu\sql\visitors\MysqlVisitor($db));
 		}
 		throw new \InvalidArgumentException(
 			'SQL driver ' . $data->sql_driver . ' not recognized'

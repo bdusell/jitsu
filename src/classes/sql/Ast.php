@@ -18,17 +18,36 @@ class Ast {
 		));
 	}
 
-	public static function insert($table) {
+	private static function insert_mode($table, $mode) {
 		return new ast\InsertStatement(array(
-			'type' => ast\InsertStatement::INSERT,
+			'type' => $mode,
 			'table' => $table
 		));
 	}
 
+	public static function insert($table) {
+		return self::insert_mode($table, ast\InsertStatement::INSERT);
+	}
+
+	public static function insert_or_replace($table) {
+		return self::insert_mode($table, ast\InsertStatement::INSERT_OR_REPLACE);
+	}
+
 	public static function insert_or_ignore($table) {
-		return new ast\InsertStatement(array(
-			'type' => ast\InsertStatement::INSERT_OR_IGNORE,
-			'table' => $table
+		return self::insert_mode($table, ast\InsertStatement::INSERT_OR_IGNORE);
+	}
+
+	public static function update($table, $assignments) {
+		return new ast\UpdateStatement(array(
+			'table' => $table,
+			'assignments' => $assignments
+		));
+	}
+
+	public static function set($name, $expr) {
+		return new ast\Assignment(array(
+			'column' => self::name($name),
+			'expr' => $expr
 		));
 	}
 
@@ -127,11 +146,58 @@ class Ast {
 	}
 
 	public static function primary_key() {
-		return new ast\PrimaryKeyClause(array());
+		$args = func_get_args();
+		if($args) {
+			return new ast\PrimaryKeyConstraint(array(
+				'columns' => self::names($args)
+			));
+		} else {
+			return new ast\PrimaryKeyClause(array());
+		}
 	}
 
 	public static function unique() {
-		return new ast\UniqueClause(array());
+		$args = func_get_args();
+		if($args) {
+			return new ast\UniqueConstraint(array(
+				'columns' => self::names($args)
+			));
+		} else {
+			return new ast\UniqueClause(array());
+		}
+	}
+
+	public static function foreign_key(
+		$cols,
+		$table = null,
+		$foreign_cols = null,
+		$attrs = null
+	) {
+		if(!is_array($cols)) {
+			list($cols, $table, $foreign_cols, $attrs) =
+				array(null, $cols, $table, $foreign_cols);
+		}
+		if($attrs === null) $attrs = array();
+		$result = new ast\ForeignKeyClause($attrs + array(
+			'table' => $table,
+			'columns' => self::names($foreign_cols)
+		));
+		if($cols !== null) {
+			$result = new ast\ForeignKeyConstraint(array(
+				'columns' => self::names($cols),
+				'references' => $result
+			));
+		}
+		return $result;
+	}
+
+	private static function names($names) {
+		if($names === null) return null;
+		$result = array();
+		foreach($names as $name) {
+			$result[] = self::name($name);
+		}
+		return $result;
 	}
 
 	public static function autoincrement() {
@@ -152,7 +218,7 @@ class Ast {
 		return new ast\BooleanType(array());
 	}
 
-	public static function int_type($bytes = 4, $signed = true) {
+	public static function int_type($bytes = 4, $signed = false) {
 		return new ast\IntegerType(array(
 			'bytes' => $bytes,
 			'signed' => $signed
@@ -192,28 +258,73 @@ class Ast {
 		return new ast\YearType(array());
 	}
 
-	public static function fixed_string_type($length) {
+	private static function charset($charset) {
+		return $charset === null ? self::ascii() : $charset;
+	}
+
+	private static function collation($collation) {
+		return $collation === null ? self::case_sensitive() : $collation;
+	}
+
+	private static function str_attrs($charset, $collation) {
+		return array(
+			'character_set' => self::charset($charset),
+			'collation' => self::collation($collation)
+		);
+	}
+
+	public static function ascii() {
+		return ast\CharacterStringType::ASCII;
+	}
+
+	public static function unicode() {
+		return ast\CharacterStringType::UNICODE;
+	}
+
+	public static function case_sensitive() {
+		return ast\CharacterStringType::CASE_SENSITIVE;
+	}
+
+	public static function case_insensitive() {
+		return ast\CharacterStringType::CASE_INSENSITIVE;
+	}
+
+	public static function fixed_string_type(
+		$length,
+		$charset = null,
+		$collation = null
+	) {
 		return new ast\FixedStringType(array(
 			'length' => $length
-		));
+		) + self::str_attrs($charset, $collation));
 	}
 
-	public static function string_type($max_length = 255 /* 2^8 - 1 */) {
+	public static function string_type(
+		$max_length = null,
+		$charset = null,
+		$collation = null
+	) {
+		if($max_length === null) $max_length = 255; /* 2^8 - 1 */
 		return new ast\StringType(array(
 			'maximum_length' => $max_length
-		));
+		) + self::str_attrs($charset, $collation));
 	}
 
-	public static function byte_string_type($max_length = 255) {
+	public static function byte_string_type($max_length = null) {
+		if($max_length === null) $max_length = 255;
 		return new ast\ByteStringType(array(
 			'maximum_length' => $max_length
 		));
 	}
 
-	public static function text_type($prefix_size = 2) {
+	public static function text_type(
+		$prefix_size = 2,
+		$charset = null,
+		$collation = null
+	) {
 		return new ast\TextType(array(
 			'prefix_size' => $prefix_size
-		));
+		) + self::str_attrs($charset, $collation));
 	}
 
 	public static function blob_type($prefix_size = 2) {

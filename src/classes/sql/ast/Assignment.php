@@ -14,7 +14,7 @@ class Assignment extends Node {
 
 	public function __construct($attrs) {
 		parent::__construct($attrs);
-		$this->validate_class('ColumnReference', 'column');
+		$this->validate_class('Identifier', 'column');
 		$this->validate_class('Expression', 'expr');
 	}
 }

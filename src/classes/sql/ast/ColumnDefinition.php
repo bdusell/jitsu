@@ -33,6 +33,42 @@ class ColumnDefinition extends Node {
 		$this->validate_optional_class('KeyClause', 'key');
 		$this->validate_optional_class('ForeignKeyClause', 'foreign_key');
 	}
+
+	public function not_null() {
+		$this->not_null = new NotNullClause(array());
+		return $this;
+	}
+
+	public function default_value($expr) {
+		$this->default = new DefaultValueClause(array(
+			'expr' => $expr
+		));
+		return $this;
+	}
+
+	public function autoincrement() {
+		$this->autoincrement = new AutoincrementClause(array());
+		return $this;
+	}
+
+	public function primary_key() {
+		$this->key = new PrimaryKeyClause(array());
+		return $this;
+	}
+
+	public function is_primary_key() {
+		return $this->key && $this->key->is_primary_key();
+	}
+
+	public function unique() {
+		$this->key = new UniqueClause(array());
+		return $this;
+	}
+
+	public function foreign_key($fk_clause) {
+		$this->key = $fk_clause;
+		return $this;
+	}
 }
 
 ?>

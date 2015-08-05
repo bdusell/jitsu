@@ -264,8 +264,7 @@ symbol corresponds to a class.
 
 <insert-type> ->
 	"insert" |
-	"replace" |
-	"insert" "or" "replace" |
+	"insert" "or" "replace" / "replace" (MySQL) |
 	"insert" "or" "ignore"
 
 <table-projection> ->
@@ -277,6 +276,9 @@ symbol corresponds to a class.
 	["where" <expr>]
 	["order" "by" <ordered-expr>+{","}]
 	["limit" <expr> ["offset" <expr>]]
+
+<update-type> ->
+	"update"
 
 <delete-stmt> ->
 	"delete" "from" <table-ref> ["where" <expr>]
@@ -655,14 +657,14 @@ YEAR
     PHP:     int
     Example: "published_in" YEAR
 
-FIXEDSTRING(LENGTH)
+FIXEDSTRING(LENGTH) CHARSET
 
     MySQL:   CHAR/CHARACTER(N)
     SQLite:  TEXT
     PHP:     string
     Example: "iso_code" FIXEDSTRING(3)
 
-STRING(MAXLENGTH)
+STRING(MAXLENGTH) CHARSET
 
     MySQL:   VARCHAR(N)
     SQLite:  TEXT
@@ -676,7 +678,7 @@ BYTESTRING(MAXLENGTH)
     PHP:     string
     Example: "raw_input" BYTESTRING(255)
 
-TEXT(PREFIXSIZE)
+TEXT(PREFIXSIZE) CHARSET
 
     MySQL:   TINYTEXT(1)/TEXT(2)/MEDIUMTEXT(3)/LONGTEXT(4)
     SQLite:  TEXT

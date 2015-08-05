@@ -13,6 +13,16 @@ class IntegerType extends Type {
 		$this->validate_int('bytes');
 		$this->validate_bool('signed');
 	}
+
+	public function unsigned() {
+		$this->signed = false;
+		return $this;
+	}
+
+	public function signed() {
+		$this->signed = true;
+		return $this;
+	}
 }
 
 ?>

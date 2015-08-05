@@ -49,11 +49,11 @@ class SqliteVisitor extends CodeGenerationVisitor {
 	}
 
 	public function visitFixedStringType($n) {
-		return 'TEXT';
+		return 'TEXT' . self::str_mods($n);
 	}
 
 	public function visitStringType($n) {
-		return 'TEXT';
+		return 'TEXT' . self::str_mods($n);
 	}
 
 	public function visitByteStringType($n) {
@@ -61,11 +61,30 @@ class SqliteVisitor extends CodeGenerationVisitor {
 	}
 
 	public function visitTextType($n) {
-		return 'TEXT';
+		return 'TEXT' . self::str_mods($n);
 	}
 
 	public function visitBlobType($n) {
 		return 'BLOB';
+	}
+
+	private static function str_mods($n) {
+		$r = '';
+		$collation = self::collation($n->collation);
+		if($collation !== null) {
+			$r .= ' COLLATE ' . $collation;
+		}
+		return $r;
+	}
+
+	private static function collation($collation) {
+		switch($collation) {
+		case \jitsu\sql\ast\CharacterStringType::CASE_SENSITIVE:
+			return 'BINARY';
+		case \jitsu\sql\ast\CharacterStringType::CASE_INSENSITIVE:
+			return 'NOCASE';
+		}
+		return null;
 	}
 }
 

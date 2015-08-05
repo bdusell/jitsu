@@ -3,7 +3,7 @@
 namespace jitsu\sql\ast;
 
 /* SQL variable-length string type. */
-class StringType extends Type {
+class StringType extends CharacterStringType {
 
 	public $maximum_length;
 

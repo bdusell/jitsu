@@ -9,6 +9,9 @@ namespace jitsu\sql\ast;
  */
 class PrimaryKeyClause extends KeyClause {
 
+	public function is_primary_key() {
+		return true;
+	}
 }
 
 ?>

@@ -22,7 +22,7 @@ class MysqlVisitor extends CodeGenerationVisitor {
 	public function insertCommand($type) {
 		switch($type) {
 		case \jitsu\sql\ast\InsertStatement::INSERT_OR_REPLACE:
-			return 'INSERT ON DUPLICATE KEY UPDATE';
+			return 'REPLACE';
 		case \jitsu\sql\ast\InsertStatement::INSERT_OR_IGNORE:
 			return 'INSERT IGNORE';
 		default:
@@ -90,12 +90,45 @@ class MysqlVisitor extends CodeGenerationVisitor {
 		return 'YEAR';
 	}
 
+	private static function charset_name($charset) {
+		switch($charset) {
+		case \jitsu\sql\ast\CharacterStringType::ASCII:
+			return 'ascii';
+		case \jitsu\sql\ast\CharacterStringType::UNICODE:
+			return 'utf8mb4';
+		}
+		return null;
+	}
+
+	private static function collation_name($collation) {
+		switch($collation) {
+		case \jitsu\sql\ast\CharacterStringType::CASE_SENSITIVE:
+			return 'bin';
+		case \jitsu\sql\ast\CharacterStringType::CASE_INSENSITIVE:
+			return 'general_ci';
+		}
+		return null;
+	}
+
+	private static function str_mods($n) {
+		$r = '';
+		$name = self::charset_name($n->character_set);
+		if($name !== null) {
+			$r .= ' CHARACTER SET ' . $name;
+			$collation = self::collation_name($n->collation);
+			if($collation !== null) {
+				$r .= ' COLLATE ' . $name . '_' . $collation;
+			}
+		}
+		return $r;
+	}
+
 	public function visitFixedStringType($n) {
-		return 'CHAR(' . $n->length . ')';
+		return 'CHAR(' . $n->length . ')' . self::str_mods($n);
 	}
 
 	public function visitStringType($n) {
-		return 'VARCHAR(' . $n->maximum_length . ')';
+		return 'VARCHAR(' . $n->maximum_length . ')' . self::str_mods($n);
 	}
 
 	public function visitByteStringType($n) {
@@ -103,7 +136,7 @@ class MysqlVisitor extends CodeGenerationVisitor {
 	}
 
 	public function visitTextType($n) {
-		return self::prefixSizeName($n->prefix_size) . 'TEXT';
+		return self::prefixSizeName($n->prefix_size) . 'TEXT' . self::str_mods($n);
 	}
 
 	public function visitBlobType($n) {

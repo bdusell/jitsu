@@ -383,7 +383,7 @@ abstract class CodeGenerationVisitor extends Visitor {
 
 	public function visitUpdateStatement($n) {
 		$r = (
-			$n->type . ' ' .
+			'UPDATE ' .
 			$n->table->accept($this) . ' ' .
 			$this->join($n->assignments)
 		);
@@ -497,7 +497,7 @@ abstract class CodeGenerationVisitor extends Visitor {
 	public function visitForeignKeyConstraint($n) {
 		return (
 			$this->constraintClause($n, 'FOREIGN KEY') .
-			' ' . $n->references($this)
+			' ' . $n->references->accept($this)
 		);
 	}
 
@@ -506,7 +506,7 @@ abstract class CodeGenerationVisitor extends Visitor {
 	}
 
 	public function visitForeignKeyClause($n) {
-		$r = 'REFERENCES ' . $n->table;
+		$r = 'REFERENCES ' . $n->table->accept($this);
 		if($n->columns) $r .= '(' . $this->join($n->columns) . ')';
 		if($n->on_delete !== null) $r .= ' ON DELETE ' . $n->on_delete;
 		if($n->on_update !== null) $r .= ' ON UPDATE ' . $n->on_update;

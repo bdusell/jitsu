@@ -2,116 +2,120 @@
 
 namespace jitsu\orm;
 
+use jitsu\sql\Ast as sql;
+
 class Model {
 
-	const id = 'id';
-
-	private $database;
-	private $attrs;
-
-	public function __construct($database, $attrs = array()) {
-		$this->database = $database;
-		$this->attrs = $attrs;
+	public static function define($name, $defs) {
+		return new ModelDefinition($name, $defs);
 	}
 
-	public function to_object() {
-		return self::_to_object($this->attrs);
-	}
-
-	public function to_array() {
-		return self::_to_array($this->attrs);
-	}
-
-	public function get($name) {
-		return self::_get_attr($this->attrs, $name);
-	}
-
-	public function set($name, $value) {
-		self::_set_attr($this->attrs, $value);
-	}
-
-	public function id() {
-		return $this->get($this->_id_col());
-	}
-
-	public static function fetch($database, $id) {
-		$table = self::_table_name();
-		$col = self::_id_col();
-		$row = $database->row_with(
-<<<SQL
-select * from "$table" where "$col" = ? limit 1
-SQL
-		, array($id));
-		$class = get_called_class();
-		return $row === null ? null : new $class($database, $row);
-	}
-
-	public function save() {
-		$table = self::_table_name();
-		$idcol = self::_id_col();
-		$attrs = $this->to_array();
-		$is_new = !array_key_exists($idcol, $attrs);
-		unset($attrs[$idcol]);
-		if($is_new) {
-			$col_parts = array();
-			$qmark_parts = array();
-			$values = array();
-			foreach($attrs as $k => $v) {
-				$col_parts[] = "\"$k\"";
-				$qmark_parts[] = '?';
-				$values[] = $v;
-			}
-			$cols = join(', ', $col_parts);
-			$qmarks = join(', ', $qmark_parts);
-			$this->database->execute_with(
-<<<SQL
-insert into "$table"($cols) values ($qmarks)
-SQL
-			, $values);
-			$this->set($idcol, $this->database->last_insert_id());
+	public static function primary_key($defs = null) {
+		if($defs === null) {
+			return new definitions\DefaultPrimaryKey;
 		} else {
-			$set_parts = array();
-			$values = array();
-			foreach($attrs as $k => $v) {
-				$set_parts = "set \"$k\" = ?";
-				$values[] = $v;
-			}
-			$values[] = $this->id();
-			$sets = join(', ', $set_parts);
-			$this->database->execute_with(
-<<<SQL
-update "$table" $sets where "$idcol" = ? limit 1
-SQL
-			, $values);
+			return new definitions\PrimaryKey($defs);
 		}
 	}
 
-	private static function _table_name() {
-		return self::_get_const('table');
+	public static function attr($type, $name) {
+		return new definitions\Column(sql::col_def($type, $name));
 	}
 
-	private static function _id_col() {
-		return self::_get_const('id');
+	public static function unique($col_defs) {
+		return new definitions\Unique($col_defs);
 	}
 
-	private static function _get_const($name) {
-		return constant(get_called_class() . '::' . $name);
+	public static function has_a($model_def) {
+		$pk_defs = $model_def->primary_key_column_definitions();
+		if(!$pk_defs) {
+			throw new \InvalidArgumentException(
+				'referenced model definition has no primary key');
+		}
+		return new definitions\ForeignKey(
+			$model_def->name(),
+			$pk_defs
+		);
 	}
 
-	private static function _get_attr($obj, $name) {
-		return is_array($obj) ? $obj[$name] : $obj->$name;
+	public static function bool_t() {
+		return sql::bool_type();
 	}
 
-	private static function _set_attr($obj, $name, $value) {
-		is_array($obj) ? $obj[$name] = $value : $obj->$name = $value;
+	public static function int_t($bytes = 4, $signed = false) {
+		return sql::int_type($bytes, $signed);
 	}
 
-	private static function _to_object($obj) {
-		return is_array($obj) ? (object) $obj : $obj;
+	public static function decimal_t($digits, $decimals) {
+		return sql::decimal_type($digits, $decimals);
 	}
 
-	private static function _to_array($obj) {
-		return is_array($obj) ? $obj : (array) $obj;
+	public static function real_t($bytes = 8) {
+		return sql::real_type($bytes);
+	}
+
+	public static function date_t() {
+		return sql::date_type();
+	}
+
+	public static function time_t() {
+		return sql::time_type();
+	}
+
+	public static function datetime_t() {
+		return sql::datetime_type();
+	}
+
+	public static function timestamp_t() {
+		return sql::timestamp_type();
+	}
+
+	public static function year_t() {
+		return sql::year_type();
+	}
+
+	public static function fixed_string_t(
+		$length,
+		$charset = null,
+		$collation = null
+	) {
+		return sql::fixed_string_type($length, $charset, $collation);
+	}
+
+	public static function string_t(
+		$max_length = null,
+		$charset = null,
+		$collation = null
+	) {
+		return sql::string_type($max_length, $charset, $collation);
+	}
+
+	public static function byte_string_t($max_length = null) {
+		return sql::byte_string_type($max_length);
+	}
+
+	public static function text_t(
+		$prefix_size = 2,
+		$charset = null,
+		$collation = null
+	) {
+		return sql::text_type($prefix_size, $charset, $collation);
+	}
+
+	public static function ascii() {
+		return sql::ascii();
+	}
+
+	public static function unicode() {
+		return sql::unicode();
+	}
+
+	public static function case_sensitive() {
+		return sql::case_sensitive();
+	}
+
+	public static function case_insensitive() {
+		return sql::case_insensitive();
 	}
 }
 

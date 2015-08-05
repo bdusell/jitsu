@@ -9,6 +9,9 @@ namespace jitsu\sql\ast;
  */
 class KeyClause extends Node {
 
+	public function is_primary_key() {
+		return false;
+	}
 }
 
 ?>

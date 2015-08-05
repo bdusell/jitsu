@@ -12,7 +12,6 @@ namespace jitsu\sql\ast;
 class InsertStatement extends Statement {
 
 	const INSERT = 'INSERT';
-	const REPLACE = 'REPLACE';
 	const INSERT_OR_REPLACE = 'INSERT OR REPLACE';
 	const INSERT_OR_IGNORE = 'INSERT OR IGNORE';
 

@@ -3,7 +3,7 @@
 namespace jitsu\sql\ast;
 
 /* SQL fixed string type. */
-class FixedStringType extends Type {
+class FixedStringType extends CharacterStringType {
 
 	public $length;
 

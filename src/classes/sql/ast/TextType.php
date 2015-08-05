@@ -3,7 +3,7 @@
 namespace jitsu\sql\ast;
 
 /* SQL text type. */
-class TextType extends Type {
+class TextType extends CharacterStringType {
 
 	public $prefix_size;
 

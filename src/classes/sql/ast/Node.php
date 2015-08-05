@@ -90,7 +90,7 @@ abstract class Node {
 	}
 
 	protected function validate_optional_const($prop) {
-		if($prop !== null) {
+		if($this->$prop !== null) {
 			$this->validate_const($prop);
 		}
 	}
@@ -108,7 +108,7 @@ abstract class Node {
 	}
 
 	protected function validate_optional_bool($prop) {
-		if($prop !== null) {
+		if($this->$prop !== null) {
 			$this->validate_bool($prop);
 		}
 	}

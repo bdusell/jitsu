@@ -9,7 +9,8 @@ namespace jitsu\sql\ast;
  *   <insert-statement> |
  *   <update-statement> |
  *   <delete-statement> |
- *   <create-table-statement>
+ *   <create-table-statement> |
+ *   <drop-table-statement>
  */
 abstract class Statement extends Node {
 

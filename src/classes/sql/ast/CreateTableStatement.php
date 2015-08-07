@@ -4,9 +4,9 @@ namespace jitsu\sql\ast;
 
 /* Create table statement.
  *
- * <create-table-stmt> ->
+ * <create-table-statement> ->
  *   "CREATE" ["TEMPORARY"] "TABLE" ["IF" "NOT" "EXISTS"]
- *   <table-ref>
+ *   <table-reference>
  *   "(" <column-definition>+{","} ("," <table-constraint>)* ")"
  *   <table-modifier>*{","}
  */

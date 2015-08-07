@@ -12,7 +12,8 @@ symbol corresponds to a class.
 	<insert-stmt> |
 	<update-stmt> |
 	<delete-stmt> |
-	<create-table-stmt>
+	<create-table-stmt> |
+	<drop-table-stmt>
 
 <select-stmt> ->
 	<select-stmt-core>
@@ -359,6 +360,9 @@ symbol corresponds to a class.
 	"cascade" |
 	"restrict" |
 	"no" "action"
+
+<drop-table-stmt> ->
+	"drop" "table" ["if" "exists"] <table-ref>
 
 Types
 -----

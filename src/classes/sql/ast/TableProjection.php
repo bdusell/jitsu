@@ -5,7 +5,7 @@ namespace jitsu\sql\ast;
 /* A table name followed by a list of column names.
  *
  * <table-projection> ->
- *   <table-reference> -> "(" <identifier>+{","} ")"
+ *   <table-reference> "(" <identifier>+{","} ")"
  */
 class TableProjection extends Node {
 

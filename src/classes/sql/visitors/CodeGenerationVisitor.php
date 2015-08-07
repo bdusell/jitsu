@@ -518,6 +518,13 @@ abstract class CodeGenerationVisitor extends Visitor {
 		return $r;
 	}
 
+	public function visitDropTableStatement($n) {
+		$r = 'DROP TABLE ';
+		if($r->if_exists) $r .= 'IF EXISTS ';
+		$r .= $n->table->accept($this);
+		return $r;
+	}
+
 	abstract public function visitBitfieldType($n);
 	abstract public function visitBooleanType($n);
 	abstract public function visitIntegerType($n);

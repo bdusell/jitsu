@@ -11,10 +11,12 @@ class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 	public function __construct($value = null) {
 		$this->value = (
 			$value === null ?
-				array() :
+			array() :
+			(
 				$value instanceof self ?
-					$value->value :
-					$value
+				$value->value :
+				$value
+			)
 		);
 	}
 
@@ -44,7 +46,7 @@ class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 				return call_user_func_array($func, $args);
 			}
 		}
-		throw new BadMethodCallException(
+		throw new \BadMethodCallException(
 			get_class() . '->' . $name . ' does not exist'
 		);
 	}

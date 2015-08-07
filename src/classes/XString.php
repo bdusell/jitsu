@@ -11,10 +11,12 @@ class XString {
 	public function __construct($value) {
 		$this->value = (
 			$value === null ?
-				'' :
+			'' :
+			(
 				$value instanceof self ?
-					$value->value :
-					$value
+				$value->value :
+				$value
+			)
 		);
 	}
 
@@ -63,7 +65,7 @@ class XString {
 				)
 			);
 		}
-		throw new BadMethodCallException(
+		throw new \BadMethodCallException(
 			get_class() . '::' . $name . ' does not exist'
 		);
 	}

@@ -37,7 +37,7 @@ class XRegex {
 		} elseif(array_key_exists($name, self::$split_methods)) {
 			return $this->_split($name, $args);
 		} else {
-			throw new BadMethodCallException(
+			throw new \BadMethodCallException(
 				get_class() . '->' . $name . ' does not exist'
 			);
 		}
@@ -50,7 +50,7 @@ class XRegex {
 				$args
 			);
 		} else {
-			throw new BadMethodCallException(
+			throw new \BadMethodCallException(
 				get_class() . '::' . $name . ' does not exist'
 			);
 		}

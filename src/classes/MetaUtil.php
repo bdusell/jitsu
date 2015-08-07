@@ -71,7 +71,7 @@ class MetaUtil {
 		return $r->getMethods(\ReflectionMethod::IS_PUBLIC);
 	}
 
-	public static function register_autoloader($namespace, $callback = null) {
+	public static function register_autoloader($callback) {
 		spl_autoload_register($callback);
 	}
 

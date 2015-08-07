@@ -694,7 +694,7 @@ class ArrayUtil {
 	}
 
 	private static function _slice($array, $i, $j, $preserve_keys) {
-		list($offset, $len) = \impl\convert_slice_indexes($i, $j, count($array));
+		list($offset, $len) = impl\convert_slice_indexes($i, $j, count($array));
 		return array_slice($array, $offset, $len, $preserve_keys);
 	}
 }

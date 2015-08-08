@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * An object-oriented wrapper class for the `array` type.
+ */
+
 namespace jitsu;
 
-/* An object-oriented wrapper around the built-in PHP array type which offers
- * a richer API. */
+/**
+ * An object-oriented wrapper class for the `array` type.
+ */
 class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 
 	public $value;
@@ -192,7 +197,7 @@ class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 		'key_of' => true,
 		'index_of' => true,
 		'contains' => true,
-		'value_at' => true,
+		'at' => true,
 		'pair_at' => true,
 		'key_at' => true,
 		'sum' => true,
@@ -208,7 +213,7 @@ class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 		'get_ref' => true,
 		'remove' => true,
 		'append' => true,
-		'append_all' => true,
+		'append_many' => true,
 		'push' => true,
 		'pop' => true,
 		'shift' => true,
@@ -232,5 +237,3 @@ class XArray implements \Countable, \IteratorAggregate, \ArrayAccess {
 		'ihuman_sort_values' => true,
 	);
 }
-
-?>

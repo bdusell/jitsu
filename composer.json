@@ -1,0 +1,18 @@
+{
+  "name": "jitsu/jitsu",
+  "description": "PHP web framework and project generator",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Jitsu\\": "src/"
+    }
+  },
+  "require": {
+    "jitsu/array": "^0.1.1",
+    "jitsu/error": "^0.2.0",
+    "jitsu/regex": "^0.1.1",
+    "jitsu/string": "^0.1.1",
+    "jitsu/util": "^0.1.2",
+    "jitsu/wrap": "^0.1.2"
+  }
+}

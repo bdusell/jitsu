@@ -19,14 +19,14 @@ Jitsu projects quickly and easily.
 PHP is a nice tool for novice web developers. For starters, most web servers
 come pre-configured to run PHP without any additional effort. You write "hello
 world" to a file named `index.php` and _boom_, you have a web page. Put some
-more code in some more files with some other names, and _boom_, you have a
-whole website. For the casual user, PHP looks and feels like magic HTML.
-Because PHP is a templating language, the panoply of languages essential for
-web development can coexist in the same source file. This reduces the
-complexity of HTML form submission to 1) printing the appropriate HTML markup,
-and 2) retrieving the submitted values through `$_REQUEST`. Play it right, and
-you can always have all of your HTML, CSS, JavaScript, backend logic, SQL
-queries, etc. in one big ball-o'-code `.php` file.
+more code in some more files, and you can make a whole website. For the casual
+user, PHP looks and feels like magic HTML. Because PHP is a templating
+language, the multitude of languages essential for web development can coexist
+in the same source file. This, to take a common example, reduces the complexity
+of HTML form submission to 1) printing the appropriate HTML markup, and 2)
+retrieving the submitted values through `$_REQUEST`. Play it right, and you can
+always have all of your HTML, CSS, JavaScript, backend logic, SQL queries, etc.
+in one big ball-o'-code.
 
 Obviously, this language-fiesta approach is not suitable for larger projects.
 As soon as your aspirations evolve from "how do I make a web page which asks
@@ -50,9 +50,9 @@ names, well-behaved string and array functions, disciplined error handling,
 object-oriented HTTP requests and responses, request routing, and more. A few
 highlights include:
 
-* Auto-loading for all `Jitsu` classes. Jitsu is composed of a number of
-  [Composer](https://getcomposer.org/) packages, all of which support
-  [PSR-4](http://www.php-fig.org/psr/psr-4/)-compliant auto-loading.
+* Auto-loading for all classes under the `Jitsu` namespace. Jitsu is composed
+  of a number of [Composer](https://getcomposer.org/) packages, all of which
+  support [PSR-4](http://www.php-fig.org/psr/psr-4/)-compliant auto-loading.
 * An `Application` class which serves as an extensible HTTP request router.
 * Request and response interfaces which decouple clients from superglobals
   like `$_GET`, `$_SERVER`, etc.
@@ -60,9 +60,10 @@ highlights include:
 * Many, many static utility functions for string and array manipulation,
   regular expression matching, introspection, functional programming, etc.
 * Wrapper classes `XArray`, `XString`, and `XRegex` which offer a rich,
-  object-oriented interface to native PHP data types that supports method
+  object-oriented interface to native PHP data types and support method
   chaining.
-* Other features in the works, like a SQL syntax abstraction layer and an ORM.
+* Other features are in the works, like a SQL syntax abstraction layer and an
+  ORM.
 
 ## Component Libraries
 
@@ -87,45 +88,15 @@ highlights include:
 
 ## Quickstart
 
-Clone this repo and create a new project:
+Clone this repo and create a new empty project:
 
 ```sh
 git clone https://github.com/bdusell/jitsu.git
+cd jitsu
+composer update
+cd ..
 ./jitsu/bin/jitsu create MyBlog
 cd MyBlog
-```
-
-## Project Structure
-
-## HTML Templates
-
-Something PHP is actually good at! By convention, HTML templates are kept
-separate from application logic in files ending in `.html.php`. They reference
-dynamic values using simple local variables &ndash; these are sent to the
-templates using `Jitsu\Util::template`. Global shorthand functions `html` and
-`htmlattr` can be used to escape values properly.
-
-Example:
-
-In a file `views/users/index.html.php`:
-
-```html
-<section>
-  <h1>Users</h1>
-  <ul>
-  <?php foreach($users as $user): ?>
-    <li id="user-<?= htmlattr($user->id) ?>"><?= html($user->name) ?></li>
-  <?php endforeach; ?>
-  </ul>
-</section>
-```
-
-Elsewhere:
-
-```php
-\jitsu\Util::template('views/users/index.html.php', array(
-  'users' => $db->query('select "id", "name" from "users"')
-));
 ```
 
 実

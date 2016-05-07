@@ -1,18 +1,30 @@
 {
   "name": "jitsu/jitsu",
   "description": "PHP web framework and project generator",
+  "keywords": ["project", "generator", "framework"],
   "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Jitsu\\": "src/"
+  "authors": [
+    {
+      "name": "Brian DuSell",
+      "email": "bdusell@gmail.com",
+      "role": "Developer"
     }
-  },
+  ],
+  "bin": [
+    "bin-src/jitsu"
+  ],
   "require": {
+    "php": ">=5.4.0",
     "jitsu/array": "^0.1.1",
     "jitsu/error": "^0.2.0",
     "jitsu/regex": "^0.1.1",
     "jitsu/string": "^0.1.1",
     "jitsu/util": "^0.1.2",
     "jitsu/wrap": "^0.1.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Jitsu\\": "src/"
+    }
   }
 }

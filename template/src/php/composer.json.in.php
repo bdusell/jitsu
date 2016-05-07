@@ -8,7 +8,7 @@
     }
   },
   "require": {
-    "jitsu/app": "^0.2.0",
+    "jitsu/app": "^0.2.1",
     "jitsu/array": "^0.1.1",
     "jitsu/error": "^0.2.0",
     "jitsu/http": "^0.2.0",
